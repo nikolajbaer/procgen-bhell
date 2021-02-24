@@ -5,12 +5,33 @@
      content='width=device-width, initial-scale=1.0, maximum-scale=1.0, 
      user-scalable=0' >
 	<style>
-		body{ background-color: #000; width: 100%; height: 100%; margin: 0px; padding: 0px; }
+		body{ 
+			background-color: #000; 
+			width: 100%; 
+			height: 100%; 
+			margin: 0px; 
+			padding: 0px; 
+			font-family: monospace;
+			font-size: 14pt;
+		}
+		#overlay { 
+			position: fixed;
+			left: 2px;
+			right: 2px;
+			bottom: 10px;
+			color: green;
+		}
+		.hud {
+			width: 300px;
+			margin: auto;
+			text-align: center;
+		}
 	</style>
 </head>
 <body>
 	<div id="overlay">
 		<div class="hud">
+			HUD
 		</div>
 	</div>
 </body>

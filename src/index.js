@@ -8,7 +8,14 @@ import * as CANNON from 'cannon-es'
 
 function init(){
     var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+    var camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+    const raycaster = new THREE.Raycaster();
+
+    const SPEED = 10.0
+
+    const mouse = new THREE.Vector2()
+    const keys = {}
 
     const world = new World()
     world.registerComponent(PhysicsComponent)
@@ -55,26 +62,26 @@ function init(){
     groundMesh.rotation.x = -Math.PI/2;
     scene.add( groundMesh );
 
-
     // Add test object
     const size = 1
-    const sphereShape = new CANNON.Sphere(size/2)
+    const shape = new CANNON.Box(new CANNON.Vec3(size/2,size,size/2))
     const mat1 = new CANNON.Material() 
     const body1  = new CANNON.Body({
         mass:1, //mass
         material: mat1,
-        position: new CANNON.Vec3(0,10,0)
+        position: new CANNON.Vec3(0,size,0),
+        type: CANNON.Body.KINEMATIC,
     })
-    body1.addShape(sphereShape)
+    body1.addShape(shape)
     body1.linearDamping = 0.01
     physicsWorld.addBody(body1)
-    
-    const boxGeometry = new THREE.BoxGeometry(1)
+   
+
+    const boxGeometry = new THREE.BoxGeometry(size,size*2,size)
     const boxMaterial = new THREE.MeshLambertMaterial({ color:0xeeeeee})
     const mesh1 = new THREE.Mesh( boxGeometry, boxMaterial)
     mesh1.castShadow = true
     mesh1.receiveShadow = true
-    body1.mesh = mesh1
     scene.add(mesh1)
 
     const entity = world.createEntity()
@@ -86,12 +93,17 @@ function init(){
     // Spawning bUllets use InstancedMesh
     */
 
-    camera.position.set(5,10,-10);
+    // camera above player
+    const CAM_OFFSET = new THREE.Vector3(0,40,-5)
+    camera.position.copy(CAM_OFFSET)
     camera.lookAt(new THREE.Vector3(0,0,0));
 
+    /*
     var controls = new OrbitControls( camera, renderer.domElement );
     controls.minDistance = 10;
     controls.maxDistance = 100;
+    controls.enableKeys = false;
+    */
 
     window.addEventListener('resize', onWindowResize)
 
@@ -105,11 +117,40 @@ function init(){
     	effect.render( scene, camera );
     }
 
+    function updatePlayer(){
+        // WASD/Arrow movement
+        const vel = new CANNON.Vec3(0,0,0)
+        if(keys["ArrowUp"] || keys["KeyW"]){ vel.z = 1
+        }else if(keys["ArrowDown"] || keys["KeyS"]){ vel.z = -1 }
+
+        if(keys["ArrowLeft"] || keys["KeyA"]){ vel.x = 1
+        }else if(keys["ArrowRight"] || keys["KeyD"]){ vel.x = -1 }
+
+        body1.velocity = vel.scale(SPEED)
+
+        // Point in Mouse Direction where our mouse projects to the ground
+        //body.rotation.set(mouse.angle()
+        raycaster.setFromCamera( mouse, camera );
+        const intersects = raycaster.intersectObjects( [groundMesh] )
+        if(intersects.length){
+            const target = new THREE.Vector3(intersects[0].point.x,body1.position.y,intersects[0].point.z)
+            //body1.quaternion.lookAt(target)
+        }
+
+        camera.position.copy(new THREE.Vector3(
+            body1.position.x + CAM_OFFSET.x,
+            body1.position.y + CAM_OFFSET.y,
+            body1.position.z + CAM_OFFSET.z,
+        ))
+    }
+
     function animate() {
         requestAnimationFrame( animate );            
 
         const delta = clock.getDelta();
         const elapsed = clock.elapsedTime;
+
+        updatePlayer()
 
         physicsWorld.step(delta)
         world.execute(delta,elapsed) 
@@ -117,6 +158,13 @@ function init(){
         render()
     }
     animate();
+
+    document.addEventListener("keydown", event => { keys[event.code] = true });
+    document.addEventListener("keyup", event => { keys[event.code] = false });
+    document.addEventListener("mousemove", event => {
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1; 
+        mouse.y = -( event.clientY / window.innerHeight) * 2 + 1
+    })
 }
 
 init();
