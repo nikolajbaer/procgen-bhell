@@ -5,11 +5,12 @@
   "main": "webpack.config.js",
   "scripts": {
     "build": "webpack",
-    "start": "webpack-dev-server --config ./webpack.config.js --mode development"
+    "start": "webpack-dev-server --config ./webpack.config.js --mode development --host 0.0.0.0"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cannon-es": "^0.16.0",
     "file-loader": "^6.1.0",
     "html-webpack-plugin": "^4.5.0",
     "oimo": "^1.0.9",

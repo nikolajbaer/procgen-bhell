@@ -1,6 +1,7 @@
-import * as THREE from "three";
-//import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { OutlineEffect } from 'three/examples/jsm/effects/OutlineEffect.js';
+import * as THREE from "three"
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { OutlineEffect } from 'three/examples/jsm/effects/OutlineEffect.js'
+import * as CANNON from 'cannon-es'
 
 function init(){
     var scene = new THREE.Scene();
@@ -28,13 +29,11 @@ function init(){
 
     var effect = new OutlineEffect( renderer );
 
+    // Create world
+    const world = new CANNON.World()
+    world.gravity.set(0, -10, 0)
+
     // Create a plane
-    const groundBody = world.add({
-        type: 'box',
-        move: false,
-        pos: [0,-0.5,0],
-        size:[1000,1,1000],
-    });
     var geometry = new THREE.PlaneGeometry( 1000, 1000, 50, 50 );
     var groundMaterial = new THREE.MeshLambertMaterial( { color: 0x111111 } );
     var groundMesh = new THREE.Mesh( geometry, groundMaterial );
@@ -42,17 +41,71 @@ function init(){
     groundMesh.rotation.x = -Math.PI/2;
     scene.add( groundMesh );
 
+    // Create ground body
+    const groundPhysMaterial = new CANNON.Material('ground')
+    const groundPhysShape = new CANNON.Plane()
+    const groundBody = new CANNON.Body({ mass: 0, material: groundPhysMaterial })
+    groundBody.addShape(groundPhysShape)
+    groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
+    world.addBody(groundBody)
+
+    // Add test object
+    const size = 1
+    const sphereShape = new CANNON.Sphere(size/2)
+    const mat1 = new CANNON.Material() 
+    const body1  = new CANNON.Body({
+        mass:1, //mass
+        material: mat1,
+        position: new CANNON.Vec3(0,10,0)
+    })
+    body1.addShape(sphereShape)
+    body1.linearDamping = 0.01
+    world.addBody(body1)
+    const boxGeometry = new THREE.BoxGeometry(1)
+    const boxMaterial = new THREE.MeshLambertMaterial({ color:0xeeeeee})
+    const mesh1 = new THREE.Mesh( boxGeometry, boxMaterial)
+    mesh1.castShadow = true
+    mesh1.receiveShadow = true
+    body1.mesh = mesh1
+    scene.add(mesh1)
+    bodies.push(body1)
+
     camera.position.set(5,10,-10);
     camera.lookAt(new THREE.Vector3(0,0,0));
 
-//    var controls = new OrbitControls( camera, renderer.domElement );
-//	controls.minDistance = 10;
-//    controls.maxDistance = 100;
+    var controls = new OrbitControls( camera, renderer.domElement );
+    controls.minDistance = 10;
+    controls.maxDistance = 100;
+
+    window.addEventListener('resize', onWindowResize)
+
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight
+        camera.updateProjectionMatrix()
+        renderer.setSize(window.innerWidth, window.innerHeight)
+    }
+
+    function updatePhysics(delta) {
+        // Step the physics world
+        world.step(delta)
+
+        // Copy coordinates from cannon.js to three.js
+        bodies.forEach( body => {
+            body.mesh.position.copy(body.position)
+            body.mesh.quaternion.copy(body.quaternion)
+        })
+    }
+
+    function render(){
+    	effect.render( scene, camera );
+    }
 
     function animate() {
         requestAnimationFrame( animate );            
+
         const delta = clock.getDelta();
-    	effect.render( scene, camera );
+        updatePhysics(delta)
+        render()
     }
     animate();
 }
