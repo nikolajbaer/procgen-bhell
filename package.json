@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "cannon-es": "^0.16.0",
+    "ecsy": "^0.4.2",
     "file-loader": "^6.1.0",
     "html-webpack-plugin": "^4.5.0",
     "oimo": "^1.0.9",

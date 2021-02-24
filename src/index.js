@@ -1,14 +1,20 @@
 import * as THREE from "three"
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { OutlineEffect } from 'three/examples/jsm/effects/OutlineEffect.js'
+import { World } from 'ecsy';
+import { PhysicsComponent,MeshComponent } from './components.js'
+import { PhysicsSystem, PhysicsMeshUpdateSystem } from './systems.js'
 import * as CANNON from 'cannon-es'
 
 function init(){
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
-    const WORLD_RADIUS = 100
-    const bodies = [];
+    const world = new World()
+    world.registerComponent(PhysicsComponent)
+    world.registerComponent(MeshComponent)
+    world.registerSystem(PhysicsSystem)
+    world.registerSystem(PhysicsMeshUpdateSystem)
 
     // Scene Lighting
     scene.fog = new THREE.Fog( 0x000000, 0, 500 );
@@ -29,9 +35,17 @@ function init(){
 
     var effect = new OutlineEffect( renderer );
 
-    // Create world
-    const world = new CANNON.World()
-    world.gravity.set(0, -10, 0)
+    // Phsyics World
+    const physicsWorld = new CANNON.World()
+    physicsWorld.gravity.set(0, -10, 0)
+
+    // Simplistically create ground body
+    const groundPhysMaterial = new CANNON.Material('ground')
+    const groundPhysShape = new CANNON.Plane()
+    const groundBody = new CANNON.Body({ mass: 0, material: groundPhysMaterial })
+    groundBody.addShape(groundPhysShape)
+    groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
+    physicsWorld.addBody(groundBody)    
 
     // Create a plane
     var geometry = new THREE.PlaneGeometry( 1000, 1000, 50, 50 );
@@ -41,13 +55,6 @@ function init(){
     groundMesh.rotation.x = -Math.PI/2;
     scene.add( groundMesh );
 
-    // Create ground body
-    const groundPhysMaterial = new CANNON.Material('ground')
-    const groundPhysShape = new CANNON.Plane()
-    const groundBody = new CANNON.Body({ mass: 0, material: groundPhysMaterial })
-    groundBody.addShape(groundPhysShape)
-    groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
-    world.addBody(groundBody)
 
     // Add test object
     const size = 1
@@ -60,7 +67,8 @@ function init(){
     })
     body1.addShape(sphereShape)
     body1.linearDamping = 0.01
-    world.addBody(body1)
+    physicsWorld.addBody(body1)
+    
     const boxGeometry = new THREE.BoxGeometry(1)
     const boxMaterial = new THREE.MeshLambertMaterial({ color:0xeeeeee})
     const mesh1 = new THREE.Mesh( boxGeometry, boxMaterial)
@@ -68,9 +76,15 @@ function init(){
     mesh1.receiveShadow = true
     body1.mesh = mesh1
     scene.add(mesh1)
-    bodies.push(body1)
+
+    const entity = world.createEntity()
+    entity.addComponent( PhysicsComponent, { body: body1 })
+    entity.addComponent( MeshComponent, { mesh: mesh1 })
+
+    /*
     // https://threejs.org/docs/#api/en/objects/InstancedMesh
     // Spawning bUllets use InstancedMesh
+    */
 
     camera.position.set(5,10,-10);
     camera.lookAt(new THREE.Vector3(0,0,0));
@@ -87,17 +101,6 @@ function init(){
         renderer.setSize(window.innerWidth, window.innerHeight)
     }
 
-    function updatePhysics(delta) {
-        // Step the physics world
-        world.step(delta)
-
-        // Copy coordinates from cannon.js to three.js
-        bodies.forEach( body => {
-            body.mesh.position.copy(body.position)
-            body.mesh.quaternion.copy(body.quaternion)
-        })
-    }
-
     function render(){
     	effect.render( scene, camera );
     }
@@ -106,7 +109,11 @@ function init(){
         requestAnimationFrame( animate );            
 
         const delta = clock.getDelta();
-        updatePhysics(delta)
+        const elapsed = clock.elapsedTime;
+
+        physicsWorld.step(delta)
+        world.execute(delta,elapsed) 
+
         render()
     }
     animate();
