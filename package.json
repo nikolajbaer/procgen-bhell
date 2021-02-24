@@ -1,0 +1,21 @@
+{
+  "name": "js_experiments",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack-dev-server --config ./webpack.config.js --mode development"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "file-loader": "^6.1.0",
+    "html-webpack-plugin": "^4.5.0",
+    "oimo": "^1.0.9",
+    "three": "^0.120.1",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  }
+}

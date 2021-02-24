@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  node:
+    image: "node"
+    user: "node"
+    working_dir: /home/node/app
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./:/home/node/app
+    ports:
+      - "8080:8080"
+    command: "npm start"
