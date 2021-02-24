@@ -69,6 +69,8 @@ function init(){
     body1.mesh = mesh1
     scene.add(mesh1)
     bodies.push(body1)
+    // https://threejs.org/docs/#api/en/objects/InstancedMesh
+    // Spawning bUllets use InstancedMesh
 
     camera.position.set(5,10,-10);
     camera.lookAt(new THREE.Vector3(0,0,0));
