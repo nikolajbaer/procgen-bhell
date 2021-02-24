@@ -76,7 +76,6 @@ function init(){
     body1.linearDamping = 0.01
     physicsWorld.addBody(body1)
    
-
     const boxGeometry = new THREE.BoxGeometry(size,size*2,size)
     const boxMaterial = new THREE.MeshLambertMaterial({ color:0xeeeeee})
     const mesh1 = new THREE.Mesh( boxGeometry, boxMaterial)
@@ -133,14 +132,17 @@ function init(){
         raycaster.setFromCamera( mouse, camera );
         const intersects = raycaster.intersectObjects( [groundMesh] )
         if(intersects.length){
-            const target = new THREE.Vector3(intersects[0].point.x,body1.position.y,intersects[0].point.z)
-            //body1.quaternion.lookAt(target)
+            const target = new THREE.Vector2(
+                intersects[0].point.x - body1.position.x,
+                intersects[0].point.z - body1.position.z
+            )
+            body1.quaternion.setFromAxisAngle(new CANNON.Vec3(0,1,0), -target.angle())
         }
 
         camera.position.copy(new THREE.Vector3(
-            body1.position.x + CAM_OFFSET.x,
-            body1.position.y + CAM_OFFSET.y,
-            body1.position.z + CAM_OFFSET.z,
+            mesh1.position.x + CAM_OFFSET.x,
+            mesh1.position.y + CAM_OFFSET.y,
+            mesh1.position.z + CAM_OFFSET.z,
         ))
     }
 
