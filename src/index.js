@@ -15,7 +15,7 @@ function init(){
     const SPEED = 10.0
 
     const mouse = new THREE.Vector2()
-    const keys = {}
+    const actions = {}
 
     const world = new World()
     world.registerComponent(PhysicsComponent)
@@ -62,7 +62,7 @@ function init(){
     groundMesh.rotation.x = -Math.PI/2;
     scene.add( groundMesh );
 
-    // Add test object
+    // Add Player Object 
     const size = 1
     const shape = new CANNON.Box(new CANNON.Vec3(size/2,size,size/2))
     const mat1 = new CANNON.Material() 
@@ -82,6 +82,17 @@ function init(){
     mesh1.castShadow = true
     mesh1.receiveShadow = true
     scene.add(mesh1)
+
+    // temp gun
+    const gunGeometry = new THREE.BoxGeometry(size*2,size/4,size/4)
+    const gunMaterial = new THREE.MeshLambertMaterial({ color:0x333333})
+    const gunMesh = new THREE.Mesh( gunGeometry, gunMaterial )
+    gunMesh.position.x = size/2
+    gunMesh.position.z = size/1.9
+    gunMesh.castShadow = true
+    gunMesh.receiveShadow = true
+    gunMesh.rotation.x = Math.PI/4
+    mesh1.add(gunMesh)
 
     const entity = world.createEntity()
     entity.addComponent( PhysicsComponent, { body: body1 })
@@ -119,11 +130,11 @@ function init(){
     function updatePlayer(){
         // WASD/Arrow movement
         const vel = new CANNON.Vec3(0,0,0)
-        if(keys["ArrowUp"] || keys["KeyW"]){ vel.z = 1
-        }else if(keys["ArrowDown"] || keys["KeyS"]){ vel.z = -1 }
+        if(actions["ArrowUp"] || actions["KeyW"]){ vel.z = 1
+        }else if(actions["ArrowDown"] || actions["KeyS"]){ vel.z = -1 }
 
-        if(keys["ArrowLeft"] || keys["KeyA"]){ vel.x = 1
-        }else if(keys["ArrowRight"] || keys["KeyD"]){ vel.x = -1 }
+        if(actions["ArrowLeft"] || actions["KeyA"]){ vel.x = 1
+        }else if(actions["ArrowRight"] || actions["KeyD"]){ vel.x = -1 }
 
         body1.velocity = vel.scale(SPEED)
 
@@ -144,6 +155,13 @@ function init(){
             mesh1.position.y + CAM_OFFSET.y,
             mesh1.position.z + CAM_OFFSET.z,
         ))
+
+        // Primary Fire
+        if(actions["Mouse0"]){
+        }
+        // Secondary Fire
+        if(actions["Mouse1"]){
+        }
     }
 
     function animate() {
@@ -161,12 +179,14 @@ function init(){
     }
     animate();
 
-    document.addEventListener("keydown", event => { keys[event.code] = true });
-    document.addEventListener("keyup", event => { keys[event.code] = false });
+    document.addEventListener("keydown", event => { actions[event.code] = true });
+    document.addEventListener("keyup", event => { actions[event.code] = false });
     document.addEventListener("mousemove", event => {
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1; 
         mouse.y = -( event.clientY / window.innerHeight) * 2 + 1
     })
+    document.addEventListener("mousedown", event => { actions["Mouse"+event.button] = true })
+    document.addEventListener("mouseup", event => { actions["Mouse"+event.button] = false })
 }
 
 init();
