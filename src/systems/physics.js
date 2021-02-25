@@ -13,6 +13,9 @@ export class PhysicsSystem extends System {
     init() {
         this.world = new CANNON.World()
         this.world.gravity.set(0, -10, 0)
+        //this.world.broadphase = new CANNON.NaiveBroadphase();
+        //this.world.solver.iterations = 10;
+        //this.world.defaultContactMaterial.contactEquationRelaxation = 4
     }
 
     execute(delta){
@@ -40,7 +43,7 @@ export class PhysicsSystem extends System {
             }
             const mat = MATERIALS[body.material]
             const body1  = new CANNON.Body({
-                mass:body.mass, //mass
+                mass: body.mass, //mass
                 material: mat,
                 position: new CANNON.Vec3(locrot.x,locrot.y,locrot.z),
                 quaternion: quat,

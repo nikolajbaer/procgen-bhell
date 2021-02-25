@@ -1,11 +1,12 @@
 import * as THREE from "three"
 import { World } from 'ecsy';
 import { BodyComponent, LocRotScaleComponent, PhysicsComponent } from './components/physics'
-import { MeshComponent, ModelComponent } from './components/render'
+import { MeshComponent, ModelComponent, CameraFollowComponent } from './components/render'
 import { PhysicsSystem, PhysicsMeshUpdateSystem } from './systems/physics'
 import { RenderSystem } from "./systems/render"
 import { ControlsSystem } from "./systems/controls"
 import { ControlsComponent } from "./components/controls";
+import { Camera } from "three";
 
 function init(){
     //const raycaster = new THREE.Raycaster();
@@ -17,6 +18,7 @@ function init(){
     world.registerComponent(BodyComponent)
     world.registerComponent(PhysicsComponent)
     world.registerComponent(MeshComponent)
+    world.registerComponent(CameraFollowComponent)
     world.registerComponent(ModelComponent)
     world.registerComponent(ControlsComponent)
     world.registerSystem(PhysicsSystem)
@@ -60,12 +62,12 @@ function init(){
     playerEntity.addComponent( LocRotScaleComponent, { y:size/2 } )
     playerEntity.addComponent( ModelComponent, { geometry: "box", material: "player" } )
     playerEntity.addComponent( ControlsComponent )
+    playerEntity.addComponent( CameraFollowComponent, { offset_x: 0, offset_y: 40, offset_z: -5 })
 
     const boxEntity = world.createEntity()
     boxEntity.addComponent( LocRotScaleComponent, { x:5, y:5, z:5 } )
     boxEntity.addComponent( BodyComponent )
     boxEntity.addComponent( ModelComponent )
-    boxEntity.addComponent( ControlsComponent )
 
     let lastTime = performance.now()
 

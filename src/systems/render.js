@@ -1,12 +1,11 @@
 import { System, Not } from "ecsy";
-import { MeshComponent, ModelComponent } from "../components/render"
+import { MeshComponent, ModelComponent, CameraFollowComponent } from "../components/render"
 import { OutlineEffect } from 'three/examples/jsm/effects/OutlineEffect.js'
 import { GEOMETRIES, MATERIALS } from "../assets"
 import * as THREE from "three"
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { ControlsComponent } from "../components/controls";
         
-const CAM_OFFSET = new THREE.Vector3(0,30,-5)
-
 export class RenderSystem extends System {
     init() {
         let scene = new THREE.Scene();
@@ -27,9 +26,6 @@ export class RenderSystem extends System {
         renderer.setSize( window.innerWidth, window.innerHeight );
         document.body.appendChild( renderer.domElement );
 
-        camera.position.copy(CAM_OFFSET)
-        camera.lookAt(new THREE.Vector3(0,0,0));
-
         let effect = new OutlineEffect( renderer );
 
         this.effect = effect
@@ -45,6 +41,7 @@ export class RenderSystem extends System {
 
         // debug
         window.scene = scene
+        window.camera = camera
         var controls = new OrbitControls( camera, renderer.domElement );
         controls.minDistance = 10;
         controls.maxDistance = 100;
@@ -61,7 +58,22 @@ export class RenderSystem extends System {
             e.addComponent( MeshComponent, { mesh: mesh })
         })
 
+        this.queries.camera_follow.results.forEach( e => {
+            const follow = e.getComponent(CameraFollowComponent)
+            const pos = e.getComponent(MeshComponent).mesh.position
+
+            this.camera.position.set( 
+                pos.x + follow.offset_x,
+                pos.y + follow.offset_y,
+                pos.z + follow.offset_z
+            )
+            this.camera.lookAt(pos);
+
+        })
+
+
         // todo cleanup removed
+
 
     	this.effect.render( this.scene, this.camera );
     }
@@ -70,6 +82,9 @@ export class RenderSystem extends System {
 RenderSystem.queries = {
     unitialized: {
         components: [ ModelComponent, Not(MeshComponent)]
+    },
+    camera_follow: {
+        components: [ CameraFollowComponent, MeshComponent ] // Maybe camera follow component?
     },
     removed: {
         components: [MeshComponent],

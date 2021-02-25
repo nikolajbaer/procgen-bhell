@@ -3,10 +3,8 @@ import { Vector2 } from "three";
 import * as CANNON from "cannon-es"
 import { PhysicsComponent } from "../components/physics";
 import { ControlsComponent } from "../components/controls";
-import * as THREE from "three"
-import { PhysicsSystem } from "./physics";
 
-const SPEED = 10 
+const SPEED = .25 
 
 export class ControlsSystem extends System {
     init() {
