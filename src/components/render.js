@@ -1,4 +1,4 @@
-import { Component, Types } from 'ecsy'
+import { Component, TagComponent, Types } from 'ecsy'
 import { Camera } from 'three'
 
 export class MeshComponent extends Component {}
@@ -17,4 +17,11 @@ CameraFollowComponent.schema = {
   offset_x: { type: Types.Number, default: 0 },
   offset_y: { type: Types.Number, default: 40 },
   offset_z: { type: Types.Number, default: -5 },
+}
+
+export class RayCastTargetComponent extends Component {}
+RayCastTargetComponent.schema = {
+  x: { type: Types.Number },
+  y: { type: Types.Number },
+  z: { type: Types.Number }
 }

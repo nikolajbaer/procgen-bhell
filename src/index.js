@@ -1,7 +1,7 @@
 import * as THREE from "three"
 import { World } from 'ecsy';
 import { BodyComponent, LocRotScaleComponent, PhysicsComponent } from './components/physics'
-import { MeshComponent, ModelComponent, CameraFollowComponent } from './components/render'
+import { MeshComponent, ModelComponent, CameraFollowComponent, RayCastTargetComponent } from './components/render'
 import { PhysicsSystem, PhysicsMeshUpdateSystem } from './systems/physics'
 import { RenderSystem } from "./systems/render"
 import { ControlsSystem } from "./systems/controls"
@@ -21,6 +21,7 @@ function init(){
     world.registerComponent(CameraFollowComponent)
     world.registerComponent(ModelComponent)
     world.registerComponent(ControlsComponent)
+    world.registerComponent(RayCastTargetComponent)
     world.registerSystem(PhysicsSystem)
     world.registerSystem(PhysicsMeshUpdateSystem)
     world.registerSystem(RenderSystem)
@@ -37,6 +38,7 @@ function init(){
     })
     groundEntity.addComponent( LocRotScaleComponent, { rotx:-Math.PI/2 } )
     groundEntity.addComponent( ModelComponent, { geometry: "ground", material: "ground" })
+    groundEntity.addComponent( RayCastTargetComponent )
   
     const size = 1
     // temp gun
@@ -64,10 +66,12 @@ function init(){
     playerEntity.addComponent( ControlsComponent )
     playerEntity.addComponent( CameraFollowComponent, { offset_x: 0, offset_y: 40, offset_z: -5 })
 
+    /*
     const boxEntity = world.createEntity()
     boxEntity.addComponent( LocRotScaleComponent, { x:5, y:5, z:5 } )
     boxEntity.addComponent( BodyComponent )
     boxEntity.addComponent( ModelComponent )
+    */
 
     let lastTime = performance.now()
 

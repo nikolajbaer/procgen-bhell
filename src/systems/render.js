@@ -1,5 +1,5 @@
 import { System, Not } from "ecsy";
-import { MeshComponent, ModelComponent, CameraFollowComponent } from "../components/render"
+import { MeshComponent, ModelComponent, CameraFollowComponent, RayCastTargetComponent } from "../components/render"
 import { OutlineEffect } from 'three/examples/jsm/effects/OutlineEffect.js'
 import { GEOMETRIES, MATERIALS } from "../assets"
 import * as THREE from "three"
@@ -26,12 +26,15 @@ export class RenderSystem extends System {
         renderer.setSize( window.innerWidth, window.innerHeight );
         document.body.appendChild( renderer.domElement );
 
+        let raycaster = new THREE.Raycaster();
+
         let effect = new OutlineEffect( renderer );
 
         this.effect = effect
         this.renderer = renderer
         this.camera = camera
         this.scene = scene
+        this.raycaster = raycaster
     
         window.addEventListener('resize', e => {
             camera.aspect = window.innerWidth / window.innerHeight
@@ -42,13 +45,15 @@ export class RenderSystem extends System {
         // debug
         window.scene = scene
         window.camera = camera
+        /*
         var controls = new OrbitControls( camera, renderer.domElement );
         controls.minDistance = 10;
         controls.maxDistance = 100;
+        */
     }
 
     execute(delta){
-
+        // Initialize meshes for any uninitialized models
         this.queries.unitialized.results.forEach( e => {
             const model = e.getComponent(ModelComponent)
             const mesh = new THREE.Mesh( GEOMETRIES[model.geometry] , MATERIALS[model.material])
@@ -58,6 +63,7 @@ export class RenderSystem extends System {
             e.addComponent( MeshComponent, { mesh: mesh })
         })
 
+        // track camera for anny cam follows
         this.queries.camera_follow.results.forEach( e => {
             const follow = e.getComponent(CameraFollowComponent)
             const pos = e.getComponent(MeshComponent).mesh.position
@@ -71,6 +77,23 @@ export class RenderSystem extends System {
 
         })
 
+        // update any raycasts
+        this.queries.raycasts.results.forEach( e => {
+            const mesh = e.getComponent(MeshComponent)
+            const caster = e.getMutableComponent(RayCastTargetComponent)
+
+            const mouse = new THREE.Vector2( caster.mx, caster.my)
+            this.raycaster.setFromCamera( mouse, this.camera );
+
+            const intersects = this.raycaster.intersectObjects( [mesh.mesh] )
+
+            if(intersects.length){
+                const p = intersects[0].point 
+                caster.x = p.x
+                caster.y = p.y
+                caster.z = p.z
+            }
+        })
 
         // todo cleanup removed
 
@@ -85,6 +108,9 @@ RenderSystem.queries = {
     },
     camera_follow: {
         components: [ CameraFollowComponent, MeshComponent ] // Maybe camera follow component?
+    },
+    raycasts: {
+        components: [ RayCastTargetComponent, MeshComponent ]
     },
     removed: {
         components: [MeshComponent],

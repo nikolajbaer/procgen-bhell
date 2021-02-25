@@ -3,6 +3,9 @@ import { Vector2 } from "three";
 import * as CANNON from "cannon-es"
 import { PhysicsComponent } from "../components/physics";
 import { ControlsComponent } from "../components/controls";
+import { RayCastTargetComponent } from "../components/render";
+import { RaycastResult } from "cannon-es";
+import * as THREE from "three"
 
 const SPEED = .25 
 
@@ -19,12 +22,19 @@ export class ControlsSystem extends System {
         document.addEventListener("mousedown", event => { actions["Mouse"+event.button] = true })
         document.addEventListener("mouseup", event => { actions["Mouse"+event.button] = false })
 
-        //this.raycaster = new THREE.Raycaster();
         this.actions = actions
         this.mouse = mouse
     }
 
     execute(delta){
+
+        let mouse_cast_target = null
+        this.queries.mouse_raycast.results.forEach( e => {
+            const caster = e.getMutableComponent(RayCastTargetComponent)
+            caster.mx = this.mouse.x
+            caster.my = this.mouse.y
+            mouse_cast_target = new CANNON.Vec3(caster.x,caster.y,caster.z)
+        })
 
         this.queries.controlled.results.forEach( e => {
             // WASD/Arrow movement
@@ -38,26 +48,13 @@ export class ControlsSystem extends System {
             const body = e.getComponent(PhysicsComponent).body
             body.velocity = vel.scale(SPEED)
 
-            // Point in Mouse Direction where our mouse projects to the ground
-            /*
-            raycaster.setFromCamera( mouse, camera );
-            const intersects = raycaster.intersectObjects( [groundMesh] )
-            if(intersects.length){
+            if(mouse_cast_target){
                 const target = new THREE.Vector2(
-                    intersects[0].point.x - body1.position.x,
-                    intersects[0].point.z - body1.position.z
+                    mouse_cast_target.x - body.position.x,
+                    mouse_cast_target.z - body.position.z
                 )
-                body1.quaternion.setFromAxisAngle(new CANNON.Vec3(0,1,0), -target.angle())
+                body.quaternion.setFromAxisAngle(new CANNON.Vec3(0,1,0), -target.angle())
             }
-            */
-
-            /*
-            camera.position.copy(new THREE.Vector3(
-                mesh1.position.x + CAM_OFFSET.x,
-                mesh1.position.y + CAM_OFFSET.y,
-                mesh1.position.z + CAM_OFFSET.z,
-            ))
-            */
 
             // Primary Fire
             if(this.actions["Mouse0"]){
@@ -74,6 +71,9 @@ export class ControlsSystem extends System {
 ControlsSystem.queries = {
     controlled: {
         components: [ControlsComponent,PhysicsComponent],
+    },
+    mouse_raycast: {
+        components: [ RayCastTargetComponent ]
     }
 }
 
