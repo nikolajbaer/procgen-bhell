@@ -1,5 +1,5 @@
 import { System, Not } from "ecsy";
-import { PhysicsComponent, LocRotScaleComponent, BodyComponent } from "../components/physics.js"
+import { PhysicsComponent, LocRotComponent, BodyComponent } from "../components/physics.js"
 import { MeshComponent } from "../components/render.js"
 import * as CANNON from "cannon-es"
 
@@ -13,9 +13,6 @@ export class PhysicsSystem extends System {
     init() {
         this.world = new CANNON.World()
         this.world.gravity.set(0, -10, 0)
-        //this.world.broadphase = new CANNON.NaiveBroadphase();
-        //this.world.solver.iterations = 10;
-        //this.world.defaultContactMaterial.contactEquationRelaxation = 4
     }
 
     execute(delta){
@@ -24,7 +21,7 @@ export class PhysicsSystem extends System {
         // first intialize any uninitialized bodies
         this.queries.uninitialized.results.forEach( e => {
             const body = e.getComponent(BodyComponent)
-            const locrot = e.getComponent(LocRotScaleComponent)
+            const locrot = e.getComponent(LocRotComponent)
 
             const quat = new CANNON.Quaternion()
             quat.setFromEuler(locrot.rotx,locrot.roty,locrot.rotz)
@@ -59,12 +56,12 @@ export class PhysicsSystem extends System {
 
         // todo then remove any removed bodies
 
-        this.world.step(delta/1000)
+        this.world.step(1/60,delta)
     }
 }
 
 PhysicsSystem.queries = {
-    uninitialized: { components: [LocRotScaleComponent, BodyComponent, Not(PhysicsComponent)]},
+    uninitialized: { components: [LocRotComponent, BodyComponent, Not(PhysicsComponent)]},
     entities: { components: [PhysicsComponent] },
     removed: { components: [PhysicsComponent] },
 };

@@ -22,7 +22,7 @@ export class RenderSystem extends System {
 
         let renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFShadowMap;
+        //renderer.shadowMap.type = THREE.PCFShadowMap;
         renderer.setSize( window.innerWidth, window.innerHeight );
         document.body.appendChild( renderer.domElement );
 
@@ -45,11 +45,10 @@ export class RenderSystem extends System {
         // debug
         window.scene = scene
         window.camera = camera
-        /*
+
         var controls = new OrbitControls( camera, renderer.domElement );
         controls.minDistance = 10;
         controls.maxDistance = 100;
-        */
     }
 
     execute(delta){
@@ -98,7 +97,8 @@ export class RenderSystem extends System {
         // todo cleanup removed
 
 
-    	this.effect.render( this.scene, this.camera );
+    	//this.effect.render( this.scene, this.camera );
+        this.renderer.render( this.scene, this.camera )
     }
 }
 

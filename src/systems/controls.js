@@ -4,10 +4,9 @@ import * as CANNON from "cannon-es"
 import { PhysicsComponent } from "../components/physics";
 import { ControlsComponent } from "../components/controls";
 import { RayCastTargetComponent } from "../components/render";
-import { RaycastResult } from "cannon-es";
 import * as THREE from "three"
 
-const SPEED = .25 
+const SPEED = 1 
 
 export class ControlsSystem extends System {
     init() {
@@ -19,8 +18,8 @@ export class ControlsSystem extends System {
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1; 
             mouse.y = -( event.clientY / window.innerHeight) * 2 + 1
         })
-        document.addEventListener("mousedown", event => { actions["Mouse"+event.button] = true })
-        document.addEventListener("mouseup", event => { actions["Mouse"+event.button] = false })
+        document.addEventListener("mousedown", event => { actions["Mouse"+event.button] = true; })
+        document.addEventListener("mouseup", event => { actions["Mouse"+event.button] = false; })
 
         this.actions = actions
         this.mouse = mouse
@@ -45,8 +44,13 @@ export class ControlsSystem extends System {
             if(this.actions["ArrowLeft"] || this.actions["KeyA"]){ vel.x = 1
             }else if(this.actions["ArrowRight"] || this.actions["KeyD"]){ vel.x = -1 }
 
+            vel.normalize()
+
             const body = e.getComponent(PhysicsComponent).body
             body.velocity = vel.scale(SPEED)
+            // to make wasd in accordance with body direction, 
+            // swap x/z and flip left/right signs
+            //body.velocity = body.quaternion.vmult(vel.scale(SPEED))
 
             if(mouse_cast_target){
                 const target = new THREE.Vector2(
@@ -56,12 +60,10 @@ export class ControlsSystem extends System {
                 body.quaternion.setFromAxisAngle(new CANNON.Vec3(0,1,0), -target.angle())
             }
 
-            // Primary Fire
-            if(this.actions["Mouse0"]){
-            }
-            // Secondary Fire
-            if(this.actions["Mouse1"]){
-            }
+            // Fire controls
+            const control = e.getMutableComponent(ControlsComponent)
+            control.fire1 = this.actions["Mouse0"]
+            control.fire2 = this.actions["Mouse1"]
 
         })
 

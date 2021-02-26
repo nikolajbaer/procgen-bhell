@@ -1,20 +1,18 @@
 import * as THREE from "three"
 import { World } from 'ecsy';
-import { BodyComponent, LocRotScaleComponent, PhysicsComponent } from './components/physics'
+import { BodyComponent, LocRotComponent, PhysicsComponent } from './components/physics'
 import { MeshComponent, ModelComponent, CameraFollowComponent, RayCastTargetComponent } from './components/render'
+import { ShooterComponent, GunComponent, BulletComponent } from "./components/weapons";
 import { PhysicsSystem, PhysicsMeshUpdateSystem } from './systems/physics'
 import { RenderSystem } from "./systems/render"
 import { ControlsSystem } from "./systems/controls"
 import { ControlsComponent } from "./components/controls";
-import { Camera } from "three";
+import { WeaponsSystem } from "./systems/weapons";
 
 function init(){
-    //const raycaster = new THREE.Raycaster();
-
-    //const SPEED = 10.0
 
     const world = new World()
-    world.registerComponent(LocRotScaleComponent)
+    world.registerComponent(LocRotComponent)
     world.registerComponent(BodyComponent)
     world.registerComponent(PhysicsComponent)
     world.registerComponent(MeshComponent)
@@ -22,13 +20,15 @@ function init(){
     world.registerComponent(ModelComponent)
     world.registerComponent(ControlsComponent)
     world.registerComponent(RayCastTargetComponent)
+    world.registerComponent(ShooterComponent)
+    world.registerComponent(GunComponent)
+    world.registerComponent(BulletComponent)
     world.registerSystem(PhysicsSystem)
     world.registerSystem(PhysicsMeshUpdateSystem)
     world.registerSystem(RenderSystem)
     world.registerSystem(ControlsSystem)
+    world.registerSystem(WeaponsSystem)
     
-    var clock = new THREE.Clock();
-
     const groundEntity = world.createEntity()
     groundEntity.addComponent( BodyComponent, {
         mass: 0,
@@ -36,7 +36,7 @@ function init(){
         body_type: BodyComponent.STATIC,
         material: "ground"
     })
-    groundEntity.addComponent( LocRotScaleComponent, { rotx:-Math.PI/2 } )
+    groundEntity.addComponent( LocRotComponent, { rotx:-Math.PI/2 } )
     groundEntity.addComponent( ModelComponent, { geometry: "ground", material: "ground" })
     groundEntity.addComponent( RayCastTargetComponent )
   
@@ -61,27 +61,24 @@ function init(){
         body_type: BodyComponent.KINEMATIC,
         material: "default" 
     })
-    playerEntity.addComponent( LocRotScaleComponent, { y:size/2 } )
+    playerEntity.addComponent( LocRotComponent, { y:size/2 } )
     playerEntity.addComponent( ModelComponent, { geometry: "box", material: "player" } )
     playerEntity.addComponent( ControlsComponent )
+    playerEntity.addComponent( ShooterComponent )
+    playerEntity.addComponent( GunComponent )
     playerEntity.addComponent( CameraFollowComponent, { offset_x: 0, offset_y: 40, offset_z: -5 })
 
-    /*
     const boxEntity = world.createEntity()
-    boxEntity.addComponent( LocRotScaleComponent, { x:5, y:5, z:5 } )
-    boxEntity.addComponent( BodyComponent )
+    boxEntity.addComponent( LocRotComponent, { x:5, y:5, z:5 } )
+    boxEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 12 })
     boxEntity.addComponent( ModelComponent )
-    */
 
-    let lastTime = performance.now()
+    let lastTime = performance.now() / 1000
 
     function animate() {
         requestAnimationFrame( animate );            
 
-        //const delta = clock.getDelta();
-        //const elapsed = clock.elapsedTime;
-
-        let time = performance.now()
+        let time = performance.now() / 1000
         let delta = time - lastTime
 
         world.execute(delta,time) 

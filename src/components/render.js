@@ -21,6 +21,8 @@ CameraFollowComponent.schema = {
 
 export class RayCastTargetComponent extends Component {}
 RayCastTargetComponent.schema = {
+  mx: { type: Types.Number },
+  my: { type: Types.Number },
   x: { type: Types.Number },
   y: { type: Types.Number },
   z: { type: Types.Number }
