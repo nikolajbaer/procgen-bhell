@@ -4,8 +4,10 @@ import { BodyComponent, LocRotComponent, PhysicsComponent } from './components/p
 import { MeshComponent, ModelComponent, CameraFollowComponent, RayCastTargetComponent } from './components/render'
 import { ShooterComponent, GunComponent, BulletComponent, AimComponent } from "./components/weapons";
 import { PhysicsSystem, PhysicsMeshUpdateSystem } from './systems/physics'
+import { DamageableComponent, DamageAppliedComponent} from './components/damage'
 import { RenderSystem } from "./systems/render"
 import { ControlsSystem } from "./systems/controls"
+import { DamageSystem } from "./systems/damage"
 import { ControlsComponent } from "./components/controls";
 import { WeaponsSystem, AimSystem, BulletSystem } from "./systems/weapons";
 import { Vector3 } from "./ecs_types"
@@ -13,6 +15,8 @@ import { Vector3 } from "./ecs_types"
 function init(){
 
     const world = new World()
+
+    // Components
     world.registerComponent(LocRotComponent)
     world.registerComponent(BodyComponent)
     world.registerComponent(PhysicsComponent)
@@ -25,11 +29,16 @@ function init(){
     world.registerComponent(GunComponent)
     world.registerComponent(BulletComponent)
     world.registerComponent(AimComponent)
+    world.registerComponent(DamageAppliedComponent)
+    world.registerComponent(DamageableComponent)
+
+    // Systems
     world.registerSystem(PhysicsMeshUpdateSystem)
     world.registerSystem(ControlsSystem)
     world.registerSystem(AimSystem)
     world.registerSystem(WeaponsSystem)
     world.registerSystem(BulletSystem)
+    world.registerSystem(DamageSystem)
     // These go last as they manage mesh and body resource removal
     world.registerSystem(PhysicsSystem)
     world.registerSystem(RenderSystem)
@@ -74,10 +83,14 @@ function init(){
     playerEntity.addComponent( AimComponent )
     playerEntity.addComponent( CameraFollowComponent, { offset: new Vector3(0,40,-5) })
 
-    const boxEntity = world.createEntity()
-    boxEntity.addComponent( LocRotComponent, { location: new Vector3(5,5,5) } )
-    boxEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 200 })
-    boxEntity.addComponent( ModelComponent )
+    for(var i=0;i < 10; i++ ){
+        const boxEntity = world.createEntity()
+        boxEntity.addComponent( LocRotComponent, { location: new Vector3((0.5 - Math.random()) * 20,5,(0.5 - Math.random()) * 20) } )
+        boxEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 200 })
+        boxEntity.addComponent( ModelComponent )
+        boxEntity.addComponent( DamageableComponent, { health: 10 } )
+
+    }
 
     let lastTime = performance.now() / 1000
 

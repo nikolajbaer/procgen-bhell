@@ -33,9 +33,12 @@ export class WeaponsSystem extends System {
                 console.log(aim.from)
                 const bulletEntity = this.world.createEntity() 
                 bulletEntity.addComponent(BodyComponent, {
+                    mass: 0.1,
                     velocity: new Vector3(vel_vec.x,vel_vec.y,vel_vec.z),
                     bounds: new Vector3(.2,.2,.2),
                     body_type: BodyComponent.DYNAMIC,
+                    destroy_on_collision: false,
+                    track_collisions: true
                 })
                 bulletEntity.addComponent( LocRotComponent, {
                     location: new Vector3(aim.from.x,aim.from.y,aim.from.z),

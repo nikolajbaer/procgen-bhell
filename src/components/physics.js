@@ -19,6 +19,8 @@ BodyComponent.schema = {
   body_type: { type: Types.Number, default: CANNON.Body.DYNAMIC }, 
   material: { type: Types.String, default: 'default' },
   velocity: { type: Vector3Type },
+  destroy_on_collision: { type: Types.Boolean, default: false },
+  track_collisions: { type: Types.Boolean, default: false },
 }
 // Bounds Types
 BodyComponent.SPHERE_TYPE = 0

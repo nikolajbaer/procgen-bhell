@@ -2,6 +2,8 @@ import { System, Not } from "ecsy";
 import { PhysicsComponent, LocRotComponent, BodyComponent } from "../components/physics.js"
 import { MeshComponent } from "../components/render.js"
 import * as CANNON from "cannon-es"
+import { BulletComponent } from "../components/weapons.js";
+import { DamageableComponent, DamageAppliedComponent } from "../components/damage.js";
 
 // inspired by https://github.com/macaco-maluco/thermal-runway/blob/master/src/systems/PhysicsSystem.ts
 const MATERIALS = {
@@ -52,6 +54,17 @@ export class PhysicsSystem extends System {
             console.log(body1.position,body1.velocity)
             body1.linearDamping = 0.01
             body1.addShape(shape)
+            body1.ecsy_entity = e // back reference for processing collisions
+            if( body.track_collisions){ 
+                body1.addEventListener("collide", event => {
+                    console.log("Collide",event,event.body.ecsy_entity.hasComponent(BulletComponent),event.target.ecsy_entity.hasComponent(DamageableComponent))
+                    if(event.body.ecsy_entity.hasComponent(BulletComponent)){
+                        this.handleBulletCollision(event.body.ecsy_entity,event.target.ecsy_entity) 
+                    }else if(event.target.ecsy_entity.hasComponent(BulletComponent)){
+                        this.handleBulletCollision(event.target.ecsy_entity,event.body.ecsy_entity) 
+                    }
+                })
+            }
             this.world.addBody(body1) 
             
             e.addComponent(PhysicsComponent, { body: body1 })
@@ -60,10 +73,26 @@ export class PhysicsSystem extends System {
         // todo then remove any removed bodies
         this.queries.entities.removed.forEach( e => {
             const body = e.getRemovedComponent(PhysicsComponent).body
+            body.ecsy_entity = null // clear back reference
             this.world.removeBody(body)
         })
 
         this.world.step(1/60,delta)
+    }
+
+    handleBulletCollision(bullet,damageable){
+        if( ! damageable.hasComponent(DamageableComponent)){
+            return
+        }
+        const bullet_c = bullet.getComponent(BulletComponent)
+        if( damageable.hasComponent(DamageAppliedComponent)){
+            console.log("updating damage component")
+            const d_applied = damageable.getMutableComponent(DamageAppliedComponent)
+            d_applied.amount += bullet_c.damage
+        }else{
+            damageable.addComponent(DamageAppliedComponent, { amount: bullet_c.damage }) 
+        }
+        bullet.remove()
     }
 }
 
