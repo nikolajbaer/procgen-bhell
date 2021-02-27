@@ -16,11 +16,12 @@ export class WeaponsSystem extends System {
 
             const aim_vec = new CANNON.Vec3(aim.at.x,aim.at.y,aim.at.z)
             aim_vec.normalize()
-            const vec = aim_vec.scale(gun.bullet_speed)
+            const vel_vec = aim_vec.scale(gun.bullet_speed)
 
             // Use Three to figure out our quaternion to point at
+            // NOT WORKING
             const m = new THREE.Matrix4()
-            m.lookAt(vec.x,vec.y,vec.z)
+            m.lookAt(vel_vec.x,vel_vec.y,vel_vec.z)
             const rot = new THREE.Euler()
             rot.setFromRotationMatrix(m,'XYZ')
 
@@ -32,8 +33,9 @@ export class WeaponsSystem extends System {
                 console.log(aim.from)
                 const bulletEntity = this.world.createEntity() 
                 bulletEntity.addComponent(BodyComponent, {
-                    velocity: new Vector3(aim_vec.x,aim_vec.y,aim_vec.z),
-                    bounds: new Vector3(.2,.2,.2)
+                    velocity: new Vector3(vel_vec.x,vel_vec.y,vel_vec.z),
+                    bounds: new Vector3(.2,.2,.2),
+                    body_type: BodyComponent.DYNAMIC,
                 })
                 bulletEntity.addComponent( LocRotComponent, {
                     location: new Vector3(aim.from.x,aim.from.y,aim.from.z),
@@ -43,6 +45,7 @@ export class WeaponsSystem extends System {
                     geometry: "sphere",
                     material: "default_bullet",
                     scale: new Vector3(.2,.2,.2),
+                    shadow: false,
                 })
                 bulletEntity.addComponent( BulletComponent, {
                     live_to: gun.bullet_life + time,

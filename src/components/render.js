@@ -10,7 +10,8 @@ export class ModelComponent extends Component {}
 ModelComponent.schema = {
   geometry: { type: Types.String, default: 'box' },
   material: { type: Types.String, default: 'default' },
-  scale: { type: Vector3Type, default: new Vector3(1,1,1) }
+  scale: { type: Vector3Type, default: new Vector3(1,1,1) },
+  shadow: { type: Types.Boolean, default: true },
 }
 
 export class CameraFollowComponent extends Component {}

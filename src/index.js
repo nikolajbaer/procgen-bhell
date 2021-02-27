@@ -76,7 +76,7 @@ function init(){
 
     const boxEntity = world.createEntity()
     boxEntity.addComponent( LocRotComponent, { location: new Vector3(5,5,5) } )
-    boxEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 12 })
+    boxEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 200 })
     boxEntity.addComponent( ModelComponent )
 
     let lastTime = performance.now() / 1000

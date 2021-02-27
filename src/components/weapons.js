@@ -15,9 +15,9 @@ GunComponent.schema = {
     bullet_model: { type: Types.String, default: "sphere" },
     bullet_material: { type: Types.String, default: "default_bullet" },
     bullet_damage: { type: Types.Number, default: 1 },
-    bullet_speed: { type: Types.Number, default: 100 },
+    bullet_speed: { type: Types.Number, default: 3 },
     bullet_damage: { type: Types.Number, default: 2 },
-    bullet_life: {  type: Types.Number, default: 1 },
+    bullet_life: {  type: Types.Number, default: 3 },
 }
 
 export class BulletComponent extends Component {}

@@ -60,10 +60,10 @@ export class RenderSystem extends System {
             const loc = e.getComponent(LocRotComponent)
             const model = e.getComponent(ModelComponent)
             const mesh = new THREE.Mesh( GEOMETRIES[model.geometry] , MATERIALS[model.material])
-            mesh.receiveShadow = true
-            mesh.castShadow = true
+            mesh.receiveShadow = model.shadow
+            mesh.castShadow = model.shadow 
             mesh.scale.set( model.scale.x,model.scale.y,model.scale.z)
-           mesh.position.set(loc.location.x,loc.location.y,loc.location.z)
+            mesh.position.set(loc.location.x,loc.location.y,loc.location.z)
             this.scene.add( mesh )
             e.addComponent( MeshComponent, { mesh: mesh })
         })
