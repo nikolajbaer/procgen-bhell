@@ -10,7 +10,6 @@ export class DamageSystem extends System {
             const damage =  e.getComponent(DamageAppliedComponent)
             const obj = e.getMutableComponent(DamageableComponent)
             obj.health -= damage.amount
-            console.log("Applying Damage",damage,obj)
             if( obj.health < 0 ){
                 e.remove() // CONSIDER maybe deathcomponent to orchaestrate death anim?
             }

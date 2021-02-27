@@ -103,7 +103,6 @@ export class RenderSystem extends System {
         // todo cleanup removed
         this.queries.entities.removed.forEach( e => {
             const mesh = e.getRemovedComponent(MeshComponent).mesh
-            console.log("removing from scene ",mesh)
             this.scene.remove(mesh)
         })
 

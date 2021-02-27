@@ -51,13 +51,11 @@ export class PhysicsSystem extends System {
                 type: body.body_type,
                 velocity: new CANNON.Vec3(body.velocity.x,body.velocity.y,body.velocity.z),
             })
-            console.log(body1.position,body1.velocity)
             body1.linearDamping = 0.01
             body1.addShape(shape)
             body1.ecsy_entity = e // back reference for processing collisions
             if( body.track_collisions){ 
                 body1.addEventListener("collide", event => {
-                    console.log("Collide",event,event.body.ecsy_entity.hasComponent(BulletComponent),event.target.ecsy_entity.hasComponent(DamageableComponent))
                     if(event.body.ecsy_entity.hasComponent(BulletComponent)){
                         this.handleBulletCollision(event.body.ecsy_entity,event.target.ecsy_entity) 
                     }else if(event.target.ecsy_entity.hasComponent(BulletComponent)){
@@ -86,7 +84,6 @@ export class PhysicsSystem extends System {
         }
         const bullet_c = bullet.getComponent(BulletComponent)
         if( damageable.hasComponent(DamageAppliedComponent)){
-            console.log("updating damage component")
             const d_applied = damageable.getMutableComponent(DamageAppliedComponent)
             d_applied.amount += bullet_c.damage
         }else{

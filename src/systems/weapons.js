@@ -30,10 +30,9 @@ export class WeaponsSystem extends System {
                 // TODO implement multiple barrels
                 // spawn bullet
                 // Question: where do i store the gun barrel direction
-                console.log(aim.from)
                 const bulletEntity = this.world.createEntity() 
                 bulletEntity.addComponent(BodyComponent, {
-                    mass: 0.1,
+                    mass: 0,
                     velocity: new Vector3(vel_vec.x,vel_vec.y,vel_vec.z),
                     bounds: new Vector3(.2,.2,.2),
                     body_type: BodyComponent.DYNAMIC,
