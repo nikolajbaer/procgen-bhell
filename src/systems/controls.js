@@ -12,14 +12,17 @@ export class ControlsSystem extends System {
     init() {
         let mouse = new Vector2(0,0)
         let actions = {}
+
         document.addEventListener("keydown", event => { actions[event.code] = true });
         document.addEventListener("keyup", event => { actions[event.code] = false });
-        document.addEventListener("mousemove", event => {
+
+        const render = document.getElementById("render")
+        render.addEventListener("pointermove", event => {
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1; 
             mouse.y = -( event.clientY / window.innerHeight) * 2 + 1
         })
-        document.addEventListener("mousedown", event => { actions["Mouse"+event.button] = true; })
-        document.addEventListener("mouseup", event => { actions["Mouse"+event.button] = false; })
+        render.addEventListener("pointerdown", event => { actions["Mouse"+event.button] = true; })
+        render.addEventListener("pointerup", event => { actions["Mouse"+event.button] = false; })
 
         this.actions = actions
         this.mouse = mouse
@@ -30,9 +33,9 @@ export class ControlsSystem extends System {
         let mouse_cast_target = null
         this.queries.mouse_raycast.results.forEach( e => {
             const caster = e.getMutableComponent(RayCastTargetComponent)
-            caster.mx = this.mouse.x
-            caster.my = this.mouse.y
-            mouse_cast_target = new CANNON.Vec3(caster.x,caster.y,caster.z)
+            caster.mouse.x = this.mouse.x
+            caster.mouse.y = this.mouse.y
+            mouse_cast_target = new CANNON.Vec3(caster.location.x,caster.location.y,caster.location.z)
         })
 
         this.queries.controlled.results.forEach( e => {
@@ -63,7 +66,7 @@ export class ControlsSystem extends System {
             // Fire controls
             const control = e.getMutableComponent(ControlsComponent)
             control.fire1 = this.actions["Mouse0"]
-            control.fire2 = this.actions["Mouse1"]
+            control.fire2 = this.actions["Mouse2"]
 
         })
 

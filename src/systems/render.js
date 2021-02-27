@@ -1,4 +1,5 @@
 import { System, Not } from "ecsy";
+import { LocRotComponent } from "../components/physics"
 import { MeshComponent, ModelComponent, CameraFollowComponent, RayCastTargetComponent } from "../components/render"
 import { OutlineEffect } from 'three/examples/jsm/effects/OutlineEffect.js'
 import { GEOMETRIES, MATERIALS } from "../assets"
@@ -20,11 +21,11 @@ export class RenderSystem extends System {
         light.castShadow = true;
         scene.add( light );
 
-        let renderer = new THREE.WebGLRenderer({ antialias: true });
+        const domElement = document.getElementById("render") 
+        let renderer = new THREE.WebGLRenderer({ antialias: true, canvas: domElement });
         renderer.shadowMap.enabled = true;
         //renderer.shadowMap.type = THREE.PCFShadowMap;
         renderer.setSize( window.innerWidth, window.innerHeight );
-        document.body.appendChild( renderer.domElement );
 
         let raycaster = new THREE.Raycaster();
 
@@ -46,18 +47,23 @@ export class RenderSystem extends System {
         window.scene = scene
         window.camera = camera
 
+        /* does not play nice with mouse controls
         var controls = new OrbitControls( camera, renderer.domElement );
         controls.minDistance = 10;
         controls.maxDistance = 100;
+        */
     }
 
     execute(delta){
         // Initialize meshes for any uninitialized models
         this.queries.unitialized.results.forEach( e => {
+            const loc = e.getComponent(LocRotComponent)
             const model = e.getComponent(ModelComponent)
             const mesh = new THREE.Mesh( GEOMETRIES[model.geometry] , MATERIALS[model.material])
             mesh.receiveShadow = true
             mesh.castShadow = true
+            mesh.scale.set( model.scale.x,model.scale.y,model.scale.z)
+           mesh.position.set(loc.location.x,loc.location.y,loc.location.z)
             this.scene.add( mesh )
             e.addComponent( MeshComponent, { mesh: mesh })
         })
@@ -68,9 +74,9 @@ export class RenderSystem extends System {
             const pos = e.getComponent(MeshComponent).mesh.position
 
             this.camera.position.set( 
-                pos.x + follow.offset_x,
-                pos.y + follow.offset_y,
-                pos.z + follow.offset_z
+                pos.x + follow.offset.x,
+                pos.y + follow.offset.y,
+                pos.z + follow.offset.z
             )
             this.camera.lookAt(pos);
 
@@ -81,20 +87,25 @@ export class RenderSystem extends System {
             const mesh = e.getComponent(MeshComponent)
             const caster = e.getMutableComponent(RayCastTargetComponent)
 
-            const mouse = new THREE.Vector2( caster.mx, caster.my)
+            const mouse = new THREE.Vector2( caster.mouse.x, caster.mouse.y)
             this.raycaster.setFromCamera( mouse, this.camera );
 
             const intersects = this.raycaster.intersectObjects( [mesh.mesh] )
 
             if(intersects.length){
                 const p = intersects[0].point 
-                caster.x = p.x
-                caster.y = p.y
-                caster.z = p.z
+                caster.location.x = p.x
+                caster.location.y = p.y
+                caster.location.z = p.z
             }
         })
 
         // todo cleanup removed
+        this.queries.entities.removed.forEach( e => {
+            const mesh = e.getRemovedComponent(MeshComponent).mesh
+            console.log("removing from scene ",mesh)
+            this.scene.remove(mesh)
+        })
 
 
     	//this.effect.render( this.scene, this.camera );
@@ -104,7 +115,7 @@ export class RenderSystem extends System {
 
 RenderSystem.queries = {
     unitialized: {
-        components: [ ModelComponent, Not(MeshComponent)]
+        components: [ ModelComponent, LocRotComponent, Not(MeshComponent)]
     },
     camera_follow: {
         components: [ CameraFollowComponent, MeshComponent ] // Maybe camera follow component?
@@ -112,7 +123,7 @@ RenderSystem.queries = {
     raycasts: {
         components: [ RayCastTargetComponent, MeshComponent ]
     },
-    removed: {
+    entities: {
         components: [MeshComponent],
         listen: {
             removed: true,

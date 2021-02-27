@@ -12,7 +12,9 @@ const MATERIALS = {
 export class PhysicsSystem extends System {
     init() {
         this.world = new CANNON.World()
-        this.world.gravity.set(0, -10, 0)
+        this.world.gravity.set(0, -1, 0)
+
+        window.world = this.world
     }
 
     execute(delta){
@@ -24,29 +26,30 @@ export class PhysicsSystem extends System {
             const locrot = e.getComponent(LocRotComponent)
 
             const quat = new CANNON.Quaternion()
-            quat.setFromEuler(locrot.rotx,locrot.roty,locrot.rotz)
+            quat.setFromEuler(locrot.rotation.x,locrot.rotation.y,locrot.rotation.z)
 
             let shape = null
             switch(body.bounds_type){
                 case BodyComponent.BOX_TYPE:
-                    shape = new CANNON.Box(new CANNON.Vec3(body.x/2,body.y/2,body.z/2))
+                    shape = new CANNON.Box(new CANNON.Vec3(body.bounds.x/2,body.bounds.y/2,body.bounds.z/2))
                     break;
                 case BodyComponent.PLANE_TYPE:
                     shape = new CANNON.Plane()
                     break;
                 default:
-                    shape = new CANNON.Sphere(body.x/2)
+                    shape = new CANNON.Sphere(body.bounds.x/2)
                     break;
             }
             const mat = MATERIALS[body.material]
             const body1  = new CANNON.Body({
                 mass: body.mass, //mass
                 material: mat,
-                position: new CANNON.Vec3(locrot.x,locrot.y,locrot.z),
+                position: new CANNON.Vec3(locrot.location.x,locrot.location.y,locrot.location.z),
                 quaternion: quat,
                 type: body.body_type,
+                velocity: new CANNON.Vec3(body.velocity.x,body.velocity.y,body.velocity.z),
             })
-            console.log(body1)
+            console.log(body1.position,body1.velocity)
             body1.linearDamping = 0.01
             body1.addShape(shape)
             this.world.addBody(body1) 
@@ -55,6 +58,10 @@ export class PhysicsSystem extends System {
         })
 
         // todo then remove any removed bodies
+        this.queries.entities.removed.forEach( e => {
+            const body = e.getRemovedComponent(PhysicsComponent).body
+            this.world.removeBody(body)
+        })
 
         this.world.step(1/60,delta)
     }
@@ -62,8 +69,12 @@ export class PhysicsSystem extends System {
 
 PhysicsSystem.queries = {
     uninitialized: { components: [LocRotComponent, BodyComponent, Not(PhysicsComponent)]},
-    entities: { components: [PhysicsComponent] },
-    removed: { components: [PhysicsComponent] },
+    entities: { 
+        components: [PhysicsComponent] ,
+        listen: {
+            removed: true
+        }
+    },
 };
 
 

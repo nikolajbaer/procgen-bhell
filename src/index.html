@@ -25,17 +25,18 @@
 			width: 300px;
 			margin: auto;
 			text-align: center;
+			font-size: 10pt;
 		}
-		canvas {
+		canvas#render {
 			cursor: crosshair;
-			pointer-events: none;
 		}
 	</style>
 </head>
 <body>
+	<canvas id="render"></canvas>
 	<div id="overlay">
 		<div class="hud">
-			WASD to move	
+			WASD to move, LMB/RMB to fire	
 		</div>
 	</div>
 </body>

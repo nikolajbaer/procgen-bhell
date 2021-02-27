@@ -1,5 +1,5 @@
 import { Component, TagComponent, Types } from 'ecsy'
-import { Camera } from 'three'
+import { Vector2Type, Vector3Type, Vector3 } from '../ecs_types'
 
 export class MeshComponent extends Component {}
 MeshComponent.schema = {
@@ -10,20 +10,16 @@ export class ModelComponent extends Component {}
 ModelComponent.schema = {
   geometry: { type: Types.String, default: 'box' },
   material: { type: Types.String, default: 'default' },
+  scale: { type: Vector3Type, default: new Vector3(1,1,1) }
 }
 
 export class CameraFollowComponent extends Component {}
 CameraFollowComponent.schema = {
-  offset_x: { type: Types.Number, default: 0 },
-  offset_y: { type: Types.Number, default: 40 },
-  offset_z: { type: Types.Number, default: -5 },
+  offset: { type: Vector3Type },
 }
 
 export class RayCastTargetComponent extends Component {}
 RayCastTargetComponent.schema = {
-  mx: { type: Types.Number },
-  my: { type: Types.Number },
-  x: { type: Types.Number },
-  y: { type: Types.Number },
-  z: { type: Types.Number }
+  mouse: { type: Vector2Type },
+  location: { type: Vector3Type },
 }
