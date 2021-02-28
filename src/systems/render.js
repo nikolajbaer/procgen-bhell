@@ -5,7 +5,6 @@ import { OutlineEffect } from 'three/examples/jsm/effects/OutlineEffect.js'
 import { GEOMETRIES, MATERIALS } from "../assets"
 import * as THREE from "three"
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { ControlsComponent } from "../components/controls";
         
 export class RenderSystem extends System {
     init() {

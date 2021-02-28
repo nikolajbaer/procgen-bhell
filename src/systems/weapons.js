@@ -1,8 +1,7 @@
 import { System, Not } from "ecsy";
-import { ShooterComponent, GunComponent, BulletComponent, AimComponent } from "../components/weapons"
+import {  GunComponent, BulletComponent, FireControlComponent } from "../components/weapons"
 import { PhysicsComponent,BodyComponent, LocRotComponent } from "../components/physics"
 import { ModelComponent } from "../components/render"
-import { ControlsComponent } from "../components/controls"
 import * as CANNON from "cannon-es"
 import * as THREE from "three"
 import { Vector3, Vector3Type } from "../ecs_types";
@@ -10,9 +9,8 @@ import { Vector3, Vector3Type } from "../ecs_types";
 export class WeaponsSystem extends System {
     execute(delta,time){
         this.queries.shooters.results.forEach( e => {
-            const controls = e.getComponent(ControlsComponent)
             const gun = e.getMutableComponent(GunComponent)  
-            const aim = e.getComponent(AimComponent)
+            const aim = e.getComponent(FireControlComponent)
 
             const aim_vec = new CANNON.Vec3(aim.at.x,aim.at.y,aim.at.z)
             aim_vec.normalize()
@@ -25,14 +23,14 @@ export class WeaponsSystem extends System {
             const rot = new THREE.Euler()
             rot.setFromRotationMatrix(m,'XYZ')
 
-            if( gun.last_fire + gun.rate_of_fire < time && controls.fire1 ){
+            if( gun.last_fire + gun.rate_of_fire < time && aim.fire1 ){
                 // fire
                 // TODO implement multiple barrels
                 // spawn bullet
                 // Question: where do i store the gun barrel direction
                 const bulletEntity = this.world.createEntity() 
                 bulletEntity.addComponent(BodyComponent, {
-                    mass: 0,
+                    mass: 1,
                     velocity: new Vector3(vel_vec.x,vel_vec.y,vel_vec.z),
                     bounds: new Vector3(.2,.2,.2),
                     body_type: BodyComponent.DYNAMIC,
@@ -62,7 +60,7 @@ export class WeaponsSystem extends System {
 
 WeaponsSystem.queries = {
     shooters: {
-        components: [ GunComponent, ShooterComponent, ControlsComponent, AimComponent ]
+        components: [ GunComponent, FireControlComponent ]
     }
 }
 
@@ -70,7 +68,7 @@ export class AimSystem extends System {
     execute(delta, time){
         this.queries.shooters.results.forEach( e => {
             const body = e.getComponent(PhysicsComponent).body
-            const aim = e.getMutableComponent(AimComponent)
+            const aim = e.getMutableComponent(FireControlComponent)
             const vec = body.quaternion.vmult(new CANNON.Vec3(1,0,))
             vec.normalize()
             aim.at.set(vec.x,vec.y,vec.z)

@@ -2,11 +2,6 @@ import { Component, Types } from 'ecsy'
 import { Vector3 } from 'three'
 import { Vector3Type } from "../ecs_types"
 
-export class ShooterComponent extends Component {}
-ShooterComponent.schema = {
-    weapon: { type: Types.Ref } // ref to gun model?
-}
-
 export class GunComponent extends Component {}
 GunComponent.schema = {
     barrels: { type: Types.Number, default: 1 },
@@ -26,8 +21,10 @@ BulletComponent.schema = {
     damage: { type: Types.Number, default: 1 },
 }
 
-export class AimComponent extends Component {}
-AimComponent.schema = {
+export class FireControlComponent extends Component {}
+FireControlComponent.schema = {
     at: { type: Vector3Type },
-    from: { type: Vector3Type }
+    from: { type: Vector3Type },
+    fire1: { type: Types.Boolean, default: false },
+    fire2: { type: Types.Boolean, default: false }
 }

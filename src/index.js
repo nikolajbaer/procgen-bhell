@@ -2,15 +2,19 @@ import * as THREE from "three"
 import { World } from 'ecsy';
 import { BodyComponent, LocRotComponent, PhysicsComponent } from './components/physics'
 import { MeshComponent, ModelComponent, CameraFollowComponent, RayCastTargetComponent } from './components/render'
-import { ShooterComponent, GunComponent, BulletComponent, AimComponent } from "./components/weapons";
+import { GunComponent, BulletComponent, FireControlComponent } from "./components/weapons";
 import { PhysicsSystem, PhysicsMeshUpdateSystem } from './systems/physics'
 import { DamageableComponent, DamageAppliedComponent} from './components/damage'
 import { RenderSystem } from "./systems/render"
-import { ControlsSystem } from "./systems/controls"
+import { PlayerControlsSystem } from "./systems/player_controls"
 import { DamageSystem } from "./systems/damage"
-import { ControlsComponent } from "./components/controls";
 import { WeaponsSystem, AimSystem, BulletSystem } from "./systems/weapons";
+import { EnemyComponent } from "./components/enemy";
+import { PlayerComponent } from "./components/player"
+import { EnemySystem } from "./systems/enemy";
 import { Vector3 } from "./ecs_types"
+import { AITargetPlayer } from "./components/ai_control";
+import { AIControlSystem } from "./systems/ai_control";
 
 function init(){
 
@@ -23,22 +27,26 @@ function init(){
     world.registerComponent(MeshComponent)
     world.registerComponent(CameraFollowComponent)
     world.registerComponent(ModelComponent)
-    world.registerComponent(ControlsComponent)
     world.registerComponent(RayCastTargetComponent)
-    world.registerComponent(ShooterComponent)
     world.registerComponent(GunComponent)
     world.registerComponent(BulletComponent)
-    world.registerComponent(AimComponent)
+    world.registerComponent(FireControlComponent)
     world.registerComponent(DamageAppliedComponent)
     world.registerComponent(DamageableComponent)
+    world.registerComponent(EnemyComponent)
+    world.registerComponent(PlayerComponent)
+    world.registerComponent(AITargetPlayer)
 
     // Systems
     world.registerSystem(PhysicsMeshUpdateSystem)
-    world.registerSystem(ControlsSystem)
+    world.registerSystem(PlayerControlsSystem)
     world.registerSystem(AimSystem)
     world.registerSystem(WeaponsSystem)
     world.registerSystem(BulletSystem)
     world.registerSystem(DamageSystem)
+    world.registerSystem(EnemySystem)
+    world.registerSystem(AIControlSystem)
+
     // These go last as they manage mesh and body resource removal
     world.registerSystem(PhysicsSystem)
     world.registerSystem(RenderSystem)
@@ -77,20 +85,10 @@ function init(){
     })
     playerEntity.addComponent( LocRotComponent, { location: new Vector3(0,size/2,0) } )
     playerEntity.addComponent( ModelComponent, { geometry: "box", material: "player" } )
-    playerEntity.addComponent( ControlsComponent )
-    playerEntity.addComponent( ShooterComponent )
     playerEntity.addComponent( GunComponent )
-    playerEntity.addComponent( AimComponent )
+    playerEntity.addComponent( FireControlComponent )
+    playerEntity.addComponent( PlayerComponent )
     playerEntity.addComponent( CameraFollowComponent, { offset: new Vector3(0,40,-5) })
-
-    for(var i=0;i < 10; i++ ){
-        const boxEntity = world.createEntity()
-        boxEntity.addComponent( LocRotComponent, { location: new Vector3((0.5 - Math.random()) * 20,5,(0.5 - Math.random()) * 20) } )
-        boxEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 200 })
-        boxEntity.addComponent( ModelComponent )
-        boxEntity.addComponent( DamageableComponent, { health: 10 } )
-
-    }
 
     let lastTime = performance.now() / 1000
 

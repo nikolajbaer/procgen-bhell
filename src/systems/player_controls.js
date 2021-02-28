@@ -2,13 +2,14 @@ import { System, Not } from "ecsy";
 import { Vector2 } from "three";
 import * as CANNON from "cannon-es"
 import { PhysicsComponent } from "../components/physics";
-import { ControlsComponent } from "../components/controls";
+import { FireControlComponent } from "../components/weapons";
 import { RayCastTargetComponent } from "../components/render";
 import * as THREE from "three"
+import { PlayerComponent } from "../components/player";
 
 const SPEED = 1 
 
-export class ControlsSystem extends System {
+export class PlayerControlsSystem extends System {
     init() {
         let mouse = new Vector2(0,0)
         let actions = {}
@@ -64,7 +65,7 @@ export class ControlsSystem extends System {
             }
 
             // Fire controls
-            const control = e.getMutableComponent(ControlsComponent)
+            const control = e.getMutableComponent(FireControlComponent)
             control.fire1 = this.actions["Mouse0"]
             control.fire2 = this.actions["Mouse2"]
 
@@ -73,9 +74,9 @@ export class ControlsSystem extends System {
     }
 }
 
-ControlsSystem.queries = {
+PlayerControlsSystem.queries = {
     controlled: {
-        components: [ControlsComponent,PhysicsComponent],
+        components: [FireControlComponent,PhysicsComponent,PlayerComponent],
     },
     mouse_raycast: {
         components: [ RayCastTargetComponent ]
