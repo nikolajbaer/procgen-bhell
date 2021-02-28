@@ -22,8 +22,16 @@ export class PlayerControlsSystem extends System {
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1; 
             mouse.y = -( event.clientY / window.innerHeight) * 2 + 1
         })
-        render.addEventListener("pointerdown", event => { actions["Mouse"+event.button] = true; })
-        render.addEventListener("pointerup", event => { actions["Mouse"+event.button] = false; })
+        render.addEventListener("pointerdown", event => { 
+            actions["Mouse"+event.button] = true; 
+            event.preventDefault(); 
+            return false; 
+        })
+        render.addEventListener("pointerup", event => { 
+            actions["Mouse"+event.button] = false; 
+            event.preventDefault(); 
+            return false; 
+        })
 
         this.actions = actions
         this.mouse = mouse

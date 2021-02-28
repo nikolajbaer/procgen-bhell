@@ -20,7 +20,7 @@ export class EnemySystem extends System {
         for(var i=0; i<this.wave * 2; i++){
             const boxEntity = this.world.createEntity()
             boxEntity.addComponent( LocRotComponent, { location: new Vector3((0.5 - Math.random()) * 20,5,(0.5 - Math.random()) * 20) } )
-            boxEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 1 })
+            boxEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 1 } )
             boxEntity.addComponent( ModelComponent )
             boxEntity.addComponent( EnemyComponent )
             boxEntity.addComponent( AITargetPlayer )
