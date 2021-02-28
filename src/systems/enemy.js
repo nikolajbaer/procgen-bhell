@@ -24,7 +24,7 @@ export class EnemySystem extends System {
             boxEntity.addComponent( ModelComponent )
             boxEntity.addComponent( EnemyComponent )
             boxEntity.addComponent( AITargetPlayer )
-            boxEntity.addComponent( GunComponent )
+            boxEntity.addComponent( GunComponent, { rate_of_fire: 1 } )
             boxEntity.addComponent( FireControlComponent )
             boxEntity.addComponent( DamageableComponent, { health: 10 } )
         }
