@@ -88,6 +88,7 @@ function init(){
     playerEntity.addComponent( GunComponent )
     playerEntity.addComponent( FireControlComponent )
     playerEntity.addComponent( PlayerComponent )
+    playerEntity.addComponent( DamageableComponent, { health: 25, max_health: 25 } )
     playerEntity.addComponent( CameraFollowComponent, { offset: new Vector3(0,40,-5) })
 
     let lastTime = performance.now() / 1000

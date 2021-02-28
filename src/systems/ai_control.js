@@ -13,7 +13,13 @@ export class AIControlSystem extends System {
     }
 
     execute(delta,time){
-        if(this.queries.player.results.length == 0){ return }
+        if(this.queries.player.results.length == 0){ 
+            this.queries.active.results.forEach( e => {
+                // if the player dies, stop shooting
+                e.getMutableComponent(FireControlComponent).fire1 = false
+            })
+            return
+        }
         const player = this.queries.player.results[0]
         const player_body = player.getComponent(PhysicsComponent).body
 
