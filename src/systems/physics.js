@@ -69,10 +69,11 @@ export class PhysicsSystem extends System {
         })
 
         // todo then remove any removed bodies
-        this.queries.entities.removed.forEach( e => {
-            const body = e.getRemovedComponent(PhysicsComponent).body
+        this.queries.remove.results.forEach( e => {
+            const body = e.getComponent(PhysicsComponent).body
             body.ecsy_entity = null // clear back reference
             this.world.removeBody(body)
+            e.removeComponent(PhysicsComponent)
         })
 
         this.world.step(1/60,delta)
@@ -101,6 +102,9 @@ PhysicsSystem.queries = {
             removed: true
         }
     },
+    remove: {
+        components: [PhysicsComponent,Not(BodyComponent)]
+    }
 };
 
 

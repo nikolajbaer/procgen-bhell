@@ -1,7 +1,7 @@
-import { Component, TagComponent, Types } from 'ecsy'
+import { SystemStateComponent,Component, TagComponent, Types } from 'ecsy'
 import { Vector2Type, Vector3Type, Vector3 } from '../ecs_types'
 
-export class MeshComponent extends Component {}
+export class MeshComponent extends SystemStateComponent {}
 MeshComponent.schema = {
   mesh: { type: Types.Ref }
 }

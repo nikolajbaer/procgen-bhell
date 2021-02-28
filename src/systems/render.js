@@ -5,6 +5,7 @@ import { OutlineEffect } from 'three/examples/jsm/effects/OutlineEffect.js'
 import { GEOMETRIES, MATERIALS } from "../assets"
 import * as THREE from "three"
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { Mesh } from "three";
         
 export class RenderSystem extends System {
     init() {
@@ -100,9 +101,10 @@ export class RenderSystem extends System {
         })
 
         // todo cleanup removed
-        this.queries.entities.removed.forEach( e => {
-            const mesh = e.getRemovedComponent(MeshComponent).mesh
+        this.queries.remove.results.forEach( e => {
+            const mesh = e.getComponent(MeshComponent).mesh
             this.scene.remove(mesh)
+            e.removeComponent(MeshComponent)
         })
 
 
@@ -126,5 +128,8 @@ RenderSystem.queries = {
         listen: {
             removed: true,
         }
+    },
+    remove: {
+        components: [Not(ModelComponent),MeshComponent]
     }
 }

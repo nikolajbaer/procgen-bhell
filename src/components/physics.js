@@ -1,4 +1,4 @@
-import { Component, Types } from 'ecsy'
+import { SystemStateComponent, Component, Types } from 'ecsy'
 import * as CANNON from "cannon-es"
 import { Vector3Type } from '../ecs_types'
 import { Vector3 } from 'three'
@@ -31,7 +31,7 @@ BodyComponent.KINEMATIC = CANNON.Body.KINEMATIC
 BodyComponent.DYNAMIC = CANNON.Body.DYNAMIC
 BodyComponent.STATIC = CANNON.Body.STATIC
 
-export class PhysicsComponent extends Component {}
+export class PhysicsComponent extends SystemStateComponent {}
 PhysicsComponent.schema = {
   body: { type: Types.Ref }
 }
