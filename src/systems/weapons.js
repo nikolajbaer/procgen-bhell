@@ -34,6 +34,25 @@ export class WeaponsSystem extends System {
         })
     }
 
+    barrel_aims(vel_vec,barrels){
+        if( barrels == 1 ){ return [vel_vec] }
+
+        const spread = (barrels == 2)?Math.PI/8:Math.PI/4;
+        if(barrels > 5){ spread *= 1.5 }
+
+        const v = new THREE.Vector3(vel_vec.x,vel_vec.y,vel_vec.z)
+        const up = new THREE.Vector3(0,1,0)
+        const a = spread/barrels
+        const vecs = []
+
+        for(var i = 0; i< barrels; i++){
+            const vx = new THREE.Vector3(v.x,v.y,v.z)
+            vx.applyAxisAngle(up,-spread/2 + i*a)
+            vecs.push(new CANNON.Vec3(vx.x,vx.y,vx.z)) 
+        }
+        return vecs
+    }
+
     execute(delta,time){
         this.queries.shooters.results.forEach( e => {
             const gun = e.getMutableComponent(GunComponent)  
@@ -55,7 +74,9 @@ export class WeaponsSystem extends System {
             rot.setFromRotationMatrix(m,'XYZ')
 
             if( gun.last_fire + gun.rate_of_fire < time && aim.fire1 ){
-                this.spawn_bullet(gun,aim,vel_vec,gun.bullet_life + time)
+                this.barrel_aims(vel_vec,gun.barrels).forEach( v => {
+                    this.spawn_bullet(gun,aim,v,gun.bullet_life + time)
+                }) 
                 gun.last_fire = time
             }
         })

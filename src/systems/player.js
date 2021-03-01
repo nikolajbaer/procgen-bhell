@@ -5,6 +5,7 @@ import { GunComponent, FireControlComponent } from "../components/weapons"
 import { ModelComponent, CameraFollowComponent } from "../components/render"
 import { DamageableComponent } from "../components/damage"
 import { Vector3 } from "../ecs_types"
+import { gen_gun } from "../procgen/guns"
 
 const RESPAWN_DELAY = 3
 
@@ -23,11 +24,11 @@ export class PlayerSystem extends System {
         })
         playerEntity.addComponent( LocRotComponent, { location: new Vector3(0,.5,0) } )
         playerEntity.addComponent( ModelComponent, { geometry: "box", material: "player" } )
-        playerEntity.addComponent( GunComponent )
+        playerEntity.addComponent( GunComponent, gen_gun() )
         playerEntity.addComponent( FireControlComponent )
         playerEntity.addComponent( PlayerComponent )
         playerEntity.addComponent( DamageableComponent, { health: 25, max_health: 25 } )
-        playerEntity.addComponent( CameraFollowComponent, { offset: new Vector3(0,40,-15) })
+        playerEntity.addComponent( CameraFollowComponent, { offset: new Vector3(0,40,-10) })
     }
 
     execute(delta,time){

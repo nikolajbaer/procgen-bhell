@@ -15,7 +15,7 @@ export class PlayerControlsSystem extends System {
         let actions = {}
 
         document.addEventListener("keydown", event => { actions[event.code] = true });
-        document.addEventListener("keyup", event => { actions[event.code] = false });
+        window.addEventListener("keyup", event => { actions[event.code] = false });
 
         const render = document.getElementById("render")
         render.addEventListener("pointermove", event => {
@@ -27,7 +27,7 @@ export class PlayerControlsSystem extends System {
             event.preventDefault(); 
             return false; 
         })
-        render.addEventListener("pointerup", event => { 
+        window.addEventListener("pointerup", event => { 
             actions["Mouse"+event.button] = false; 
             event.preventDefault(); 
             return false; 
