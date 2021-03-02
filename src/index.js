@@ -18,6 +18,8 @@ import { AIControlSystem } from "./systems/ai_control";
 import { PlayerSystem } from "./systems/player";
 import { GroundComponent } from "./components/map";
 import { MapSystem } from "./systems/map";
+import { ExplosionComponent } from "./components/effects";
+import { EffectsSystem } from "./systems/effects";
 
 function init(){
 
@@ -40,6 +42,7 @@ function init(){
     world.registerComponent(PlayerComponent)
     world.registerComponent(AITargetPlayer)
     world.registerComponent(GroundComponent)
+    world.registerComponent(ExplosionComponent)
 
     // Systems
     world.registerSystem(PhysicsMeshUpdateSystem)
@@ -52,6 +55,7 @@ function init(){
     world.registerSystem(AIControlSystem)
     world.registerSystem(PlayerSystem)
     world.registerSystem(MapSystem)
+    world.registerSystem(EffectsSystem)
 
     // These go last as they manage mesh and body resource removal
     world.registerSystem(PhysicsSystem)

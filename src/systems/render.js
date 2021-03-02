@@ -104,7 +104,7 @@ export class RenderSystem extends System {
             }
         })
 
-        // todo cleanup removed
+        // cleanup removed
         this.queries.remove.results.forEach( e => {
             const mesh = e.getComponent(MeshComponent).mesh
             this.scene.remove(mesh)
@@ -112,8 +112,8 @@ export class RenderSystem extends System {
         })
 
 
-    	//this.effect.render( this.scene, this.camera );
-        this.renderer.render( this.scene, this.camera )
+    	this.effect.render( this.scene, this.camera );
+        //this.renderer.render( this.scene, this.camera )
     }
 }
 

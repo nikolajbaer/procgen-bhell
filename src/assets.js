@@ -13,4 +13,5 @@ export const MATERIALS = {
     "default": new THREE.MeshLambertMaterial( { color: 0x9999FF } ),
     "default_bullet": new THREE.MeshLambertMaterial( { color: 0x111111 } ),
     "gun": new THREE.MeshLambertMaterial( { color: 0x333333 } ),
+    "explosion": new THREE.MeshBasicMaterial( { color: 0xF59B42 })
 }
