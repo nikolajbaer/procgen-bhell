@@ -21,7 +21,7 @@ import { MapSystem } from "./systems/map";
 import { ExplosionComponent } from "./components/effects";
 import { EffectsSystem } from "./systems/effects";
 
-function init(){
+function init_game(){
 
     const world = new World()
 
@@ -75,4 +75,4 @@ function init(){
 
 }
 
-init();
+init_game();

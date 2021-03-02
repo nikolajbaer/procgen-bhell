@@ -112,8 +112,8 @@ export class RenderSystem extends System {
         })
 
 
-    	this.effect.render( this.scene, this.camera );
-        //this.renderer.render( this.scene, this.camera )
+    	//this.effect.render( this.scene, this.camera );
+        this.renderer.render( this.scene, this.camera )
     }
 }
 
