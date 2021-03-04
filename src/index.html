@@ -14,18 +14,22 @@
 			font-family: monospace;
 			font-size: 14pt;
 		}
-		#overlay { 
+		.overlay { 
 			position: fixed;
-			left: 2px;
-			right: 2px;
-			bottom: 10px;
-			color: green;
+			width: 100%;
+		}
+		.bottom { bottom: 2px;}
+		.left { left: 2px;}
+		.right { right: 2px;}
+		.top { top: 2px; }
+		.center { 
+			text-align: center;
+			margin: auto;
+			width: 300px;
 		}
 		.hud {
-			width: 300px;
-			margin: auto;
-			text-align: center;
 			font-size: 10pt;
+			color: green;
 		}
 		canvas#render {
 			cursor: crosshair;
@@ -40,6 +44,7 @@
 </head>
 <body>
 <<<<<<< HEAD
+<<<<<<< HEAD
 	<canvas id="render"></canvas>
 	<div id="overlay">
 		<div class="hud">
@@ -50,5 +55,20 @@
 =======
 	<div id="app"></div>
 >>>>>>> reworked hud and react system with mobx per https://github.com/patreeceeo suggestion
+=======
+	<div id="app"></div>
+=======
+	<canvas id="render"></canvas>
+	<div class="overlay top left">
+		<div class="hud">Score: 0</div>
+	</div>
+	<div class="overlay bottom">
+		<div class="hud center">
+			WASD to move, LMB/RMB to fire <br>
+			<a href="https://github.com/nikolajbaer/procgen-bhell" target="_blank" title="source code on github">&lt;src&gt;</a>
+		</div>
+	</div>
+>>>>>>> rework css for hud
+>>>>>>> fixing up
 </body>
 </html>
