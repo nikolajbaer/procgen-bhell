@@ -17,7 +17,8 @@ export class EnemySystem extends System {
     }
 
     spawn_wave(){
-        for(var i=0; i<this.wave * 2; i++){
+        const n = this.wave * 2
+        for(var i=0; i<n; i++){
             const boxEntity = this.world.createEntity()
             boxEntity.addComponent( LocRotComponent, { location: new Vector3((0.5 - Math.random()) * 20,5,(0.5 - Math.random()) * 20) } )
             boxEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 1 } )
@@ -28,28 +29,31 @@ export class EnemySystem extends System {
             boxEntity.addComponent( FireControlComponent )
             boxEntity.addComponent( DamageableComponent, { health: 2 } )
         }
+        return n
     }
 
     execute(delta,time){
-        if(this.queries.active.results.length == 0){
-            if(this.wave_delay == null){
-                this.wave_delay = time + WAVE_DELAY
-            }else if(this.wave_delay <= time){
-                this.wave_delay = null 
-                // Spawn enemies
-                this.spawn_wave()
-                this.wave += 1
-            }
-        }
-
         if(this.queries.player.results.length > 0){
             const player = this.queries.player.results[0]
             const player_c = player.getMutableComponent(PlayerComponent)
-            this.queries.active.removed.forEach( e => {
-                player_c.score += 1
-                console.log("score is now ",player_c.score)
-            })
 
+            if(this.queries.active.results.length == 0){
+                if(this.wave_delay == null){
+                    this.wave_delay = time + WAVE_DELAY
+                }else if(this.wave_delay <= time){
+                    this.wave_delay = null 
+                    // Spawn enemies
+                    player_c.current_wave_enemies = this.spawn_wave()
+                    player_c.wave = this.wave
+                    this.wave += 1
+                }
+            }
+
+            if(this.queries.player.results.length > 0){
+                this.queries.active.removed.forEach( e => {
+                    player_c.score += 1
+                })
+            }
         }
     }
 }

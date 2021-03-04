@@ -39,7 +39,6 @@ export class PlayerSystem extends System {
                 this.spawn_player()
                 this.respawn_delay = null
             }
-        
         }
     }
 }
