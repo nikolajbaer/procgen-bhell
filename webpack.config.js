@@ -2,7 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = { 
-  entry: './src/index.js', 
+  entry: './src/index.jsx', 
   mode: 'development',
   output: { 
     path: path.resolve(__dirname,'dist'), 
@@ -45,6 +45,11 @@ module.exports = {
             loader: 'sass-loader' // compiles Sass to CSS
           }]
         },
+        {
+          test: /\.(js|jsx)$/,
+          exclude: /node_modules/,
+          use: ['babel-loader']
+        }
     ],
   },
   plugins: [

@@ -1,5 +1,5 @@
 import { System } from "ecsy"
-import { makeAutoObservable } from "mobx"
+import { makeAutoObservable, runInAction } from "mobx"
 import { DamageableComponent } from "../components/damage"
 import { EnemyComponent } from "../components/enemy"
 import { PlayerComponent } from "../components/player"
@@ -18,6 +18,7 @@ export class HUDState {
     constructor(){
         makeAutoObservable(this)
     }
+
 }
 
 export class HUDSystem extends System {
@@ -33,12 +34,15 @@ export class HUDSystem extends System {
         const damage = player.getComponent(DamageableComponent)
 
         // update the state
-        this.state.score = player_c.score
-        this.state.health = damage.health
-        this.state.max_health = damage.max_health
-        this.state.wave = player_c.wave
-        this.state.total_enemies = player_c.current_wave_enemies
-        this.state.enemies_left = this.queries.enemies.results.length
+        // use runInAction per https://stackoverflow.com/a/64771774
+        runInAction( () => {
+            this.state.score = player_c.score
+            this.state.health = damage.health
+            this.state.max_health = damage.max_health
+            this.state.wave = player_c.wave
+            this.state.total_enemies = player_c.current_wave_enemies
+            this.state.enemies_left = this.queries.enemies.results.length
+        })
 
     }
 }
