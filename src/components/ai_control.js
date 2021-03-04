@@ -1,6 +1,13 @@
 import { Component, Types } from 'ecsy'
 
-export class AITargetPlayer extends Component {}
-AITargetPlayer.schema = {
+export class AITargetPlayerComponent extends Component {}
+AITargetPlayerComponent.schema = {
     max_distance: { type: Types.Number, default: 20 }
+}
+
+export class AIChasePlayerComponent extends Component {}
+AIChasePlayerComponent.schema = {
+    max_distance: { type: Types.Number, default: 20 },
+    min_distance: { type: Types.Number, default: 0 },
+    speed: { type: Types.Number, default: .1 },
 }

@@ -5,7 +5,7 @@ import { ModelComponent } from "../components/render"
 import { DamageableComponent } from "../components/damage"
 import { Vector3 } from "../ecs_types"
 import { PlayerComponent } from "../components/player";
-import { AITargetPlayer } from "../components/ai_control";
+import { AIChasePlayerComponent, AITargetPlayerComponent } from "../components/ai_control";
 import { FireControlComponent, GunComponent } from "../components/weapons";
 
 const WAVE_DELAY = 1.5
@@ -21,12 +21,22 @@ export class EnemySystem extends System {
         for(var i=0; i<n; i++){
             const boxEntity = this.world.createEntity()
             boxEntity.addComponent( LocRotComponent, { location: new Vector3((0.5 - Math.random()) * 20,5,(0.5 - Math.random()) * 20) } )
-            boxEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 1 } )
-            boxEntity.addComponent( ModelComponent )
             boxEntity.addComponent( EnemyComponent )
-            boxEntity.addComponent( AITargetPlayer )
-            boxEntity.addComponent( GunComponent, { rate_of_fire: 1 } )
-            boxEntity.addComponent( FireControlComponent )
+            if(Math.random() > 0.8){
+                boxEntity.addComponent( AIChasePlayerComponent )
+                boxEntity.addComponent( ModelComponent, {
+                    material: "enemy:chaser",
+                    geometry: "sphere",
+                    scale: new Vector3(0.5,0.5,0.5),
+                } )
+                boxEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.SPHERE_TYPE, mass: 1 } )
+            }else{
+                boxEntity.addComponent( AITargetPlayerComponent )
+                boxEntity.addComponent( GunComponent, { rate_of_fire: 1 } )
+                boxEntity.addComponent( FireControlComponent )
+                boxEntity.addComponent( ModelComponent, {material: "enemy:shooter"} )
+                boxEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 1 } )
+            }
             boxEntity.addComponent( DamageableComponent, { health: 2 } )
         }
         return n

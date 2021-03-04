@@ -12,7 +12,7 @@ import { EnemyComponent } from "./components/enemy";
 import { PlayerComponent } from "./components/player"
 import { EnemySystem } from "./systems/enemy";
 import { Vector3 } from "./ecs_types"
-import { AITargetPlayer } from "./components/ai_control";
+import { AIChasePlayerComponent, AITargetPlayerComponent } from "./components/ai_control";
 import { AIControlSystem } from "./systems/ai_control";
 import { PlayerSystem } from "./systems/player";
 import { GroundComponent } from "./components/map";
@@ -40,9 +40,10 @@ export function init_game(){
     world.registerComponent(DamageableComponent)
     world.registerComponent(EnemyComponent)
     world.registerComponent(PlayerComponent)
-    world.registerComponent(AITargetPlayer)
+    world.registerComponent(AITargetPlayerComponent)
     world.registerComponent(GroundComponent)
     world.registerComponent(ExplosionComponent)
+    world.registerComponent(AIChasePlayerComponent)
 
     // Systems
     world.registerSystem(PhysicsMeshUpdateSystem)
