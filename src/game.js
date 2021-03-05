@@ -1,7 +1,7 @@
 import { World } from 'ecsy';
 import { BodyComponent, LocRotComponent, PhysicsComponent } from './components/physics'
 import { MeshComponent, ModelComponent, CameraFollowComponent, RayCastTargetComponent } from './components/render'
-import { GunComponent, BulletComponent, FireControlComponent, KamykazeComponent } from "./components/weapons";
+import { GunComponent, BulletComponent, FireControlComponent, ProxyMineComponent } from "./components/weapons";
 import { PhysicsSystem, PhysicsMeshUpdateSystem } from './systems/physics'
 import { DamageableComponent, DamageAppliedComponent} from './components/damage'
 import { RenderSystem } from "./systems/render"
@@ -21,6 +21,7 @@ import { ExplosionComponent } from "./components/effects";
 import { EffectsSystem } from "./systems/effects";
 import { HUDSystem } from './systems/hud';
 import { SoundSystem } from './systems/sound';
+import { SoundEffectComponent } from './components/sound';
 
 
 export function init_game(){
@@ -45,7 +46,8 @@ export function init_game(){
     world.registerComponent(GroundComponent)
     world.registerComponent(ExplosionComponent)
     world.registerComponent(AIChasePlayerComponent)
-    world.registerComponent(KamykazeComponent)
+    world.registerComponent(ProxyMineComponent)
+    world.registerComponent(SoundEffectComponent)
 
     // Systems
     world.registerSystem(SoundSystem)

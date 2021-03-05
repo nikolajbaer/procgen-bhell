@@ -1,5 +1,5 @@
 import { System, Not } from "ecsy";
-import {  GunComponent, BulletComponent, FireControlComponent, KamykazeComponent as ProxyMineComponent } from "../components/weapons"
+import {  GunComponent, BulletComponent, FireControlComponent, ProxyMineComponent } from "../components/weapons"
 import { PhysicsComponent,BodyComponent, LocRotComponent } from "../components/physics"
 import { ModelComponent } from "../components/render"
 import * as CANNON from "cannon-es"
@@ -9,6 +9,7 @@ import { PlayerSystem } from "./player";
 import { DamageAppliedComponent } from "../components/damage";
 import { ExplosionComponent } from "../components/effects";
 import { PlayerComponent } from "../components/player";
+import { SoundEffectComponent } from "../components/sound";
 
 export class WeaponsSystem extends System {
 
@@ -36,6 +37,7 @@ export class WeaponsSystem extends System {
             live_to: live_to,
             damage: gun.bullet_damage,
         })
+        bulletEntity.addComponent( SoundEffectComponent, { sound: "bullet-fire" })
     }
 
     barrel_aims(vel_vec,barrels){
@@ -164,6 +166,7 @@ export class ProxyMineSystem extends System {
                         size: kam.damage_radius * 0.75,
                         duration: 0.7,
                     })
+                    explosion.addComponent(SoundEffectComponent, { sound: "self-destruct" })
                     e.remove()
                 }
             }else if( distance < kam.trigger_distance ){

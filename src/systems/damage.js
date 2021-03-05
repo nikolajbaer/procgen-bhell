@@ -2,6 +2,7 @@ import { System, Not } from "ecsy";
 import { DamageableComponent, DamageAppliedComponent } from "../components/damage";
 import { ExplosionComponent } from "../components/effects"
 import { PhysicsComponent } from "../components/physics";
+import { SoundEffectComponent } from "../components/sound";
 import { Vector3 } from "../ecs_types";
 
 // Todo DamageableComponent , DamageComponent, DamagingComponent
@@ -13,6 +14,7 @@ export class DamageSystem extends System {
         e.addComponent( ExplosionComponent, { 
             location: new Vector3(position.x,position.y,position.z)
        })
+       e.addComponent(SoundEffectComponent, { sound: "explode" } )
     }
 
     execute(delta,time){

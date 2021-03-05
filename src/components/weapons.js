@@ -29,8 +29,8 @@ FireControlComponent.schema = {
     fire2: { type: Types.Boolean, default: false }
 }
 
-export class KamykazeComponent extends Component { }
-KamykazeComponent.schema = {
+export class ProxyMineComponent extends Component { }
+ProxyMineComponent.schema = {
     trigger_distance: { type: Types.Number, default: 5 },
     delay: { type: Types.Number, default: 0.75 },
     time: { type: Types.Number, default: null },

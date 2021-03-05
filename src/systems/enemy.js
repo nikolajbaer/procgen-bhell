@@ -6,7 +6,7 @@ import { DamageableComponent } from "../components/damage"
 import { Vector3 } from "../ecs_types"
 import { PlayerComponent } from "../components/player";
 import { AIChasePlayerComponent, AITargetPlayerComponent } from "../components/ai_control";
-import { FireControlComponent, GunComponent, KamykazeComponent } from "../components/weapons";
+import { FireControlComponent, GunComponent, ProxyMineComponent } from "../components/weapons";
 
 const WAVE_DELAY = 1.5
 
@@ -34,7 +34,7 @@ export class EnemySystem extends System {
                     mass: 1 ,
                     material: "chaser", // higher friction
                 } )
-                boxEntity.addComponent( KamykazeComponent )
+                boxEntity.addComponent( ProxyMineComponent )
             }else{
                 boxEntity.addComponent( AITargetPlayerComponent )
                 boxEntity.addComponent( GunComponent, { rate_of_fire: 1 } )
