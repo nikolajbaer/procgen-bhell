@@ -20,6 +20,7 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "three": ">=0.125.0",
+    "tone": "^14.7.77",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"
@@ -37,7 +38,12 @@
       "@babel/preset-react"
     ],
     "plugins": [
-      ["@babel/plugin-proposal-class-properties", { "loose": true }]
+      [
+        "@babel/plugin-proposal-class-properties",
+        {
+          "loose": true
+        }
+      ]
     ]
   }
 }
