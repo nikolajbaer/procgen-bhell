@@ -20,7 +20,7 @@ import { MapSystem } from "./systems/map";
 import { ExplosionComponent } from "./components/effects";
 import { EffectsSystem } from "./systems/effects";
 import { HUDSystem } from './systems/hud';
-import { MusicSystem } from './systems/music';
+import { SoundSystem } from './systems/sound';
 
 
 export function init_game(){
@@ -48,7 +48,7 @@ export function init_game(){
     world.registerComponent(KamykazeComponent)
 
     // Systems
-    world.registerSystem(MusicSystem)
+    world.registerSystem(SoundSystem)
     world.registerSystem(PhysicsMeshUpdateSystem)
     world.registerSystem(PlayerControlsSystem)
     world.registerSystem(AimSystem)
