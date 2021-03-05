@@ -11,7 +11,7 @@ const HUDView = observer( ({ hudState }) => (
         <div className="hud">
             Score: {hudState.score} |
             Wave: {hudState.wave} |
-            Health: {hudState.health} / {hudState.max_health}
+            Health: {Math.round(hudState.health)} / {hudState.max_health}
         </div>
         <div className="hud">
             WASD to move, LMB/RMB to fire <br/>

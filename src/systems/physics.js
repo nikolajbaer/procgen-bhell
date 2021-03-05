@@ -6,9 +6,10 @@ import { BulletComponent } from "../components/weapons.js";
 import { DamageableComponent, DamageAppliedComponent } from "../components/damage.js";
 
 // inspired by https://github.com/macaco-maluco/thermal-runway/blob/master/src/systems/PhysicsSystem.ts
-const MATERIALS = {
+const PHYSICS_MATERIALS = {
     "ground": new CANNON.Material("ground"),
     "default": new CANNON.Material(),
+    "chaser": new CANNON.Material({name:"chaser",friction:1.0})
 }
 
 export class PhysicsSystem extends System {
@@ -38,7 +39,7 @@ export class PhysicsSystem extends System {
                 shape = new CANNON.Sphere(body.bounds.x/2)
                 break;
         }
-        const mat = MATERIALS[body.material]
+        const mat = PHYSICS_MATERIALS[body.material]
         const body1  = new CANNON.Body({
             mass: body.mass, //mass
             material: mat,

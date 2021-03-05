@@ -7,7 +7,7 @@ AITargetPlayerComponent.schema = {
 
 export class AIChasePlayerComponent extends Component {}
 AIChasePlayerComponent.schema = {
-    max_distance: { type: Types.Number, default: 20 },
+    max_distance: { type: Types.Number, default: 40 },
     min_distance: { type: Types.Number, default: 0 },
     speed: { type: Types.Number, default: .1 },
 }

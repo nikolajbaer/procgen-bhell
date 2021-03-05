@@ -28,3 +28,13 @@ FireControlComponent.schema = {
     fire1: { type: Types.Boolean, default: false },
     fire2: { type: Types.Boolean, default: false }
 }
+
+export class KamykazeComponent extends Component { }
+KamykazeComponent.schema = {
+    trigger_distance: { type: Types.Number, default: 5 },
+    delay: { type: Types.Number, default: 0.75 },
+    time: { type: Types.Number, default: null },
+    damage: { type: Types.Number, default: 5 },
+    damage_radius: { type: Types.Number, default: 3 },
+}
+

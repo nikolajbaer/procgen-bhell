@@ -1,10 +1,14 @@
 import { System, Not } from "ecsy";
-import {  GunComponent, BulletComponent, FireControlComponent } from "../components/weapons"
+import {  GunComponent, BulletComponent, FireControlComponent, KamykazeComponent as ProxyMineComponent } from "../components/weapons"
 import { PhysicsComponent,BodyComponent, LocRotComponent } from "../components/physics"
 import { ModelComponent } from "../components/render"
 import * as CANNON from "cannon-es"
 import * as THREE from "three"
 import { Vector3, Vector3Type } from "../ecs_types";
+import { PlayerSystem } from "./player";
+import { DamageAppliedComponent } from "../components/damage";
+import { ExplosionComponent } from "../components/effects";
+import { PlayerComponent } from "../components/player";
 
 export class WeaponsSystem extends System {
 
@@ -126,5 +130,54 @@ export class BulletSystem extends System {
 BulletSystem.queries = {
     active: {
         components: [ BulletComponent ],
+    }
+}
+
+export class ProxyMineSystem extends System {
+    execute(delta, time){
+        if( this.queries.player.results.length == 0 ){ return; }
+        // CONSIDER refactor to TrackPlayerComponent  to minimize this query
+        const player = this.queries.player.results[0]
+        const player_body = player.getComponent(PhysicsComponent).body
+
+        this.queries.active.results.forEach( e => {
+            const kam = e.getMutableComponent(ProxyMineComponent)
+            const body = e.getComponent(PhysicsComponent).body
+
+            const distance = player_body.position.distanceTo(body.position)
+
+            if( kam.time != null ){
+                if( kam.time >= time ){
+                    console.log(kam.time,time,"proxy mine exploding!")
+                    const damage = ( Math.pow(1 - (distance/kam.damage_radius),2) ) * kam.damage
+
+                    if(player.hasComponent(DamageAppliedComponent)){
+                        const dmg = player.getMutableComponent( DamageAppliedComponent)
+                        dmg.amount += bullet_c.damage
+                    }else{
+                        player.addComponent(DamageAppliedComponent, { amount: damage }) 
+                    }
+                   
+                    const explosion = this.world.createEntity()
+                    explosion.addComponent( ExplosionComponent, { 
+                        location: new Vector3(body.position.x,body.position.y,body.position.z),
+                        size: kam.damage_radius * 0.75,
+                        duration: 0.7,
+                    })
+                    e.remove()
+                }
+            }else if( distance < kam.trigger_distance ){
+                console.log(distance,"is less than trigger",kam.trigger_distance,"starting timer")
+                kam.time = time + kam.delay
+            }
+        }) 
+    }
+}
+ProxyMineSystem.queries = {
+    active: {
+        components: [ ProxyMineComponent, PhysicsComponent ]
+    },
+    player: {
+        components: [ PlayerComponent, PhysicsComponent ]
     }
 }

@@ -1,13 +1,13 @@
 import { World } from 'ecsy';
 import { BodyComponent, LocRotComponent, PhysicsComponent } from './components/physics'
 import { MeshComponent, ModelComponent, CameraFollowComponent, RayCastTargetComponent } from './components/render'
-import { GunComponent, BulletComponent, FireControlComponent } from "./components/weapons";
+import { GunComponent, BulletComponent, FireControlComponent, KamykazeComponent } from "./components/weapons";
 import { PhysicsSystem, PhysicsMeshUpdateSystem } from './systems/physics'
 import { DamageableComponent, DamageAppliedComponent} from './components/damage'
 import { RenderSystem } from "./systems/render"
 import { PlayerControlsSystem } from "./systems/player_controls"
 import { DamageSystem } from "./systems/damage"
-import { WeaponsSystem, AimSystem, BulletSystem } from "./systems/weapons";
+import { WeaponsSystem, AimSystem, BulletSystem, ProxyMineSystem } from "./systems/weapons";
 import { EnemyComponent } from "./components/enemy";
 import { PlayerComponent } from "./components/player"
 import { EnemySystem } from "./systems/enemy";
@@ -44,6 +44,7 @@ export function init_game(){
     world.registerComponent(GroundComponent)
     world.registerComponent(ExplosionComponent)
     world.registerComponent(AIChasePlayerComponent)
+    world.registerComponent(KamykazeComponent)
 
     // Systems
     world.registerSystem(PhysicsMeshUpdateSystem)
@@ -58,6 +59,7 @@ export function init_game(){
     world.registerSystem(MapSystem)
     world.registerSystem(EffectsSystem)
     world.registerSystem(HUDSystem)
+    world.registerSystem(ProxyMineSystem)
 
     // These go last as they manage mesh and body resource removal
     world.registerSystem(PhysicsSystem)
