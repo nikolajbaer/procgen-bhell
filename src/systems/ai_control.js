@@ -43,6 +43,7 @@ export class AIControlSystem extends System {
 
                 aim.at = new Vector3(player_body.position.x,player_body.position.y,player_body.position.z)
                 aim.from = new Vector3(body.position.x,body.position.y,body.position.z)
+
                 aim.fire1 = true
                
             }else{

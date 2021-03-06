@@ -27,23 +27,33 @@ class GameUI extends React.Component {
     }
 
     componentDidMount(){
+    }
+
+    start_game(){
         const world = init_game()
         this.setState({hudState:world.getSystem(HUDSystem).state})
     }
 
     render() {
 
-        let hud;
+        let view;
         if( this.state.hudState != null) {
-            hud = <HUDView hudState={this.state.hudState} />
+            view = <HUDView hudState={this.state.hudState} />
         }else{
-            hud = <div></div>
+            view = <div className="menu">
+                <p>a procedurally generated</p>
+                <h1>BULLET HELL</h1>
+                <button onClick={() => this.start_game()}>START</button>
+                <p>
+                    <input type="checkbox" /> Sound
+                </p>
+            </div>
         }
 
         return (
         <div id="game">
             <canvas id="render"></canvas>
-            {hud}
+            {view}
         </div>
         )
     }

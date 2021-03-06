@@ -4,8 +4,14 @@ import { SoundEffectComponent } from "../components/sound"
 
 export class SoundSystem extends System {
     init (){
+        this.active = false 
+        Tone.start().then( () => {
+            this.startMusic()
+        })
+
+        /*
+        // Use this to initialize if we don't have a start button to initiate input first
         let initialized = false
-        console.log("Adding listener")
         document.getElementById("render").addEventListener("click", () => {
             if(!initialized){
                 console.log("Key Down!")
@@ -14,7 +20,8 @@ export class SoundSystem extends System {
                 })
                 initialized = true
             }
-        })
+        }) 
+        */
     }
 
     startMusic(){
@@ -51,11 +58,17 @@ export class SoundSystem extends System {
 			},
 		}).toDestination();
 
-        this.effects_synth = new Tone.PolySynth(Tone.Synth).toDestination()
+        this.bullet_synth = new Tone.PolySynth(Tone.Synth).toDestination()
+        this.bullet_synth.volume.value = -15;
+
+        const explode_dist = new Tone.Distortion(0.8).toDestination()
+        this.explode_synth = new Tone.PolySynth(Tone.FMSynth)
+        this.explode_synth.connect(explode_dist)
 
         this.create_bass_loop()
 
         Tone.Transport.toggle()
+        this.active = true
     }
 
     create_bass_loop(){
@@ -84,21 +97,20 @@ export class SoundSystem extends System {
      }
 
     execute(delta, time){
-        // TODO add a new layer to the music for each loop
+        if(!this.active){ return }
+
         this.queries.effects.results.forEach( e => {
             const effect = e.getComponent(SoundEffectComponent)  
             switch (effect.sound) {
                 case "explode":
-                    this.effects_synth.triggerAttackRelease("C3",.1)
+                    this.explode_synth.triggerAttackRelease("C2",.1)
                     break
                 case "self-destruct":
-                    this.effects_synth.triggerAttackRelease("G2",.2)
+                    this.explode_synth.triggerAttackRelease("G2",.2)
                     break
                 case "bullet-fire":
-                    this.effects_synth.triggerAttackRelease("A4",.1)
+                    this.bullet_synth.triggerAttackRelease("A4",.1)
                     break
-                 default:
-                    this.effects_synth.triggerAttackRelease("E3",.1)
             }
             e.removeComponent(SoundEffectComponent)
         })
