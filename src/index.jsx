@@ -23,15 +23,20 @@ const HUDView = observer( ({ hudState }) => (
 class GameUI extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { hudState: null }
+        this.state = { hudState: null, playSound: true }
+        this.handleSoundChange = this.handleSoundChange.bind(this)
     }
 
     componentDidMount(){
     }
 
     start_game(){
-        const world = init_game()
+        const world = init_game(this.state.playSound)
         this.setState({hudState:world.getSystem(HUDSystem).state})
+    }
+
+    handleSoundChange(event){
+        this.setState({playSound: event.target.checked})
     }
 
     render() {
@@ -45,7 +50,7 @@ class GameUI extends React.Component {
                 <h1>BULLET HELL</h1>
                 <button onClick={() => this.start_game()}>START</button>
                 <p>
-                    <input type="checkbox" /> Sound
+                    <input type="checkbox" checked={this.state.playSound} onClick={this.handleSoundChange} /> Sound
                 </p>
             </div>
         }

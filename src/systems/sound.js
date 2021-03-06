@@ -4,24 +4,18 @@ import { SoundEffectComponent } from "../components/sound"
 
 export class SoundSystem extends System {
     init (){
-        this.active = false 
+        this.initialized = false
+    }
+
+    activate() {
+        // activating
         Tone.start().then( () => {
             this.startMusic()
         })
+    }
 
-        /*
-        // Use this to initialize if we don't have a start button to initiate input first
-        let initialized = false
-        document.getElementById("render").addEventListener("click", () => {
-            if(!initialized){
-                console.log("Key Down!")
-                Tone.start().then( () => {
-                    this.startMusic()
-                })
-                initialized = true
-            }
-        }) 
-        */
+    set_volume(v){
+        Tone.Transport.set_volume(v)
     }
 
     startMusic(){
@@ -68,7 +62,7 @@ export class SoundSystem extends System {
         this.create_bass_loop()
 
         Tone.Transport.toggle()
-        this.active = true
+        this.initialized= true
     }
 
     create_bass_loop(){
@@ -97,7 +91,7 @@ export class SoundSystem extends System {
      }
 
     execute(delta, time){
-        if(!this.active){ return }
+        if(!this.initialized){ return }
 
         this.queries.effects.results.forEach( e => {
             const effect = e.getComponent(SoundEffectComponent)  

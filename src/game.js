@@ -24,7 +24,7 @@ import { SoundSystem } from './systems/sound';
 import { SoundEffectComponent } from './components/sound';
 
 
-export function init_game(){
+export function init_game(playSound){
     const world = new World()
 
     // Components
@@ -68,6 +68,11 @@ export function init_game(){
     // These go last as they manage mesh and body resource removal
     world.registerSystem(PhysicsSystem)
     world.registerSystem(RenderSystem)
+
+    // update sound preference
+    if(playSound){
+        world.getSystem(SoundSystem).activate()
+    }
     
     let lastTime = performance.now() / 1000
 

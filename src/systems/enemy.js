@@ -36,7 +36,7 @@ export class EnemySystem extends System {
                 } )
                 boxEntity.addComponent( ProxyMineComponent )
             }else{
-                boxEntity.addComponent( AITargetPlayerComponent )
+                boxEntity.addComponent( AITargetPlayerComponent, { predict: true } )
                 boxEntity.addComponent( GunComponent, { rate_of_fire: 1 } )
                 boxEntity.addComponent( FireControlComponent )
                 boxEntity.addComponent( ModelComponent, {material: "enemy:shooter"} )
