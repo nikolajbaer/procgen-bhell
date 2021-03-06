@@ -32,7 +32,6 @@ const HUDView = observer( ({ hudState }) => (
         <HealthBar health={hudState.health} max_health={hudState.max_health} />
         <div className="hud">
             WASD to move, LMB/RMB to fire <br/>
-            <a href="https://github.com/nikolajbaer/procgen-bhell" target="_blank" title="source code on github">&lt;src&gt;</a>
         </div>
     </div>    
 ))
@@ -65,6 +64,10 @@ class GameUI extends React.Component {
             view = <div className="menu">
                 <p>a procedurally generated</p>
                 <h1>BULLET HELL</h1>
+                <p>
+                    By <a title="nikolajbaer.us" target="_blank" href="https://www.nikolajbaer.us/">Nikolaj Baer</a>
+                    <a href="https://github.com/nikolajbaer/procgen-bhell" target="_blank" title="source code on github">(src)</a>
+                </p>
                 <button onClick={() => this.start_game()}>START</button>
                 <p>
                     <input type="checkbox" checked={this.state.playSound} onChange={this.handleSoundChange} /> Sound
