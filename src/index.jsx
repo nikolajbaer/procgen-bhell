@@ -2,17 +2,34 @@ import { init_game } from "./game"
 
 // React
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM, { render } from "react-dom";
 import { HUDSystem } from "./systems/hud";
 import { observer } from "mobx-react-lite"
+
+class HealthBar extends React.Component {
+    constructor(props){
+        super(props);
+    }
+
+    render(){
+        return (
+            <div className="healthbar">
+                <div style={{width:((this.props.health/this.props.max_health)*100) + "%"}}>
+                    <span>{Math.round(this.props.health)}/{this.props.max_health}</span>
+                </div>
+            </div>
+        )
+    }
+}
+
 
 const HUDView = observer( ({ hudState }) => (
     <div className="overlay">
         <div className="hud">
             Score: {hudState.score} |
             Wave: {hudState.wave} |
-            Health: {Math.round(hudState.health)} / {hudState.max_health}
         </div>
+        <HealthBar health={hudState.health} max_health={hudState.max_health} />
         <div className="hud">
             WASD to move, LMB/RMB to fire <br/>
             <a href="https://github.com/nikolajbaer/procgen-bhell" target="_blank" title="source code on github">&lt;src&gt;</a>

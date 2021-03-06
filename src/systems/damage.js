@@ -1,7 +1,9 @@
 import { System, Not } from "ecsy";
+import { Player } from "tone";
 import { DamageableComponent, DamageAppliedComponent } from "../components/damage";
 import { ExplosionComponent } from "../components/effects"
 import { PhysicsComponent } from "../components/physics";
+import { PlayerComponent } from "../components/player";
 import { SoundEffectComponent } from "../components/sound";
 import { Vector3 } from "../ecs_types";
 
@@ -22,6 +24,10 @@ export class DamageSystem extends System {
             // apply damage, then remove damageable component
             const damage =  e.getComponent(DamageAppliedComponent)
             const obj = e.getMutableComponent(DamageableComponent)
+
+            if( e.hasComponent(PlayerComponent)){
+                // Flash material?
+            }
 
             obj.health -= damage.amount
             if( obj.health < 0 ){

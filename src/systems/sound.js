@@ -105,6 +105,9 @@ export class SoundSystem extends System {
                 case "bullet-fire":
                     this.bullet_synth.triggerAttackRelease("A4",.1)
                     break
+                case "player-hit":
+                    this.explode_synth.triggerAttackRelease("B5",.1)
+                    break
             }
             e.removeComponent(SoundEffectComponent)
         })

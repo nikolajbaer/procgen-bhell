@@ -27,7 +27,18 @@ export class HUDSystem extends System {
     }
 
     execute(delta,time){
-        if( this.queries.player.results.length == 0){ return }
+        if( this.queries.player.results.length == 0){ 
+            if(this.queries.player.removed.length == 0 ){
+                return
+            }else{
+                // When player goes away, we are assuming for now that
+                // they died, so we do one last update
+                runInAction( () => {
+                    this.state.health = 0
+                })
+                return
+            }
+        }
 
         const player = this.queries.player.results[0]
         const player_c = player.getComponent(PlayerComponent)
@@ -49,7 +60,11 @@ export class HUDSystem extends System {
 
 HUDSystem.queries = {
     player: {
-        components: [PlayerComponent,DamageableComponent]
+        components: [PlayerComponent,DamageableComponent],
+        listen: {
+            removed: true
+        }
+
     },
     enemies: {
         components: [EnemyComponent]
