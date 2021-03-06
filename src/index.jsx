@@ -50,7 +50,7 @@ class GameUI extends React.Component {
                 <h1>BULLET HELL</h1>
                 <button onClick={() => this.start_game()}>START</button>
                 <p>
-                    <input type="checkbox" checked={this.state.playSound} onClick={this.handleSoundChange} /> Sound
+                    <input type="checkbox" checked={this.state.playSound} onChange={this.handleSoundChange} /> Sound
                 </p>
             </div>
         }
