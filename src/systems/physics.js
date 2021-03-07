@@ -9,7 +9,8 @@ import { DamageableComponent, DamageAppliedComponent } from "../components/damag
 const PHYSICS_MATERIALS = {
     "ground": new CANNON.Material("ground"),
     "default": new CANNON.Material(),
-    "chaser": new CANNON.Material({name:"chaser",friction:1.0})
+    "chaser": new CANNON.Material({name:"chaser",friction:1.0}),
+    "player": new CANNON.Material({name:"player",friction:0.0}),
 }
 
 export class PhysicsSystem extends System {

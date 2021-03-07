@@ -23,9 +23,32 @@ export class MapSystem extends System {
         groundEntity.addComponent( GroundComponent )
     }
 
+    create_room(x,z,w,h,doors){
+        // ISSUE - kinematic bodies don't collide.
+        const T = 2 // wall thickness
+        this.create_wall(x-w/2,z,T,h) // left
+        this.create_wall(x+w/2,z,T,h) // right
+        this.create_wall(x,z+h/2,w,T) // top
+        this.create_wall(x,z-h/2,w,T) // bottom
+    }
+
+    create_wall(x,z,w,h){
+        const H = 5 // wall height
+        const e = this.world.createEntity()
+        e.addComponent( BodyComponent, {
+            mass: 0,
+            bounds_type: BodyComponent.BOX_TYPE,
+            bounds: {x:w,y:H,z:h},
+            material: "ground",
+         })
+        e.addComponent( LocRotComponent, { location: {x:x,y:H/2,z:z} } )
+        e.addComponent( ModelComponent, { geometry: "box", material: "ground", scale: new Vector3(w,H,h) })
+    }
+
     execute(delta,time){
         if(this.queries.ground.results.length == 0){
             this.create_ground()
+            this.create_room(0,0,75,60,[])
         }
 
         // TODO walls?

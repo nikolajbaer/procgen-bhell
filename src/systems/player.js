@@ -19,8 +19,8 @@ export class PlayerSystem extends System {
         playerEntity.addComponent( BodyComponent, { 
             mass: 1, 
             bounds_type: BodyComponent.BOX_TYPE, 
-            body_type: BodyComponent.KINEMATIC,
-            material: "default" 
+            body_type: BodyComponent.DYNAMIC,
+            material: "player" 
         })
         playerEntity.addComponent( LocRotComponent, { location: new Vector3(0,.5,0) } )
         playerEntity.addComponent( ModelComponent, { geometry: "box", material: "player" } )
