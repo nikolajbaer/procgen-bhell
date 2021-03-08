@@ -32,6 +32,10 @@ export class PlayerControlsSystem extends System {
             event.preventDefault(); 
             return false; 
         })
+        render.addEventListener("contextmenu", event => {
+            event.preventDefault()
+            return false
+        })
 
         this.actions = actions
         this.mouse = mouse

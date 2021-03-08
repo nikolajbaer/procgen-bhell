@@ -12,7 +12,7 @@ const RESPAWN_DELAY = 3
 export class PlayerSystem extends System {
     init(){
         this.respawn_delay = 1  // non null for immediate start
-   }
+    }
 
     spawn_player(){
         const playerEntity = this.world.createEntity()

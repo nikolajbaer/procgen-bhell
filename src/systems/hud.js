@@ -3,6 +3,7 @@ import { makeAutoObservable, runInAction } from "mobx"
 import { DamageableComponent } from "../components/damage"
 import { EnemyComponent } from "../components/enemy"
 import { PlayerComponent } from "../components/player"
+import { GunComponent } from "../components/weapons"
 
 
 export class HUDState {
@@ -14,6 +15,7 @@ export class HUDState {
     enemies_left = 0
     deaths = 0
     lives = 1
+    gun = {} 
 
     constructor(){
         makeAutoObservable(this)
@@ -43,6 +45,7 @@ export class HUDSystem extends System {
         const player = this.queries.player.results[0]
         const player_c = player.getComponent(PlayerComponent)
         const damage = player.getComponent(DamageableComponent)
+        const gun = player.getComponent(GunComponent)
 
         // update the state
         // use runInAction per https://stackoverflow.com/a/64771774
@@ -53,14 +56,17 @@ export class HUDSystem extends System {
             this.state.wave = player_c.wave
             this.state.total_enemies = player_c.current_wave_enemies
             this.state.enemies_left = this.queries.enemies.results.length
-        })
+            for(var key in gun.constructor.schema){
+                this.state.gun[key] = gun[key]
+            }
+       })
 
     }
 }
 
 HUDSystem.queries = {
     player: {
-        components: [PlayerComponent,DamageableComponent],
+        components: [PlayerComponent,DamageableComponent,GunComponent],
         listen: {
             removed: true
         }

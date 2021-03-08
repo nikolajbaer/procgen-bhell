@@ -8,6 +8,6 @@ export function gen_gun(level) {
         rate_of_fire: .1,
         bullet_damage: 1,
         bullet_speed: 3,
-        bullet_life: 3,
+        bullet_life: 2,
     }
 }

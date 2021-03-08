@@ -37,7 +37,6 @@ export class WeaponsSystem extends System {
             live_to: live_to,
             damage: gun.bullet_damage,
         })
-        bulletEntity.addComponent( SoundEffectComponent, { sound: "bullet-fire" })
     }
 
     barrel_aims(vel_vec,barrels){
@@ -84,6 +83,7 @@ export class WeaponsSystem extends System {
                     this.spawn_bullet(gun,aim,v,gun.bullet_life + time)
                 }) 
                 gun.last_fire = time
+                e.addComponent( SoundEffectComponent, { sound: "bullet-fire" })
             }
         })
     }

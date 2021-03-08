@@ -17,7 +17,23 @@
 		.overlay { 
 			position: fixed;
 			width: 100%;
+			top: 4px;
 			bottom: 4px;
+			pointer-events: none;
+		}
+		.gun_stats { 
+			position: absolute;
+			width: 150px;
+			font-size: 8px;
+			color: white;
+			left: 4px;
+			top: 4px;
+		}
+		.bottom {
+			position: fixed;
+			bottom: 4px;
+			left: 4px;
+			right: 4px;
 		}
 		.hud { 
 			text-align: center;
@@ -26,6 +42,7 @@
 			font-size: 10pt;
 			color: white;
 		}
+
 		canvas#render {
 			cursor: crosshair;
 		}
