@@ -1,8 +1,11 @@
 import { System, Not } from "ecsy";
-import { ExplosionComponent } from "../components/effects"
+import { DamageFlashEffectComponent, ExplosionComponent } from "../components/effects"
 import { LocRotComponent } from "../components/physics";
 import { MeshComponent, ModelComponent } from "../components/render"
 import { Vector3 } from "../ecs_types"
+import * as THREE from "three"
+
+const FLASH_COLOR = new THREE.Color("#ff0000")
 
 export class EffectsSystem extends System {
 
@@ -34,6 +37,26 @@ export class EffectsSystem extends System {
                 mesh.scale.set(sv,sv,sv)
             }
         })
+
+        this.queries.damage_flashing.results.forEach( e => {
+            const mesh = e.getComponent(MeshComponent).mesh
+            const flash = e.getMutableComponent(DamageFlashEffectComponent)
+            const material = mesh.material
+
+            // preserve the base color if we haven't already
+            if(material._base_color == undefined){
+                material._base_color = material.color
+            }
+
+            const v = ((time - flash.start_time)/(flash.end_time - flash.start_time))
+            if(v < 1.0){
+                material.color = material._base_color.clone().lerp(FLASH_COLOR,Math.sin(v*flash.freq))
+            }else{
+                console.log("removing flash",material.color,material._base_color)
+                material.color = material._base_color
+                e.removeComponent(DamageFlashEffectComponent)
+            }
+        })
     }
 }
 
@@ -44,4 +67,7 @@ EffectsSystem.queries = {
     active_explosions: {
         components: [ExplosionComponent,ModelComponent,MeshComponent]
     },
+    damage_flashing: {
+        components: [DamageFlashEffectComponent,MeshComponent]
+    }
 }

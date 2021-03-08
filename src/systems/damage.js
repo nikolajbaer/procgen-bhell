@@ -1,7 +1,7 @@
 import { System, Not } from "ecsy";
 import { Player } from "tone";
 import { DamageableComponent, DamageAppliedComponent, HealableComponent, HealthAppliedComponent } from "../components/damage";
-import { ExplosionComponent } from "../components/effects"
+import { DamageFlashEffectComponent, ExplosionComponent } from "../components/effects"
 import { PhysicsComponent } from "../components/physics";
 import { PlayerComponent } from "../components/player";
 import { SoundEffectComponent } from "../components/sound";
@@ -27,6 +27,11 @@ export class DamageSystem extends System {
 
             if( e.hasComponent(PlayerComponent)){
                 // Flash material?
+                e.addComponent(DamageFlashEffectComponent, {
+                    start_time: time,
+                    end_time: time + .4,
+                    freq: 4,
+                })
             }
 
             obj.health -= damage.amount

@@ -17,7 +17,7 @@ import { AIControlSystem } from "./systems/ai_control";
 import { PlayerSystem } from "./systems/player";
 import { GroundComponent } from "./components/map";
 import { MapSystem } from "./systems/map";
-import { ExplosionComponent } from "./components/effects";
+import { DamageFlashEffectComponent, ExplosionComponent } from "./components/effects";
 import { EffectsSystem } from "./systems/effects";
 import { HUDSystem } from './systems/hud';
 import { SoundSystem } from './systems/sound';
@@ -52,6 +52,7 @@ export function init_game(playSound){
     world.registerComponent(HealthComponent)
     world.registerComponent(HealableComponent)
     world.registerComponent(HealthAppliedComponent)
+    world.registerComponent(DamageFlashEffectComponent)
 
     // Systems
     world.registerSystem(SoundSystem)

@@ -12,3 +12,10 @@ ExplosionComponent.schema = {
 
 // Todo explosion factory
 // Todo explosion shader
+
+export class DamageFlashEffectComponent extends Component {}
+DamageFlashEffectComponent.schema = {
+    start_time: { type: Types.Number },
+    end_time: { type: Types.Number },
+    freq: { type: Types.Number, default: 0.5 }
+}
