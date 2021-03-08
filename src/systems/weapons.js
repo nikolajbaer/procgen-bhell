@@ -15,22 +15,26 @@ export class WeaponsSystem extends System {
 
     spawn_bullet(gun,aim,vel_vec,live_to){
         const bulletEntity = this.world.createEntity() 
+        const bullet_scale = (gun.bullet_scale == null)?new Vector3(.2,.2,.2):gun.bullet_scale
+        // scoot bullet out by its z-scale plus a bit
+        const barrel_end = new THREE.Vector3(aim.from.x,aim.from.y,aim.from.z).add( new THREE.Vector3(aim.at.x,aim.at.y,aim.at.z).multiplyScalar(bullet_scale.z*2.1) )
+        
         bulletEntity.addComponent(BodyComponent, {
             mass: 3,
             velocity: new Vector3(vel_vec.x,vel_vec.y,vel_vec.z),
-            bounds: new Vector3(.2,.2,.2),
+            bounds: bullet_scale,
             body_type: BodyComponent.DYNAMIC,
             destroy_on_collision: true,
             track_collisions: true
         })
         bulletEntity.addComponent( LocRotComponent, {
-            location: new Vector3(aim.from.x,aim.from.y,aim.from.z),
+            location: new Vector3(barrel_end.x,barrel_end.y,barrel_end.z),
             //rotation: new Vector3(rot.x,rot.y,rot.z),
         })
         bulletEntity.addComponent( ModelComponent, {
             geometry: "sphere",
             material: gun.bullet_material,
-            scale: new Vector3(.2,.2,.2),
+            scale: bullet_scale,
             shadow: false,
         })
         bulletEntity.addComponent( BulletComponent, {
@@ -83,7 +87,7 @@ export class WeaponsSystem extends System {
                     this.spawn_bullet(gun,aim,v,gun.bullet_life + time)
                 }) 
                 gun.last_fire = time
-                e.addComponent( SoundEffectComponent, { sound: "bullet-fire" })
+                e.addComponent( SoundEffectComponent, { sound: gun.bullet_sound })
             }
         })
     }
@@ -106,7 +110,7 @@ export class AimSystem extends System {
             // TODO fire from tip of barrel in future
             aim.from.set(
                 body.position.x + aim.at.x,
-                body.position.y + .5 + aim.at.y,
+                body.position.y + .5 + aim.at.y, // standardize to half height of body?
                 body.position.z + aim.at.z
             )
         })

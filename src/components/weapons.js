@@ -5,14 +5,19 @@ import { Vector3Type } from "../ecs_types"
 export class GunComponent extends Component {}
 GunComponent.schema = {
     barrels: { type: Types.Number, default: 1 },
-
+    barrel_spread: { type: Types.Number, default: 45 },
+    barrel_offset: { type: Types.Number, default: 0.25 },
+    // barrel_mod - maybe alternate how often each barrel fires?
     rate_of_fire: { type: Types.Number, default: 0.1 },
     last_fire: { type: Types.Number, default: -1000 },
     bullet_model: { type: Types.String, default: "sphere" },
+    bullet_mass: { type: Types.Number, default: 0.1 },
     bullet_material: { type: Types.String, default: "default_bullet" },
     bullet_speed: { type: Types.Number, default: 3 },
     bullet_damage: { type: Types.Number, default: 2 },
     bullet_life: {  type: Types.Number, default: 3 },
+    bullet_scale: { type: Vector3Type, default: null },
+    bullet_sound: { type: Types.String, default: "bullet-fire" },
 }
 
 export class BulletComponent extends Component {}

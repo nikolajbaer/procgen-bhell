@@ -24,7 +24,7 @@ export class EnemySystem extends System {
             boxEntity.addComponent( LocRotComponent, { location: new Vector3((0.5 - Math.random()) * 20,5,(0.5 - Math.random()) * 20) } )
             boxEntity.addComponent( EnemyComponent )
             const r = Math.random()
-            if(r > 0.8){
+            if(r > 0.8){ // Chaser
                 boxEntity.addComponent( AIChasePlayerComponent )
                 boxEntity.addComponent( ModelComponent, {
                     material: "enemy:chaser",
@@ -38,14 +38,29 @@ export class EnemySystem extends System {
                 } )
                 boxEntity.addComponent( ProxyMineComponent )
                 boxEntity.addComponent( DamageableComponent, { health: 3 } )
-            }else if(r > 0.7){
-                boxEntity.addComponent( AITargetPlayerComponent, { predict: true } )
+            }else if(r > 0.7){ // Sharp Shooter
+                boxEntity.addComponent( AITargetPlayerComponent, { predict: true, max_distance: 30 } )
                 boxEntity.addComponent( GunComponent, { rate_of_fire: 2, bullet_damage: 2,bullet_material: "bullet-shooter2", bullet_speed: 5 } )
                 boxEntity.addComponent( FireControlComponent )
                 boxEntity.addComponent( ModelComponent, {material: "enemy:shooter2"} )
                 boxEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 1 } )
                 boxEntity.addComponent( DamageableComponent, { health: 3 } )
-            }else{
+            }else if(r > 0.65){ // Big Daddy
+                boxEntity.addComponent( AITargetPlayerComponent, { predict: true, max_distance: 30 } )
+                boxEntity.addComponent( GunComponent, { 
+                    rate_of_fire: 3, 
+                    bullet_damage: 10, 
+                    bullet_material: "default_bullet", 
+                    bullet_speed: 2.5 ,
+                    bullet_scale: new Vector3(0.4,0.4,0.4),
+                    bullet_mass: 15,
+                    bullet_sound: "big-bullet-fire",
+                } )
+                boxEntity.addComponent( FireControlComponent )
+                boxEntity.addComponent( ModelComponent, {material: "enemy:shooter3", scale: new Vector3(1.5,1.5,1.5) } )
+                boxEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 5, bounds: new Vector3(1.5,1.5,1.5) } )
+                boxEntity.addComponent( DamageableComponent, { health: 5 } )
+            }else{ // Grunt
                 boxEntity.addComponent( AITargetPlayerComponent )
                 boxEntity.addComponent( FireControlComponent )
                 boxEntity.addComponent( GunComponent, { rate_of_fire: 1 , bullet_damage: 0.5 } )
