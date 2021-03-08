@@ -3,7 +3,7 @@ import { BodyComponent, LocRotComponent, PhysicsComponent } from './components/p
 import { MeshComponent, ModelComponent, CameraFollowComponent, RayCastTargetComponent } from './components/render'
 import { GunComponent, BulletComponent, FireControlComponent, ProxyMineComponent } from "./components/weapons";
 import { PhysicsSystem, PhysicsMeshUpdateSystem } from './systems/physics'
-import { DamageableComponent, DamageAppliedComponent} from './components/damage'
+import { DamageableComponent, DamageAppliedComponent, HealableComponent, HealthAppliedComponent} from './components/damage'
 import { RenderSystem } from "./systems/render"
 import { PlayerControlsSystem } from "./systems/player_controls"
 import { DamageSystem } from "./systems/damage"
@@ -22,6 +22,7 @@ import { EffectsSystem } from "./systems/effects";
 import { HUDSystem } from './systems/hud';
 import { SoundSystem } from './systems/sound';
 import { SoundEffectComponent } from './components/sound';
+import { HealthComponent } from './components/pickups';
 
 
 export function init_game(playSound){
@@ -48,6 +49,9 @@ export function init_game(playSound){
     world.registerComponent(AIChasePlayerComponent)
     world.registerComponent(ProxyMineComponent)
     world.registerComponent(SoundEffectComponent)
+    world.registerComponent(HealthComponent)
+    world.registerComponent(HealableComponent)
+    world.registerComponent(HealthAppliedComponent)
 
     // Systems
     world.registerSystem(SoundSystem)

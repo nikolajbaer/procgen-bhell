@@ -3,7 +3,8 @@ import { PhysicsComponent, LocRotComponent, BodyComponent } from "../components/
 import { MeshComponent } from "../components/render.js"
 import * as CANNON from "cannon-es"
 import { BulletComponent } from "../components/weapons.js";
-import { DamageableComponent, DamageAppliedComponent } from "../components/damage.js";
+import { DamageableComponent, DamageAppliedComponent, HealableComponent, HealthAppliedComponent } from "../components/damage.js";
+import { HealthComponent } from "../components/pickups.js";
 
 // inspired by https://github.com/macaco-maluco/thermal-runway/blob/master/src/systems/PhysicsSystem.ts
 const PHYSICS_MATERIALS = {
@@ -54,11 +55,17 @@ export class PhysicsSystem extends System {
         body1.ecsy_entity = e // back reference for processing collisions
         if( body.track_collisions){ 
             body1.addEventListener("collide", event => {
+                // TODO Would like a nicer way to do this
                 if(event.body.ecsy_entity.hasComponent(BulletComponent)){
                     this.handleBulletCollision(event.body.ecsy_entity,event.target.ecsy_entity) 
                 }else if(event.target.ecsy_entity.hasComponent(BulletComponent)){
                     this.handleBulletCollision(event.target.ecsy_entity,event.body.ecsy_entity) 
                 }
+                if(event.body.ecsy_entity.hasComponent(HealthComponent)){
+                    this.handleHealthCollision(event.body.ecsy_entity,event.target.ecsy_entity) 
+                }else if(event.target.ecsy_entity.hasComponent(HealthComponent)){
+                    this.handleHealthCollision(event.target.ecsy_entity,event.body.ecsy_entity) 
+                }            
             })
         }
         this.world.addBody(body1) 
@@ -99,7 +106,21 @@ export class PhysicsSystem extends System {
         }
         bullet.remove()
     }
-}
+
+    handleHealthCollision(health_pickup,damageable){
+        if( !damageable.hasComponent(HealableComponent)){
+            return
+        }
+        const health_c = health_pickup.getComponent(HealthComponent)
+        if( damageable.hasComponent(HealthAppliedComponent)){
+            const h_applied = damageable.getMutableComponent(HealthAppliedComponent)
+            h_applied.amount += health_c.amount
+        }else{
+            damageable.addComponent(HealthAppliedComponent, { amount: health_c.amount }) 
+        }
+        health_pickup.remove()
+    }
+ }
 
 PhysicsSystem.queries = {
     uninitialized: { components: [LocRotComponent, BodyComponent, Not(PhysicsComponent)]},

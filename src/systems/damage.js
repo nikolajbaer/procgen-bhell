@@ -1,6 +1,6 @@
 import { System, Not } from "ecsy";
 import { Player } from "tone";
-import { DamageableComponent, DamageAppliedComponent } from "../components/damage";
+import { DamageableComponent, DamageAppliedComponent, HealableComponent, HealthAppliedComponent } from "../components/damage";
 import { ExplosionComponent } from "../components/effects"
 import { PhysicsComponent } from "../components/physics";
 import { PlayerComponent } from "../components/player";
@@ -37,11 +37,30 @@ export class DamageSystem extends System {
             }
             e.removeComponent(DamageAppliedComponent)
         })
+
+        this.queries.health_received.results.forEach( e => {
+            const healing =  e.getComponent(HealthAppliedComponent)
+            const obj = e.getMutableComponent(DamageableComponent)
+
+            if( e.hasComponent(PlayerComponent)){
+                // play healing sound
+                e.addComponent(SoundEffectComponent, {"sound": "healing"})
+            }
+
+            obj.health += healing.amount
+            if( obj.health > obj.max_health ){
+                obj.health = obj.max_health
+            }
+            e.removeComponent(HealthAppliedComponent)
+        })
     }
 }
 
 DamageSystem.queries = {
     damage_taken: {
         components: [DamageableComponent,DamageAppliedComponent,PhysicsComponent]
+    },
+    health_received: {
+        components: [DamageableComponent,HealableComponent,PhysicsComponent,HealthAppliedComponent]
     },
 }

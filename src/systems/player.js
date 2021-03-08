@@ -3,7 +3,7 @@ import { PlayerComponent } from "../components/player";
 import { BodyComponent, LocRotComponent } from "../components/physics"
 import { GunComponent, FireControlComponent } from "../components/weapons"
 import { ModelComponent, CameraFollowComponent } from "../components/render"
-import { DamageableComponent } from "../components/damage"
+import { DamageableComponent, HealableComponent } from "../components/damage"
 import { Vector3 } from "../ecs_types"
 import { gen_gun } from "../procgen/guns"
 
@@ -27,6 +27,7 @@ export class PlayerSystem extends System {
         playerEntity.addComponent( GunComponent, gen_gun() )
         playerEntity.addComponent( FireControlComponent )
         playerEntity.addComponent( PlayerComponent )
+        playerEntity.addComponent( HealableComponent )
         playerEntity.addComponent( DamageableComponent, { health: 25, max_health: 25 } )
         playerEntity.addComponent( CameraFollowComponent, { offset: new Vector3(0,40,-10) })
     }

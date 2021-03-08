@@ -72,7 +72,6 @@ export class AIControlSystem extends System {
                     const predicted_target = this.predict_target(body.position,player_body.position,player_body.velocity,gun.bullet_speed)
                     if(predicted_target != null){
                         aim_at = predicted_target
-                        console.log("Aiming at ",aim_at)
                     }
                 }
 

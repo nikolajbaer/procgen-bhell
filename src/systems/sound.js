@@ -59,6 +59,9 @@ export class SoundSystem extends System {
         this.explode_synth = new Tone.PolySynth(Tone.FMSynth)
         this.explode_synth.connect(explode_dist)
 
+        const chorus = new Tone.Chorus(5, .1, 3.5).toDestination().start();
+        this.good_synth = new Tone.PolySynth(Tone.AMSynth).connect(chorus)
+
         this.create_bass_loop()
 
         Tone.Transport.toggle()
@@ -105,8 +108,8 @@ export class SoundSystem extends System {
                 case "bullet-fire":
                     this.bullet_synth.triggerAttackRelease("A4",.1)
                     break
-                case "player-hit":
-                    this.explode_synth.triggerAttackRelease("B5",.1)
+                case "healing":
+                    this.good_synth.triggerAttackRelease(["G4","C5","E5"],.3)
                     break
             }
             e.removeComponent(SoundEffectComponent)

@@ -10,11 +10,17 @@ DamageableComponent.schema = {
 export class DamageAppliedComponent extends Component {}
 DamageAppliedComponent.schema = {
     amount: { type: Types.Number, default: 1 },
-    location: { type: Vector3Type }, // Not figured this out yet
 }
 
 export class DamageComponent extends Component {}
 DamageComponent.schema = {
     damage: { type: Types.Number, default: 1 },
     destroy: { type: Types.Boolean, default: true },
+}
+
+export class HealableComponent extends TagComponent {}
+
+export class HealthAppliedComponent extends Component {}
+HealthAppliedComponent.schema = {
+    amount: { type: Types.Number, default: 10 },
 }

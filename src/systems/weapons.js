@@ -20,7 +20,7 @@ export class WeaponsSystem extends System {
             velocity: new Vector3(vel_vec.x,vel_vec.y,vel_vec.z),
             bounds: new Vector3(.2,.2,.2),
             body_type: BodyComponent.DYNAMIC,
-            destroy_on_collision: false,
+            destroy_on_collision: true,
             track_collisions: true
         })
         bulletEntity.addComponent( LocRotComponent, {
@@ -29,7 +29,7 @@ export class WeaponsSystem extends System {
         })
         bulletEntity.addComponent( ModelComponent, {
             geometry: "sphere",
-            material: "default_bullet",
+            material: gun.bullet_material,
             scale: new Vector3(.2,.2,.2),
             shadow: false,
         })
