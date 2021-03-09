@@ -65,37 +65,40 @@ export class WeaponsSystem extends System {
         return vecs
     }
 
+    fire(gun,body,time){
+        // bullet heading/speed
+        const vel_vec = body.quaternion.vmult(new CANNON.Vec3(gun.bullet_speed,0,0))
+        // bullet radius 
+        const br = (gun.bullet_scale!=undefined)?gun.bullet_scale.z:.2
+        // go out so we don't collid with ourselves (NOTE ASsumption our radius is .5)
+        const offset = body.quaternion.vmult(new CANNON.Vec3( br*2.1 + .5,0.5,0 ) )
+        // perpendicular offset spacer for each barrel
+        const p_offset = body.quaternion.vmult(new CANNON.Vec3(0,0,br*3)) 
+
+        if(gun.barrels == 1){
+            this.spawn_bullet(gun,vel_vec,body.position.vadd(offset),gun.bullet_life + time)
+        }else{
+            for(var i=0;i<gun.barrels;i++){
+                const b_offset = offset.vadd(p_offset.scale(i-gun.barrels/2))
+                const vb = new THREE.Vector3(vel_vec.x,vel_vec.y,vel_vec.z)
+                if(gun.barrels > 2){ // only spread if we are more than 2 barrels.. otherwise weird
+                    const a = -1 * (gun.barrel_spread * Math.PI/180)/gun.barrels * (i-gun.barrels/2)
+                    vb.applyAxisAngle(UP, a)
+                }
+
+                this.spawn_bullet(gun,vb,body.position.vadd(b_offset),gun.bullet_life + time)
+            }
+        }
+    }
+
     execute(delta,time){
         this.queries.shooters.results.forEach( e => {
             const gun = e.getMutableComponent(GunComponent)  
             const control = e.getComponent(FireControlComponent)
             const body = e.getComponent(PhysicsComponent).body
 
-            const vel_vec = body.quaternion.vmult(new CANNON.Vec3(gun.bullet_speed,0,0))
-
             if( gun.last_fire + gun.rate_of_fire < time && control.fire1 ){                    
-                // bullet radius 
-                const br = (gun.bullet_scale!=undefined)?gun.bullet_scale.z:.2
-
-                // go out so we don't collid with ourselves (NOTE ASsumption our radius is .5)
-                const offset = body.quaternion.vmult(new CANNON.Vec3( br*2.1 + .5,0.5,0 ) )
-                const p_offset = body.quaternion.vmult(new CANNON.Vec3(0,0,br*3)) // perpendicular offset spacer for each barrel
-
-                if(gun.barrels == 1){
-                    this.spawn_bullet(gun,vel_vec,body.position.vadd(offset),gun.bullet_life + time)
-                }else{
-                    for(var i=0;i<gun.barrels;i++){
-                        const b_offset = offset.vadd(p_offset.scale(i-gun.barrels/2))
-                        // todo spread vel_vec
-                
-                        const vb = new THREE.Vector3(vel_vec.x,vel_vec.y,vel_vec.z)
-                        const a = -1 * (gun.barrel_spread * Math.PI/180)/gun.barrels * (i-gun.barrels/2)
-                        vb.applyAxisAngle(UP, a)
-                        console.log("angle",i,a,vb)
-                        this.spawn_bullet(gun,vb,body.position.vadd(b_offset),gun.bullet_life + time)
-                    }
-                }
-
+                this.fire(gun,body,time)
                 gun.last_fire = time
                 e.addComponent( SoundEffectComponent, { sound: gun.bullet_sound })
             }
