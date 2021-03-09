@@ -25,7 +25,7 @@ export class DamageSystem extends System {
             const damage =  e.getComponent(DamageAppliedComponent)
             const obj = e.getMutableComponent(DamageableComponent)
 
-            if( e.hasComponent(PlayerComponent)){
+            if( e.hasComponent(PlayerComponent) && !e.hasComponent(DamageFlashEffectComponent)){
                 // Flash material?
                 e.addComponent(DamageFlashEffectComponent, {
                     start_time: time,

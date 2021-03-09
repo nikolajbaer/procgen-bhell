@@ -5,6 +5,7 @@ export function gen_gun(level) {
 
     return {
         barrels: 1,
+        barrel_spread: 50,
         rate_of_fire: .1,
         bullet_damage: 1,
         bullet_speed: 3,

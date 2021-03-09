@@ -52,7 +52,6 @@ export class EffectsSystem extends System {
             if(v < 1.0){
                 material.color = material._base_color.clone().lerp(FLASH_COLOR,Math.sin(v*flash.freq))
             }else{
-                console.log("removing flash",material.color,material._base_color)
                 material.color = material._base_color
                 e.removeComponent(DamageFlashEffectComponent)
             }
