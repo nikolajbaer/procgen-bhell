@@ -19,12 +19,13 @@ export class EnemySystem extends System {
 
     spawn_wave(){
         const n = this.wave * 2
+
         for(var i=0; i<n; i++){
             const boxEntity = this.world.createEntity()
             boxEntity.addComponent( LocRotComponent, { location: new Vector3((0.5 - Math.random()) * 20,5,(0.5 - Math.random()) * 20) } )
-            boxEntity.addComponent( EnemyComponent )
             const r = Math.random()
-            if(r > 0.8){ // Chaser
+            if(r > 0.8 && this.wave > 1){ // Chaser
+                boxEntity.addComponent( EnemyComponent, { score: 2 })
                 boxEntity.addComponent( AIChasePlayerComponent )
                 boxEntity.addComponent( ModelComponent, {
                     material: "enemy:chaser",
@@ -38,14 +39,15 @@ export class EnemySystem extends System {
                 } )
                 boxEntity.addComponent( ProxyMineComponent )
                 boxEntity.addComponent( DamageableComponent, { health: 3 } )
-            }else if(r > 0.7){ // Sharp Shooter
+            }else if(r > 0.7 && this.wave >= 3){ // Sharp Shooter
                 boxEntity.addComponent( AITargetPlayerComponent, { predict: true, max_distance: 30 } )
                 boxEntity.addComponent( GunComponent, { rate_of_fire: 2, bullet_damage: 2,bullet_material: "bullet-shooter2", bullet_speed: 5 } )
                 boxEntity.addComponent( FireControlComponent )
                 boxEntity.addComponent( ModelComponent, {material: "enemy:shooter2"} )
                 boxEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 1 } )
                 boxEntity.addComponent( DamageableComponent, { health: 3 } )
-            }else if(r > 0.65){ // Big Daddy
+                boxEntity.addComponent( EnemyComponent, { score: 2 })
+            }else if(r > 0.65 && this.wave >= 5){ // Big Daddy
                 boxEntity.addComponent( AITargetPlayerComponent, { predict: true, max_distance: 30 } )
                 boxEntity.addComponent( GunComponent, { 
                     rate_of_fire: 3, 
@@ -53,13 +55,14 @@ export class EnemySystem extends System {
                     bullet_material: "default_bullet", 
                     bullet_speed: 2.5 ,
                     bullet_scale: new Vector3(0.4,0.4,0.4),
-                    bullet_mass: 15,
+                    bullet_mass: 50,
                     bullet_sound: "big-bullet-fire",
                 } )
                 boxEntity.addComponent( FireControlComponent )
                 boxEntity.addComponent( ModelComponent, {material: "enemy:shooter3", scale: new Vector3(1.5,1.5,1.5) } )
                 boxEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 5, bounds: new Vector3(1.5,1.5,1.5) } )
-                boxEntity.addComponent( DamageableComponent, { health: 5 } )
+                boxEntity.addComponent( DamageableComponent, { health: 8 } )
+                boxEntity.addComponent( EnemyComponent, { score: 3 })
             }else{ // Grunt
                 boxEntity.addComponent( AITargetPlayerComponent )
                 boxEntity.addComponent( FireControlComponent )
@@ -67,6 +70,7 @@ export class EnemySystem extends System {
                 boxEntity.addComponent( ModelComponent, {material: "enemy:shooter"} )
                 boxEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 1 } )
                 boxEntity.addComponent( DamageableComponent, { health: 2 } )
+                boxEntity.addComponent( EnemyComponent, { score: 1 })
             }
         }
         return n
@@ -115,7 +119,10 @@ export class EnemySystem extends System {
 
             if(this.queries.player.results.length > 0){
                 this.queries.active.removed.forEach( e => {
-                    player_c.score += 1
+                    const enemy = e.getRemovedComponent(EnemyComponent)
+                    if(enemy){ // not sure why this is sometimes undefined
+                        player_c.score += enemy.score
+                    }
                 })
             }
         }

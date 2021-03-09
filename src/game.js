@@ -58,7 +58,7 @@ export function init_game(playSound){
     world.registerSystem(SoundSystem)
     world.registerSystem(PhysicsMeshUpdateSystem)
     world.registerSystem(PlayerControlsSystem)
-    world.registerSystem(AimSystem)
+    //world.registerSystem(AimSystem)
     world.registerSystem(WeaponsSystem)
     world.registerSystem(BulletSystem)
     world.registerSystem(DamageSystem)

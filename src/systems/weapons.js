@@ -13,11 +13,10 @@ import { SoundEffectComponent } from "../components/sound";
 
 export class WeaponsSystem extends System {
 
-    spawn_bullet(gun,aim,vel_vec,live_to){
+    spawn_bullet(gun,vel_vec,start_pos,live_to){
         const bulletEntity = this.world.createEntity() 
         const bullet_scale = (gun.bullet_scale == null)?new Vector3(.2,.2,.2):gun.bullet_scale
         // scoot bullet out by its z-scale plus a bit
-        const barrel_end = new THREE.Vector3(aim.from.x,aim.from.y,aim.from.z).add( new THREE.Vector3(aim.at.x,aim.at.y,aim.at.z).multiplyScalar(bullet_scale.z*2.1) )
         
         bulletEntity.addComponent(BodyComponent, {
             mass: 3,
@@ -28,7 +27,7 @@ export class WeaponsSystem extends System {
             track_collisions: true
         })
         bulletEntity.addComponent( LocRotComponent, {
-            location: new Vector3(barrel_end.x,barrel_end.y,barrel_end.z),
+            location: new Vector3(start_pos.x,start_pos.y,start_pos.z),
             //rotation: new Vector3(rot.x,rot.y,rot.z),
         })
         bulletEntity.addComponent( ModelComponent, {
@@ -43,21 +42,23 @@ export class WeaponsSystem extends System {
         })
     }
 
-    barrel_aims(vel_vec,barrels){
-        if( barrels == 1 ){ return [vel_vec] }
+    barrel_aims(vel_vec,gun){
+        const base_offset = vel_vec.scale(((gun.bullet_scale)?gun.bullet_scale.z:.2) * 2.1 ) // a bit farther than twice the bullet width
+        const offset = body.quaternion.vmult(base_offset)
 
-        const spread = (barrels == 2)?Math.PI/8:Math.PI/4;
-        if(barrels > 5){ spread *= 1.5 }
+        // we need the offset to be pointing in the same direction as the aim vec
+
+        if( gun.barrels == 1 ){ return [{vel:vel_vec,offset:base_offset}] }
 
         const v = new THREE.Vector3(vel_vec.x,vel_vec.y,vel_vec.z)
         const up = new THREE.Vector3(0,1,0)
-        const a = spread/barrels
+        const a = (gun.barrel_spread * Math.PI/180)/gun.barrels
         const vecs = []
 
-        for(var i = 0; i< barrels; i++){
-            const vx = new THREE.Vector3(v.x,v.y,v.z)
-            vx.applyAxisAngle(up,-spread/2 + i*a)
-            vecs.push(new CANNON.Vec3(vx.x,vx.y,vx.z)) 
+        for(var i = 0; i< gun.barrels; i++){
+            const vb = new THREE.Vector3(v.x,v.y,v.z)
+            vb.applyAxisAngle(up, -((a*gun.barrels)/2) + i*a)
+            vecs.push({vel:new CANNON.Vec3(vb.x,vb.y,vb.z),offset:base_offset }) 
         }
         return vecs
     }
@@ -65,27 +66,18 @@ export class WeaponsSystem extends System {
     execute(delta,time){
         this.queries.shooters.results.forEach( e => {
             const gun = e.getMutableComponent(GunComponent)  
-            const aim = e.getComponent(FireControlComponent)
+            const control = e.getComponent(FireControlComponent)
             const body = e.getComponent(PhysicsComponent).body
 
-            const aim_vec = new CANNON.Vec3(aim.at.x,aim.at.y,aim.at.z)
-            aim_vec.normalize()
-            const vel_vec = aim_vec.scale(gun.bullet_speed)
+            const vel_vec = body.quaternion.vmult(new CANNON.Vec3(gun.bullet_speed,0,0))
 
-            // match speed with body, but this makes it way harder to aim!
-            //const vel_vec = aim_vel.vadd(body.velocity)
+            if( gun.last_fire + gun.rate_of_fire < time && control.fire1 ){                    
+                const offset = body.quaternion.vmult(new CANNON.Vec3( 
+                    ((gun.bullet_scale!=undefined)?gun.bullet_scale.z:.2)*2.1 + .5, // a bit further than the bullet z radius so we don't hit ourself
+                    0.5,0 ))
+                this.spawn_bullet(gun,vel_vec,body.position.vadd(offset),gun.bullet_life + time)
 
-            // Use Three to figure out our quaternion to point at
-            // NOT WORKING
-            const m = new THREE.Matrix4()
-            m.lookAt(vel_vec.x,vel_vec.y,vel_vec.z)
-            const rot = new THREE.Euler()
-            rot.setFromRotationMatrix(m,'XYZ')
 
-            if( gun.last_fire + gun.rate_of_fire < time && aim.fire1 ){
-                this.barrel_aims(vel_vec,gun.barrels).forEach( v => {
-                    this.spawn_bullet(gun,aim,v,gun.bullet_life + time)
-                }) 
                 gun.last_fire = time
                 e.addComponent( SoundEffectComponent, { sound: gun.bullet_sound })
             }
@@ -96,29 +88,6 @@ export class WeaponsSystem extends System {
 WeaponsSystem.queries = {
     shooters: {
         components: [ GunComponent, FireControlComponent, PhysicsComponent ]
-    }
-}
-
-export class AimSystem extends System {
-    execute(delta, time){
-        this.queries.shooters.results.forEach( e => {
-            const body = e.getComponent(PhysicsComponent).body
-            const aim = e.getMutableComponent(FireControlComponent)
-            const vec = body.quaternion.vmult(new CANNON.Vec3(1,0,))
-            vec.normalize()
-            aim.at.set(vec.x,vec.y,vec.z)
-            // TODO fire from tip of barrel in future
-            aim.from.set(
-                body.position.x + aim.at.x,
-                body.position.y + .5 + aim.at.y, // standardize to half height of body?
-                body.position.z + aim.at.z
-            )
-        })
-    }
-}
-AimSystem.queries = {
-    shooters: {
-        components: [ GunComponent, PhysicsComponent ]
     }
 }
 
@@ -147,15 +116,15 @@ export class ProxyMineSystem extends System {
         const player_body = player.getComponent(PhysicsComponent).body
 
         this.queries.active.results.forEach( e => {
-            const kam = e.getMutableComponent(ProxyMineComponent)
+            const proxy = e.getMutableComponent(ProxyMineComponent)
             const body = e.getComponent(PhysicsComponent).body
 
             const distance = player_body.position.distanceTo(body.position)
 
-            if( kam.time != null ){
-                if( kam.time >= time ){
-                    console.log(kam.time,time,"proxy mine exploding!")
-                    const damage = ( Math.pow(1 - (distance/kam.damage_radius),2) ) * kam.damage
+            if( proxy.time != null ){
+                if( proxy.time >= time ){
+                    console.log(proxy.time,time,"proxy mine exploding!")
+                    const damage = ( Math.pow(1 - (distance/proxy.damage_radius),2) ) * proxy.damage
 
                     if(player.hasComponent(DamageAppliedComponent)){
                         const dmg = player.getMutableComponent( DamageAppliedComponent)
@@ -167,15 +136,15 @@ export class ProxyMineSystem extends System {
                     const explosion = this.world.createEntity()
                     explosion.addComponent( ExplosionComponent, { 
                         location: new Vector3(body.position.x,body.position.y,body.position.z),
-                        size: kam.damage_radius * 0.75,
+                        size: proxy.damage_radius * 0.75,
                         duration: 0.7,
                     })
                     explosion.addComponent(SoundEffectComponent, { sound: "self-destruct" })
                     e.remove()
                 }
-            }else if( distance < kam.trigger_distance ){
-                console.log(distance,"is less than trigger",kam.trigger_distance,"starting timer")
-                kam.time = time + kam.delay
+            }else if( distance < proxy.trigger_distance ){
+                console.log(distance,"is less than trigger",proxy.trigger_distance,"starting timer")
+                proxy.time = time + proxy.delay
             }
         }) 
     }

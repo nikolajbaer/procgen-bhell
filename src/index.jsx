@@ -22,20 +22,27 @@ class HealthBar extends React.Component {
     }
 }
 
-
-const HUDView = observer( ({ hudState }) => (
-    <div className="overlay">
+const HUDView = observer( ({ hudState }) => {
+    if(hudState.gameover){
+        return (<div className="menu">
+                    <h1>GAME OVER</h1>
+                    <h3>Score: {hudState.score}</h3>
+                    <p>You were eliminated during Wave {hudState.wave}</p>
+                    <button>PLAY AGAIN</button>
+                </div>)
+    }
+    return (<div className="overlay">
         <div className="gun_stats">
-            <h3>gun stats</h3>
+            <h3>Gun Stats</h3>
             <dl>
-                <dd>Barrels: </dd>
-                    <dt>{hudState.gun.barrels}</dt>
-                <dd>Bullet Damage:</dd>
-                    <dt>{hudState.gun.bullet_damage}</dt>
-                <dd>Bullet Speed:</dd>
-                    <dt>{hudState.gun.bullet_speed}</dt>
-                <dd>Bullet Distance</dd>
-                    <dt>{hudState.gun.bullet_life}</dt>
+                <dt>Barrels: </dt>
+                    <dd>{hudState.gun.barrels}</dd>
+                <dt>Bullet Damage:</dt>
+                    <dd>{hudState.gun.bullet_damage}</dd>
+                <dt>Bullet Speed:</dt>
+                    <dd>{hudState.gun.bullet_speed}</dd>
+                <dt>Bullet Distance</dt>
+                    <dd>{hudState.gun.bullet_life}</dd>
             </dl>
         </div>
         <div className="bottom">
@@ -46,11 +53,12 @@ const HUDView = observer( ({ hudState }) => (
             </div>
             <HealthBar health={hudState.health} max_health={hudState.max_health} />
             <div className="hud">
-                WASD to move, LMB/RMB to fire <br/>
+                WASD to move, LMB to fire <br/>
             </div>
         </div>
-    </div>    
-))
+    </div>)
+})
+
 
 class GameUI extends React.Component {
     constructor(props) {

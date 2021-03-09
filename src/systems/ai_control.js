@@ -60,7 +60,7 @@ export class AIControlSystem extends System {
         this.queries.shooters.results.forEach( e => {
             const body = e.getComponent(PhysicsComponent).body
             const ai_target = e.getComponent(AITargetPlayerComponent)
-            const aim = e.getMutableComponent(FireControlComponent)
+            const control = e.getMutableComponent(FireControlComponent)
             const gun = e.getComponent(GunComponent)
 
             // check lock distance 
@@ -76,14 +76,10 @@ export class AIControlSystem extends System {
                 }
 
                 this.look_at(body,aim_at)
-
-                aim.at = new Vector3(aim_at.x,aim_at.y,aim_at.z)
-                aim.from = new Vector3(body.position.x,body.position.y,body.position.z)
-
-                aim.fire1 = true
+                control.fire1 = true
                
             }else{
-                aim.fire1 = false
+                control.fire1 = false
             }
         })
 

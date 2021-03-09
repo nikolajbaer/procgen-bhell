@@ -12,6 +12,7 @@ const RESPAWN_DELAY = 3
 export class PlayerSystem extends System {
     init(){
         this.respawn_delay = 1  // non null for immediate start
+        this.lives = 1
     }
 
     spawn_player(){
@@ -34,11 +35,12 @@ export class PlayerSystem extends System {
 
     execute(delta,time){
         if(this.queries.active.results.length == 0){
-            if(this.respawn_delay == null){
+            if(this.respawn_delay == null && this.lives > 0){
                 this.respawn_delay = time + RESPAWN_DELAY
-            }else if(this.respawn_delay <= time){
+            }else if(this.respawn_delay <= time && this.lives > 0){
                 this.spawn_player()
                 this.respawn_delay = null
+                this.lives -= 1
             }
         }
     }

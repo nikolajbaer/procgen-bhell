@@ -109,7 +109,7 @@ export class SoundSystem extends System {
                     this.bullet_synth.triggerAttackRelease("A4",.1)
                     break
                 case "big-bullet-fire":
-                    this.bullet_synth.triggerAttackRelease("A3",.25)
+                    this.bullet_synth.triggerAttackRelease("F3",.4)
                     break
                 case "healing":
                     this.good_synth.triggerAttackRelease(["G4","C5","E5"],.3)

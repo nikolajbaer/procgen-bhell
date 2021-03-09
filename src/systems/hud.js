@@ -15,6 +15,7 @@ export class HUDState {
     enemies_left = 0
     deaths = 0
     lives = 1
+    gameover = false
     gun = {} 
 
     constructor(){
@@ -37,6 +38,8 @@ export class HUDSystem extends System {
                 // they died, so we do one last update
                 runInAction( () => {
                     this.state.health = 0
+                    this.state.gameover = true
+                    console.log("game is over")
                 })
                 return
             }
