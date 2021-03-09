@@ -22,13 +22,13 @@ class HealthBar extends React.Component {
     }
 }
 
-const HUDView = observer( ({ hudState }) => {
+const HUDView = observer( ({ hudState,clickHandler }) => {
     if(hudState.gameover){
         return (<div className="menu">
                     <h1>GAME OVER</h1>
                     <h3>Score: {hudState.score}</h3>
                     <p>You were eliminated during Wave {hudState.wave}</p>
-                    <button>PLAY AGAIN</button>
+                    <button onClick={clickHandler.bind(this)}>PLAY AGAIN</button>
                 </div>)
     }
     return (<div className="overlay">
@@ -83,7 +83,7 @@ class GameUI extends React.Component {
 
         let view;
         if( this.state.hudState != null) {
-            view = <HUDView hudState={this.state.hudState} />
+            view = <HUDView hudState={this.state.hudState} clickHandler={() => this.start_game()} />
         }else{
             view = <div className="menu">
                 <p>a procedurally generated</p>
