@@ -4,6 +4,7 @@ import { DamageableComponent } from "../components/damage"
 import { EnemyComponent } from "../components/enemy"
 import { PlayerComponent } from "../components/player"
 import { GunComponent } from "../components/weapons"
+import { InventoryComponent } from "./inventory"
 
 
 export class HUDState {
@@ -17,6 +18,7 @@ export class HUDState {
     lives = 1
     gameover = false
     gun = {} 
+    inventory = []
 
     constructor(){
         makeAutoObservable(this)
@@ -59,9 +61,18 @@ export class HUDSystem extends System {
             this.state.wave = player_c.wave
             this.state.total_enemies = player_c.current_wave_enemies
             this.state.enemies_left = this.queries.enemies.results.length
+
+            // current gun
             for(var key in gun.constructor.schema){
                 this.state.gun[key] = gun[key]
             }
+
+            // all guns in inventory
+            this.state.inventory = []
+            this.queries.gun_inventory.results.forEach( e => {
+                const inv_gun = e.getComponent(GunComponent)
+                this.state.inventory.push(inv_gun)
+            })
        })
 
     }
@@ -74,6 +85,9 @@ HUDSystem.queries = {
             removed: true
         }
 
+    },
+    gun_inventory: {
+        components: [InventoryComponent,GunComponent]
     },
     enemies: {
         components: [EnemyComponent]

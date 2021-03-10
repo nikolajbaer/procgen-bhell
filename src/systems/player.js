@@ -6,6 +6,7 @@ import { ModelComponent, CameraFollowComponent } from "../components/render"
 import { DamageableComponent, HealableComponent } from "../components/damage"
 import { Vector3 } from "../ecs_types"
 import { gen_gun } from "../procgen/guns"
+import { InventoryComponent } from "./inventory";
 
 const RESPAWN_DELAY = 3
 
@@ -23,14 +24,23 @@ export class PlayerSystem extends System {
             body_type: BodyComponent.DYNAMIC,
             material: "player" 
         })
+
         playerEntity.addComponent( LocRotComponent, { location: new Vector3(0,.5,0) } )
         playerEntity.addComponent( ModelComponent, { geometry: "box", material: "player" } )
-        playerEntity.addComponent( GunComponent, gen_gun(1,true) )
         playerEntity.addComponent( FireControlComponent )
         playerEntity.addComponent( PlayerComponent )
         playerEntity.addComponent( HealableComponent )
         playerEntity.addComponent( DamageableComponent, { health: 25, max_health: 25 } )
         playerEntity.addComponent( CameraFollowComponent, { offset: new Vector3(0,40,-10) })
+
+        // The starting gun
+        const base_gun = gen_gun(1,true)
+        playerEntity.addComponent( GunComponent, base_gun )
+
+        // put our starting gun in inventory
+        const gunEntity = this.world.createEntity()
+        gunEntity.addComponent(GunComponent, base_gun )
+        gunEntity.addComponent(InventoryComponent)
     }
 
     execute(delta,time){

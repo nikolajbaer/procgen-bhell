@@ -31,6 +31,7 @@ const HUDView = observer( ({ hudState,clickHandler }) => {
                     <button onClick={clickHandler.bind(this)}>PLAY AGAIN</button>
                 </div>)
     }
+
     return (<div className="overlay">
         <div className="gun_stats">
             <h3>Current Gun: {hudState.gun.name}</h3>
@@ -45,6 +46,10 @@ const HUDView = observer( ({ hudState,clickHandler }) => {
                 <dt>Bullet Distance</dt>
                     <dd>{hudState.gun.bullet_life}</dd>
             </dl>
+            <h4>Gun Inventory</h4>
+            <ul>
+                {hudState.inventory.map((gun) => <li key={gun.name}>{gun.name}</li>)} 
+            </ul>
         </div>
         <div className="bottom">
             <div className="hud">
