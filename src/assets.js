@@ -13,7 +13,7 @@ export const MATERIALS = {
     "default": new THREE.MeshLambertMaterial( { color: 0x9999FF } ),
     "default_bullet": new THREE.MeshLambertMaterial( { color: 0x111111 } ),
     "bullet-shooter2": new THREE.MeshLambertMaterial( { color: 0xaaaa00 } ),
-    "gun": new THREE.MeshLambertMaterial( { color: 0x333333 } ),
+    "gun-pickup": new THREE.MeshLambertMaterial( { color: 0x333333 } ),
     "explosion": new THREE.MeshBasicMaterial( { color: 0xF59B42 }),
     "enemy:shooter": new THREE.MeshLambertMaterial( { color: 0x9999FF } ),
     "enemy:shooter2": new THREE.MeshLambertMaterial( { color: 0x99FF99 } ),

@@ -4,6 +4,7 @@ import { Vector3Type } from "../ecs_types"
 
 export class GunComponent extends Component {}
 GunComponent.schema = {
+    name: { type: Types.String, default: "X-1" },
     barrels: { type: Types.Number, default: 1 },
     barrel_spread: { type: Types.Number, default: 0 },
     barrel_offset: { type: Types.Number, default: 0.25 },

@@ -33,7 +33,8 @@ const HUDView = observer( ({ hudState,clickHandler }) => {
     }
     return (<div className="overlay">
         <div className="gun_stats">
-            <h3>Gun Stats</h3>
+            <h3>Current Gun: {hudState.gun.name}</h3>
+            <h4>Stats</h4>
             <dl>
                 <dt>Barrels: </dt>
                     <dd>{hudState.gun.barrels}</dd>

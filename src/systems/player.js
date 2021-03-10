@@ -25,7 +25,7 @@ export class PlayerSystem extends System {
         })
         playerEntity.addComponent( LocRotComponent, { location: new Vector3(0,.5,0) } )
         playerEntity.addComponent( ModelComponent, { geometry: "box", material: "player" } )
-        playerEntity.addComponent( GunComponent, gen_gun() )
+        playerEntity.addComponent( GunComponent, gen_gun(1,true) )
         playerEntity.addComponent( FireControlComponent )
         playerEntity.addComponent( PlayerComponent )
         playerEntity.addComponent( HealableComponent )

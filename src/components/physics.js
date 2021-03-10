@@ -21,6 +21,7 @@ BodyComponent.schema = {
   velocity: { type: Vector3Type },
   destroy_on_collision: { type: Types.Boolean, default: false },
   track_collisions: { type: Types.Boolean, default: false },
+  fixed_rotation: { type: Types.Boolean, default: false },
 }
 // Bounds Types
 BodyComponent.SPHERE_TYPE = 0

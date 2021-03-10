@@ -22,9 +22,10 @@ import { EffectsSystem } from "./systems/effects";
 import { HUDSystem } from './systems/hud';
 import { SoundSystem } from './systems/sound';
 import { SoundEffectComponent } from './components/sound';
-import { HealthComponent } from './components/pickups';
+import { GunPickupComponent, HealthComponent } from './components/pickups';
 import { WaveMemberComponent } from './components/wave';
 import { WaveSystem } from './systems/wave';
+import { InventoryComponent } from './systems/inventory';
 
 
 export function init_game(playSound){
@@ -56,6 +57,8 @@ export function init_game(playSound){
     world.registerComponent(HealthAppliedComponent)
     world.registerComponent(DamageFlashEffectComponent)
     world.registerComponent(WaveMemberComponent)
+    world.registerComponent(GunPickupComponent)
+    world.registerComponent(InventoryComponent)
 
     // Systems
     world.registerSystem(SoundSystem)

@@ -1,10 +1,13 @@
 import { System, Not } from "ecsy";
 import { PhysicsComponent, LocRotComponent, BodyComponent } from "../components/physics.js"
-import { MeshComponent } from "../components/render.js"
+import { MeshComponent, ModelComponent } from "../components/render.js"
 import * as CANNON from "cannon-es"
-import { BulletComponent } from "../components/weapons.js";
+import { BulletComponent, GunComponent } from "../components/weapons.js";
 import { DamageableComponent, DamageAppliedComponent, HealableComponent, HealthAppliedComponent } from "../components/damage.js";
-import { HealthComponent } from "../components/pickups.js";
+import { GunPickupComponent, HealthComponent } from "../components/pickups.js";
+import { InventoryComponent } from "./inventory.js";
+import { Player } from "tone";
+import { PlayerComponent } from "../components/player.js";
 
 // inspired by https://github.com/macaco-maluco/thermal-runway/blob/master/src/systems/PhysicsSystem.ts
 const PHYSICS_MATERIALS = {
@@ -16,10 +19,10 @@ const PHYSICS_MATERIALS = {
 
 export class PhysicsSystem extends System {
     init() {
-        this.world = new CANNON.World()
-        this.world.gravity.set(0, -1, 0)
+        this.physics_world = new CANNON.World()
+        this.physics_world.gravity.set(0, -1, 0)
 
-        window.world = this.world
+        window.physics_world = this.phsyics_world
     }
 
     create_physics_body(e){
@@ -49,7 +52,11 @@ export class PhysicsSystem extends System {
             quaternion: quat,
             type: body.body_type,
             velocity: new CANNON.Vec3(body.velocity.x,body.velocity.y,body.velocity.z),
+            fixedRotation: body.fixed_rotation
         })
+        if( body.fixed_rotation ){
+            body1.updateMassProperties()
+        }
         body1.linearDamping = 0.01
         body1.addShape(shape)
         body1.ecsy_entity = e // back reference for processing collisions
@@ -65,17 +72,22 @@ export class PhysicsSystem extends System {
                     this.handleHealthCollision(event.body.ecsy_entity,event.target.ecsy_entity) 
                 }else if(event.target.ecsy_entity.hasComponent(HealthComponent)){
                     this.handleHealthCollision(event.target.ecsy_entity,event.body.ecsy_entity) 
-                }            
+                }  
+                if(event.body.ecsy_entity.hasComponent(GunPickupComponent)){
+                    this.handleGunPickupCollision(event.body.ecsy_entity,event.target.ecsy_entity) 
+                }else if(event.target.ecsy_entity.hasComponent(GunPickupComponent)){
+                    this.handleGunPickupCollision(event.target.ecsy_entity,event.body.ecsy_entity) 
+                }  
             })
         }
-        this.world.addBody(body1) 
+        this.physics_world.addBody(body1) 
         
         e.addComponent(PhysicsComponent, { body: body1 })
 
     }
 
     execute(delta){
-        if(!this.world) return
+        if(!this.physics_world) return
 
         // first intialize any uninitialized bodies
         this.queries.uninitialized.results.forEach( e => {
@@ -86,11 +98,11 @@ export class PhysicsSystem extends System {
         this.queries.remove.results.forEach( e => {
             const body = e.getComponent(PhysicsComponent).body
             body.ecsy_entity = null // clear back reference
-            this.world.removeBody(body)
+            this.physics_world.removeBody(body)
             e.removeComponent(PhysicsComponent)
         })
 
-        this.world.step(1/60,delta)
+        this.physics_world.step(1/60,delta)
     }
 
     handleBulletCollision(bullet,damageable){
@@ -119,6 +131,21 @@ export class PhysicsSystem extends System {
             damageable.addComponent(HealthAppliedComponent, { amount: health_c.amount }) 
         }
         health_pickup.remove()
+    }
+    
+    handleGunPickupCollision(gun_pickup,player){
+        if( !player.hasComponent(GunComponent) || !player.hasComponent(PlayerComponent)){
+            return
+        }
+        const new_gun = gun_pickup.getComponent(GunComponent)
+        const pgun = player.getMutableComponent(GunComponent)
+        pgun.copy(new_gun)
+
+        // Clear out model and physics and render of gun pickup
+        const inventory_gun = this.world.createEntity()
+        inventory_gun.addComponent( GunComponent, new_gun )
+        inventory_gun.addComponent(InventoryComponent) 
+        gun_pickup.remove()
     }
  }
 
