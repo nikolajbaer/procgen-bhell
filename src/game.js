@@ -25,7 +25,8 @@ import { SoundEffectComponent } from './components/sound';
 import { GunPickupComponent, HealthComponent } from './components/pickups';
 import { WaveMemberComponent } from './components/wave';
 import { WaveSystem } from './systems/wave';
-import { InventoryComponent } from './systems/inventory';
+import { InventoryComponent } from './components/inventory';
+import { InventorySystem } from './systems/inventory';
 
 
 export function init_game(playSound){
@@ -76,6 +77,7 @@ export function init_game(playSound){
     world.registerSystem(HUDSystem)
     world.registerSystem(ProxyMineSystem)
     world.registerSystem(WaveSystem)
+    world.registerSystem(InventorySystem)
 
     // These go last as they manage mesh and body resource removal
     world.registerSystem(PhysicsSystem)

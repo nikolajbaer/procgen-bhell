@@ -4,7 +4,7 @@ import { DamageableComponent } from "../components/damage"
 import { EnemyComponent } from "../components/enemy"
 import { PlayerComponent } from "../components/player"
 import { GunComponent } from "../components/weapons"
-import { InventoryComponent } from "./inventory"
+import { InventoryComponent } from "../components/inventory"
 
 
 export class HUDState {

@@ -6,7 +6,7 @@ import { ModelComponent, CameraFollowComponent } from "../components/render"
 import { DamageableComponent, HealableComponent } from "../components/damage"
 import { Vector3 } from "../ecs_types"
 import { gen_gun } from "../procgen/guns"
-import { InventoryComponent } from "./inventory";
+import { InventoryComponent } from "../components/inventory";
 
 const RESPAWN_DELAY = 3
 

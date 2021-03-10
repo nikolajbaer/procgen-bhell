@@ -80,7 +80,7 @@ export class PlayerControlsSystem extends System {
             const control = e.getMutableComponent(FireControlComponent)
             control.fire1 = this.actions["Mouse0"]
             control.fire2 = this.actions["Mouse2"]
-
+            console.log(control.fire1,control.fire2)
         })
 
     }

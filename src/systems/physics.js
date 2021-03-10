@@ -5,7 +5,7 @@ import * as CANNON from "cannon-es"
 import { BulletComponent, GunComponent } from "../components/weapons.js";
 import { DamageableComponent, DamageAppliedComponent, HealableComponent, HealthAppliedComponent } from "../components/damage.js";
 import { GunPickupComponent, HealthComponent } from "../components/pickups.js";
-import { InventoryComponent } from "./inventory.js";
+import { InventoryComponent } from "../components/inventory.js";
 import { Player } from "tone";
 import { PlayerComponent } from "../components/player.js";
 
