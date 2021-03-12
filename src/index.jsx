@@ -5,17 +5,26 @@ import React from "react";
 import ReactDOM, { render } from "react-dom";
 import { HUDSystem } from "./systems/hud";
 import { observer } from "mobx-react-lite"
+import { gun_output_score } from "./procgen/guns"
 
 class HealthBar extends React.Component {
-    constructor(props){
-        super(props);
-    }
-
     render(){
         return (
             <div className="healthbar">
                 <div style={{width:((this.props.health/this.props.max_health)*100) + "%"}}>
                     <span>{Math.round(this.props.health)}/{this.props.max_health}</span>
+                </div>
+            </div>
+        )
+    }
+}
+class GunStat extends React.Component {
+    render(){
+        return(
+            <div className="gunStat">
+                {this.props.name}
+                <div style={{width:((this.props.value/this.props.max_value)*100) + "%"}}>
+                    <span>{this.props.value.toFixed(1)}</span>
                 </div>
             </div>
         )
@@ -34,18 +43,12 @@ const HUDView = observer( ({ hudState,clickHandler }) => {
 
     return (<div className="overlay">
         <div className="gun_stats">
-            <h3>Current Gun: {hudState.gun.name}</h3>
-            <h4>Stats</h4>
-            <dl>
-                <dt>Barrels: </dt>
-                    <dd>{hudState.gun.barrels}</dd>
-                <dt>Bullet Damage:</dt>
-                    <dd>{hudState.gun.bullet_damage}</dd>
-                <dt>Bullet Speed:</dt>
-                    <dd>{hudState.gun.bullet_speed}</dd>
-                <dt>Bullet Distance</dt>
-                    <dd>{hudState.gun.bullet_life}</dd>
-            </dl>
+            <h2>Current Gun: {hudState.gun.name}</h2>
+            <div>Score {gun_output_score(hudState.gun)}</div>
+            <GunStat name="Barrels" value={hudState.gun.barrels} max_value={5}></GunStat>
+            <GunStat name="Bullet Damage" value={hudState.gun.bullet_damage} max_value={5}></GunStat>
+            <GunStat name="Bullet Speed" value={hudState.gun.bullet_speed} max_value={5}></GunStat>
+            <GunStat name="Bullet Distance" value={hudState.gun.bullet_life} max_value={3}></GunStat>
             <h4>Gun Inventory</h4>
             <ul>
                 {hudState.inventory.map((gun) => <li key={gun.name}>{gun.name}</li>)} 

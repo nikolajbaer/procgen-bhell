@@ -18,5 +18,6 @@ export const MATERIALS = {
     "enemy:shooter": new THREE.MeshLambertMaterial( { color: 0x9999FF } ),
     "enemy:shooter2": new THREE.MeshLambertMaterial( { color: 0x99FF99 } ),
     "enemy:shooter3": new THREE.MeshLambertMaterial( { color: 0x60a395 } ),
+    "enemy:shooter4": new THREE.MeshLambertMaterial( { color: 0xaa00aa } ),
     "enemy:chaser": new THREE.MeshLambertMaterial( { color: 0xFF9999 } ),
 }

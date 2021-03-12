@@ -14,28 +14,34 @@ export class PlayerControlsSystem extends System {
         let mouse = new Vector2(0,0)
         let actions = {}
 
+        // KeyboarD Controls
         document.addEventListener("keydown", event => { actions[event.code] = true });
         window.addEventListener("keyup", event => { actions[event.code] = false });
 
+        // Mouse / Touch aim controls
         const render = document.getElementById("render")
-        render.addEventListener("pointermove", event => {
+        render.addEventListener("mousemove", event => {
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1; 
             mouse.y = -( event.clientY / window.innerHeight) * 2 + 1
         })
-        render.addEventListener("pointerdown", event => { 
+        render.addEventListener("mousedown", event => { 
             actions["Mouse"+event.button] = true; 
             event.preventDefault(); 
             return false; 
         })
-        window.addEventListener("pointerup", event => { 
+        window.addEventListener("mouseup", event => { 
             actions["Mouse"+event.button] = false; 
             event.preventDefault(); 
             return false; 
         })
+        // don't show the context menu (use RMB for game controls)
         render.addEventListener("contextmenu", event => {
             event.preventDefault()
             return false
         })
+
+        // TODO Mobile on-screen controls
+        // can we detect if we have a mouse?
 
         this.actions = actions
         this.mouse = mouse
@@ -80,7 +86,6 @@ export class PlayerControlsSystem extends System {
             const control = e.getMutableComponent(FireControlComponent)
             control.fire1 = this.actions["Mouse0"]
             control.fire2 = this.actions["Mouse2"]
-            console.log(control.fire1,control.fire2)
         })
 
     }

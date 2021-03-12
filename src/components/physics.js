@@ -36,3 +36,8 @@ export class PhysicsComponent extends SystemStateComponent {}
 PhysicsComponent.schema = {
   body: { type: Types.Ref }
 }
+
+export class RotatorComponent extends Component {}
+RotatorComponent.schema = {
+  a_per_s: { type: Types.Number, default: Math.PI/4 }
+}

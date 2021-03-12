@@ -35,7 +35,7 @@ export class WeaponsSystem extends System {
         bulletEntity.addComponent( ModelComponent, {
             geometry: "sphere",
             material: gun.bullet_material,
-            scale: bullet_scale,
+            scale: bullet_scale, // Maybe scale bullet by damage amount
             shadow: false,
         })
         bulletEntity.addComponent( BulletComponent, {

@@ -1,5 +1,5 @@
 import { System, Not } from "ecsy";
-import { PhysicsComponent, LocRotComponent, BodyComponent } from "../components/physics.js"
+import { PhysicsComponent, LocRotComponent, BodyComponent, RotatorComponent } from "../components/physics.js"
 import { MeshComponent, ModelComponent } from "../components/render.js"
 import * as CANNON from "cannon-es"
 import { BulletComponent, GunComponent } from "../components/weapons.js";
@@ -86,7 +86,7 @@ export class PhysicsSystem extends System {
 
     }
 
-    execute(delta){
+    execute(delta,time){
         if(!this.physics_world) return
 
         // first intialize any uninitialized bodies
@@ -100,6 +100,12 @@ export class PhysicsSystem extends System {
             body.ecsy_entity = null // clear back reference
             this.physics_world.removeBody(body)
             e.removeComponent(PhysicsComponent)
+        })
+
+        this.queries.rotators.added.forEach( e => {
+            const body = e.getComponent(PhysicsComponent).body
+            const rot = e.getComponent(RotatorComponent)
+            body.angularVelocity.set(0,rot.a_per_s,0)
         })
 
         this.physics_world.step(1/60,delta)
@@ -159,6 +165,12 @@ PhysicsSystem.queries = {
     },
     remove: {
         components: [PhysicsComponent,Not(BodyComponent)]
+    },
+    rotators: {
+        components: [RotatorComponent,PhysicsComponent],
+        listen: {
+            added: true
+        }
     }
 };
 

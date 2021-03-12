@@ -1,12 +1,12 @@
 import { System, Not } from "ecsy";
-import { LocRotComponent, BodyComponent, PhysicsComponent } from "../components/physics"
+import { LocRotComponent, BodyComponent, PhysicsComponent, RotatorComponent } from "../components/physics"
 import { ModelComponent } from "../components/render"
 import { Vector3 } from "../ecs_types"
 import { PlayerComponent } from "../components/player";
 import { GunPickupComponent, HealthComponent } from "../components/pickups";
 import { WaveMemberComponent } from "../components/wave";
 import { GunComponent } from "../components/weapons";
-import { gen_gun } from "../procgen/guns"
+import { gen_gun, gun_output_score } from "../procgen/guns"
 
 const WAVE_DELAY = 3 
 
@@ -49,8 +49,9 @@ export class WaveSystem extends System {
             } )
             e.addComponent( HealthComponent )
         }else if( r > 0.0 ){
+            const gun = gen_gun(1,false) 
             e.addComponent( ModelComponent, {
-                material: "gun-pickup",
+                material: gun.bullet_material,
                 geometry: "box",
                 scale: new Vector3(1.5,0.5,0.5),
             } )
@@ -62,7 +63,8 @@ export class WaveSystem extends System {
                 fixed_rotation: true
             } )
             e.addComponent( GunPickupComponent )
-            e.addComponent( GunComponent, gen_gun(1,false) )
+            e.addComponent( GunComponent, gun )
+            e.addComponent( RotatorComponent ) // slow spin
         }
     }
 

@@ -1,5 +1,5 @@
 import { World } from 'ecsy';
-import { BodyComponent, LocRotComponent, PhysicsComponent } from './components/physics'
+import { BodyComponent, LocRotComponent, PhysicsComponent, RotatorComponent } from './components/physics'
 import { MeshComponent, ModelComponent, CameraFollowComponent, RayCastTargetComponent } from './components/render'
 import { GunComponent, BulletComponent, FireControlComponent, ProxyMineComponent } from "./components/weapons";
 import { PhysicsSystem, PhysicsMeshUpdateSystem } from './systems/physics'
@@ -60,6 +60,7 @@ export function init_game(playSound){
     world.registerComponent(WaveMemberComponent)
     world.registerComponent(GunPickupComponent)
     world.registerComponent(InventoryComponent)
+    world.registerComponent(RotatorComponent)
 
     // Systems
     world.registerSystem(SoundSystem)

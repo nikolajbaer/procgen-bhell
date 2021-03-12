@@ -12,7 +12,7 @@ import { WaveMemberComponent } from "../components/wave";
 export class EnemySystem extends System {
     spawn_enemy(enemyEntity,level){
         const r = Math.random()
-        // TODO influence enemy selection based on wave
+        // TODO Do some procgen of the enemies
         console.log("spawning entity with level", level)
         enemyEntity.addComponent( LocRotComponent, { location: new Vector3((0.5 - Math.random()) * 20,5,(0.5 - Math.random()) * 20) } )
         if(r > 0.8 && level > 1){ // Chaser
@@ -53,6 +53,22 @@ export class EnemySystem extends System {
             enemyEntity.addComponent( ModelComponent, {material: "enemy:shooter3", scale: new Vector3(1.5,1.5,1.5) } )
             enemyEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 5, bounds: new Vector3(1.5,1.5,1.5) } )
             enemyEntity.addComponent( DamageableComponent, { health: 8 } )
+            enemyEntity.addComponent( EnemyComponent, { score: 3 })
+        }else if(r > 0.55 && level >= 4){ // Bullet hail
+            enemyEntity.addComponent( AITargetPlayerComponent, { max_distance: 20 } )
+            enemyEntity.addComponent( GunComponent, { 
+                barrels: 3,
+                barrel_spread: 30,
+                rate_of_fire: 0.25, 
+                bullet_damage: .5, 
+                bullet_material: "default_bullet", 
+                bullet_speed: 2,
+                bullet_life: 1.5,
+            } )
+            enemyEntity.addComponent( FireControlComponent )
+            enemyEntity.addComponent( ModelComponent, {material: "enemy:shooter4" } )
+            enemyEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 1 } )
+            enemyEntity.addComponent( DamageableComponent, { health: 3 } )
             enemyEntity.addComponent( EnemyComponent, { score: 3 })
         }else{ // Grunt
             enemyEntity.addComponent( AITargetPlayerComponent )
