@@ -22,9 +22,8 @@ class GunStat extends React.Component {
     render(){
         return(
             <div className="gunStat">
-                {this.props.name}
-                <div style={{width:((this.props.value/this.props.max_value)*100) + "%"}}>
-                    <span>{this.props.value.toFixed(1)}</span>
+                <div>{this.props.name}</div>
+                <div className="bar" style={{width:((this.props.value/this.props.max_value)*100) + "%",backgroundColor:this.props.color}}>
                 </div>
             </div>
         )
@@ -45,10 +44,10 @@ const HUDView = observer( ({ hudState,clickHandler }) => {
         <div className="gun_stats">
             <h2>Current Gun: {hudState.gun.name}</h2>
             <div>Score {gun_output_score(hudState.gun)}</div>
-            <GunStat name="Barrels" value={hudState.gun.barrels} max_value={5}></GunStat>
-            <GunStat name="Bullet Damage" value={hudState.gun.bullet_damage} max_value={5}></GunStat>
-            <GunStat name="Bullet Speed" value={hudState.gun.bullet_speed} max_value={5}></GunStat>
-            <GunStat name="Bullet Distance" value={hudState.gun.bullet_life} max_value={3}></GunStat>
+            <GunStat name="Barrels" value={hudState.gun.barrels} max_value={5} color={hudState.gun.bullet_color}></GunStat>
+            <GunStat name="Bullet Damage" value={hudState.gun.bullet_damage} max_value={5} color={hudState.gun.bullet_color}></GunStat>
+            <GunStat name="Bullet Speed" value={hudState.gun.bullet_speed} max_value={5} color={hudState.gun.bullet_color}></GunStat>
+            <GunStat name="Bullet Distance" value={hudState.gun.bullet_life} max_value={3} color={hudState.gun.bullet_color}></GunStat>
             <h4>Gun Inventory</h4>
             <ul>
                 {hudState.inventory.map((gun) => <li key={gun.name}>{gun.name}</li>)} 

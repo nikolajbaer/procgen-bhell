@@ -62,6 +62,7 @@ export function gen_gun(level,default_gun=true,create_material=true) {
         const bullet_material = "bullet-"+generated.name
         MATERIALS[bullet_material] = new THREE.MeshLambertMaterial( { color: color } ), 
         generated.bullet_material = bullet_material
+        generated.bullet_color = color
 
         // we scale damage and rate of fire by the difference from the level
         const x = level / init_level
