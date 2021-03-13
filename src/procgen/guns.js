@@ -25,6 +25,7 @@ export function gen_gun(level,default_gun=true,create_material=true) {
             bullet_damage: 1,
             bullet_speed: 3,
             bullet_life: 2,
+            bullet_color: "white"
         }
     }else{
         const r = Math.random()

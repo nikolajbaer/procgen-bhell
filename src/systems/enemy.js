@@ -46,7 +46,7 @@ export class EnemySystem extends System {
                 bullet_material: "default_bullet", 
                 bullet_speed: 2.5 ,
                 bullet_scale: new Vector3(0.4,0.4,0.4),
-                bullet_mass: 50,
+                bullet_mass: 500,
                 bullet_sound: "big-bullet-fire",
             } )
             enemyEntity.addComponent( FireControlComponent )
@@ -58,18 +58,34 @@ export class EnemySystem extends System {
             enemyEntity.addComponent( AITargetPlayerComponent, { max_distance: 20 } )
             enemyEntity.addComponent( GunComponent, { 
                 barrels: 3,
-                barrel_spread: 30,
                 rate_of_fire: 0.25, 
                 bullet_damage: .5, 
-                bullet_material: "default_bullet", 
-                bullet_speed: 2,
-                bullet_life: 1.5,
+                bullet_speed: 1.5,
+                bullet_life: 1,
             } )
             enemyEntity.addComponent( FireControlComponent )
             enemyEntity.addComponent( ModelComponent, {material: "enemy:shooter4" } )
             enemyEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 1 } )
+            enemyEntity.addComponent( DamageableComponent, { health: 1 } )
+            enemyEntity.addComponent( EnemyComponent, { score: 3 })
+        }else if(r > 0.45 && level >= 6){ // Hunter
+            enemyEntity.addComponent( AIChasePlayerComponent, { speed: .5 } )
+            enemyEntity.addComponent( AITargetPlayerComponent, { max_distance: 10 } )
+            enemyEntity.addComponent( GunComponent, { 
+                barrels: 3,
+                barrel_spread: 30,
+                rate_of_fire: 0.65, 
+                bullet_damage: .5, 
+                bullet_material: "default_bullet", 
+                bullet_speed: 2,
+                bullet_life: 1,
+            } )
+            enemyEntity.addComponent( FireControlComponent )
+            enemyEntity.addComponent( ModelComponent, { material: "enemy:shooter5" } )
+            enemyEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 1, material: "mover" } )
             enemyEntity.addComponent( DamageableComponent, { health: 3 } )
             enemyEntity.addComponent( EnemyComponent, { score: 3 })
+
         }else{ // Grunt
             enemyEntity.addComponent( AITargetPlayerComponent )
             enemyEntity.addComponent( FireControlComponent )

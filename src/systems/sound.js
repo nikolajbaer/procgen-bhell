@@ -1,6 +1,6 @@
 import { System } from "ecsy"
 import * as Tone from 'tone'
-import { SoundEffectComponent } from "../components/sound"
+import { MusicLoopComponent, SoundEffectComponent } from "../components/sound"
 
 export class SoundSystem extends System {
     init (){
@@ -8,9 +8,8 @@ export class SoundSystem extends System {
     }
 
     activate() {
-        // activating
         Tone.start().then( () => {
-            this.startMusic()
+            this.initSynths()
         })
     }
 
@@ -18,8 +17,8 @@ export class SoundSystem extends System {
         Tone.Transport.set_volume(v)
     }
 
-    startMusic(){
-        console.log("starting music")
+    initSynths(){
+
         // from https://tonejs.github.io/examples/simpleSynth 
         this.bass_synth = new Tone.Synth({
 			oscillator: {
@@ -62,39 +61,55 @@ export class SoundSystem extends System {
         const chorus = new Tone.Chorus(5, .1, 3.5).toDestination().start();
         this.good_synth = new Tone.PolySynth(Tone.AMSynth).connect(chorus)
 
-        this.create_bass_loop()
+        this.synths = [
+            this.bass_synth,
+            this.lead_synth,
+            this.bullet_synth,
+            this.explode_synth,
+            this.good_synth,
+        ]
 
-        Tone.Transport.toggle()
+        Tone.Transport.start()
         this.initialized= true
     }
 
     create_bass_loop(){
         const beat = 0.2
-        const bass_loop = new Tone.Sequence( (time,note) => {
+        this.bass_loop = new Tone.Sequence( (time,note) => {
             this.bass_synth.triggerAttackRelease(note, beat/2, time);
         },["C2","C3","C2","C3","C2","C3","C2",["C2","C3"]],beat).start(0)
+
+        this.arpeggiator = new Tone.Pattern((time, note) => {
+	        this.good_synth.triggerAttackRelease(note, beat/4,time);
+        }, ["A4", "C5", "E5","A5","C6","E6","A6"], "upDown")
+        this.arpeggiator.interval = beat/2
+        //this.arpeggiator.start(beat*8).stop(beat*16)
+
+        this.arpeggiator2 = new Tone.Pattern((time, note) => {
+	        this.good_synth.triggerAttackRelease(note, beat/4,time);
+        }, ["D4","F4","A4","D5", "F5","D6","F6","A6","D7"], "upDown")
+        this.arpeggiator2.interval = beat/2
+        //this.arpeggiator2.start(beat*16).stop(beat*32)
     }
 
-    create_wave_loop(wave){
-        const lead_note = "C5"
-        const sequence =[
-            [lead_note,null],
-            [lead_note,lead_note],
-            [lead_note,null],
-            [lead_note,lead_note],
-            [lead_note,null],
-            null,
-            null,
-            null
-        ]
-        const lead_loop = new Tone.Sequence( (time,note) => {
-            this.lead_synth.triggerAttackRelease(note, beat/3, time);
-        },sequence,beat).start( beat * 4 * 3 )
-
-     }
+    stop(){
+        if( this.initialized){
+            Tone.Transport.stop()
+            this.synths.forEach( s => {
+                s.disconnect()
+            })
+            this.bass_loop.stop()
+        }
+    }
 
     execute(delta, time){
         if(!this.initialized){ return }
+
+        if(this.queries.music.results.length == 0){
+            const e = this.world.createEntity()
+            e.addComponent(MusicLoopComponent)
+            this.create_bass_loop()
+        }
 
         this.queries.effects.results.forEach( e => {
             const effect = e.getComponent(SoundEffectComponent)  
@@ -123,5 +138,8 @@ export class SoundSystem extends System {
 SoundSystem.queries = {
     effects: {
         components: [ SoundEffectComponent ]
+    },
+    music: { 
+        components: [MusicLoopComponent]
     }
 }

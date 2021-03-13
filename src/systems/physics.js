@@ -15,6 +15,7 @@ const PHYSICS_MATERIALS = {
     "default": new CANNON.Material(),
     "chaser": new CANNON.Material({name:"chaser",friction:1.0}),
     "player": new CANNON.Material({name:"player",friction:0.0}),
+    "mover": new CANNON.Material({name:"mover",friction:0.0}),
 }
 
 export class PhysicsSystem extends System {

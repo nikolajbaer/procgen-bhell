@@ -96,9 +96,15 @@ export class AIControlSystem extends System {
                 dir.normalize()
                 const vel = new CANNON.Vec3(dir.x,0,dir.z)
 
+                if(chase.speed != null && body.position.y < 2){
+                    const v = vel.scale(chase.speed)
+                    body.velocity = (new CANNON.Vec3(-v.x,body.velocity.y,-v.z))
+                }else{
+                    body.applyForce(new CANNON.Vec3(-vel.x,0,-vel.z),new CANNON.Vec3(0,chase.force,0))
+                }
+
                 // CONSIDER moving these guys means we override motion from physics
                 //body.velocity.set(vel.x,body.velocity.y,vel.z)
-                body.applyForce(new CANNON.Vec3(-vel.x,0,-vel.z),new CANNON.Vec3(0,0.5,0))
             }else{
                 body.velocity = body.velocity.scale(0.8)
             }

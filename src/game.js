@@ -21,7 +21,7 @@ import { DamageFlashEffectComponent, ExplosionComponent } from "./components/eff
 import { EffectsSystem } from "./systems/effects";
 import { HUDSystem } from './systems/hud';
 import { SoundSystem } from './systems/sound';
-import { SoundEffectComponent } from './components/sound';
+import { MusicLoopComponent, SoundEffectComponent } from './components/sound';
 import { GunPickupComponent, HealthComponent } from './components/pickups';
 import { WaveMemberComponent } from './components/wave';
 import { WaveSystem } from './systems/wave';
@@ -61,6 +61,7 @@ export function init_game(playSound){
     world.registerComponent(GunPickupComponent)
     world.registerComponent(InventoryComponent)
     world.registerComponent(RotatorComponent)
+    world.registerComponent(MusicLoopComponent)
 
     // Systems
     world.registerSystem(SoundSystem)

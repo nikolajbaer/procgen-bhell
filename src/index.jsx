@@ -42,7 +42,7 @@ const HUDView = observer( ({ hudState,clickHandler }) => {
 
     return (<div className="overlay">
         <div className="gun_stats">
-            <h2>Current Gun: {hudState.gun.name}</h2>
+            <h2 style={{color:hudState.gun.bullet_color}}>Gun: {hudState.gun.name}</h2>
             <div>Score {gun_output_score(hudState.gun)}</div>
             <GunStat name="Barrels" value={hudState.gun.barrels} max_value={5} color={hudState.gun.bullet_color}></GunStat>
             <GunStat name="Bullet Damage" value={hudState.gun.bullet_damage} max_value={5} color={hudState.gun.bullet_color}></GunStat>
@@ -52,6 +52,10 @@ const HUDView = observer( ({ hudState,clickHandler }) => {
             <ul>
                 {hudState.inventory.map((gun) => <li key={gun.name}>{gun.name}</li>)} 
             </ul>
+        </div>
+        <div className="flash">
+            <h2 style={{color:hudState.gun.bullet_color}}>{hudState.gun.name}</h2>
+            <p>[gun level: {gun_output_score(hudState.gun).toFixed(2)}]</p>
         </div>
         <div className="bottom">
             <div className="hud">

@@ -17,7 +17,7 @@ export class WaveSystem extends System {
     }
 
     spawn_wave(){
-        const n = this.wave * 2
+        const n = Math.ceil(Math.pow(this.wave,.9) + 2)
 
         for(var i=0; i<n; i++){
             const e = this.world.createEntity()
