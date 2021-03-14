@@ -6,6 +6,7 @@ import ReactDOM, { render } from "react-dom";
 import { HUDSystem } from "./systems/hud";
 import { observer } from "mobx-react-lite"
 import { gun_output_score } from "./procgen/guns"
+import { get_scoreboard } from "./scoreboard/scoreboard";
 
 class HealthBar extends React.Component {
     render(){
@@ -30,13 +31,55 @@ class GunStat extends React.Component {
     }
 }
 
-const HUDView = observer( ({ hudState,clickHandler }) => {
+class HighScores extends React.Component {
+    constructor(props){
+        super(props)
+        this.state = {
+            scores: []
+        }
+    }
+    componentDidMount(){
+        const score = get_scoreboard()
+        score.load_scores().then( (result) => {
+            const high_scores = []
+            result.forEach( (r) => {
+                console.log(r)
+                high_scores.push(r)
+            })
+            console.log(high_scores)
+            this.setState({
+                scores: high_scores
+            })
+        })
+    }
+
+    render() {
+        const scores = this.state.scores.map( (s) => {
+            return (<div key={s.name}>
+                <strong>{s.name}</strong> <strong>{s.score}</strong>
+            </div>)
+        })
+        return(
+            <div className="menu">
+                <h1>High Scores</h1>
+                {scores}
+                <button onClick={this.props.closeHandler.bind(this)}>CLOSE</button>
+            </div>
+        )
+    }
+}
+
+const HUDView = observer( ({ hudState,newGameHandler,highScoreHandler }) => {
     if(hudState.gameover){
         return (<div className="menu">
                     <h1>GAME OVER</h1>
                     <h3>Score: {hudState.score}</h3>
                     <p>You were eliminated during Wave {hudState.wave}</p>
-                    <button onClick={clickHandler.bind(this)}>PLAY AGAIN</button>
+
+                    <p>Save your score: <input type="text" /> </p>
+
+                    <button onClick={highScoreHandler.bind(this)}>HIGH SCORES</button>
+                    <button onClick={newGameHandler.bind(this)}>PLAY AGAIN</button>
                 </div>)
     }
 
@@ -75,7 +118,11 @@ const HUDView = observer( ({ hudState,clickHandler }) => {
 class GameUI extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { hudState: null, playSound: true }
+        this.state = { 
+            hudState: null, 
+            playSound: true, 
+            showHighScores: false,
+        }
         this.handleSoundChange = this.handleSoundChange.bind(this)
     }
 
@@ -87,6 +134,10 @@ class GameUI extends React.Component {
         this.setState({hudState:world.getSystem(HUDSystem).state})
     }
 
+    show_high_scores(show){
+        this.setState({showHighScores:show})
+    }
+
     handleSoundChange(event){
         this.setState({playSound: event.target.checked})
     }
@@ -95,7 +146,9 @@ class GameUI extends React.Component {
 
         let view;
         if( this.state.hudState != null) {
-            view = <HUDView hudState={this.state.hudState} clickHandler={() => this.start_game()} />
+            view = <HUDView hudState={this.state.hudState} newGameHandler={() => this.start_game()} highScoreHandler={() => this.show_high_scores(true)} />
+        }else if(this.state.showHighScores){
+            view = <HighScores closeHandler={() => this.show_high_scores(false)} />
         }else{
             view = <div className="menu">
                 <p>a procedurally generated</p>
@@ -104,6 +157,7 @@ class GameUI extends React.Component {
                     By <a title="nikolajbaer.us" target="_blank" href="https://www.nikolajbaer.us/">Nikolaj Baer</a>
                     <a href="https://github.com/nikolajbaer/procgen-bhell" target="_blank" title="source code on github">(src)</a>
                 </p>
+                <button onClick={() => this.show_high_scores(true)}>HIGH SCORES</button>
                 <button onClick={() => this.start_game()}>START</button>
                 <p>
                     <input type="checkbox" checked={this.state.playSound} onChange={this.handleSoundChange} /> Sound

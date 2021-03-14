@@ -73,6 +73,7 @@
 			background-color: black;
 			border: 1px solid white;
 			padding: 8px;
+			margin-left: 16px;
 			cursor: pointer;
 			color: white;
 		}
@@ -119,6 +120,9 @@
 			font-size: 12px;
 		}
 	</style>
+	<% if(htmlWebpackPlugin.options.firebase_creds){ %>
+	<script id="firebase_creds" type="application/json"><%= htmlWebpackPlugin.options.firebase_creds %></script>
+	<% } %>
 </head>
 <body>
 	<div id="app"></div>

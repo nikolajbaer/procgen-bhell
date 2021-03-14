@@ -57,6 +57,7 @@ module.exports = {
       filename: 'index.html',
       title: 'Output Management',
       template: 'src/index.html',
+      firebase_creds: process.env.FIREBASE_CREDS_JSON,
       inject: true,
     }),
   ],

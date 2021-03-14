@@ -7,6 +7,8 @@ services:
     working_dir: /home/node/app
     environment:
       - NODE_ENV=development
+    env_file:
+      - local.env
     volumes:
       - ./:/home/node/app
     ports:
