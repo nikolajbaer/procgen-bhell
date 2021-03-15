@@ -61,35 +61,36 @@ export class SoundSystem extends System {
         const chorus = new Tone.Chorus(5, .1, 3.5).toDestination().start();
         this.good_synth = new Tone.PolySynth(Tone.AMSynth).connect(chorus)
 
+        this.hat_synth = new Tone.PluckSynth().toDestination();
+        this.hat_synth.volume.value = -4
+
         this.synths = [
             this.bass_synth,
             this.lead_synth,
             this.bullet_synth,
             this.explode_synth,
             this.good_synth,
+            this.hat_synth,
         ]
 
+        Tone.Transport.bpm.value = 150 
         Tone.Transport.start()
         this.initialized= true
     }
 
     create_bass_loop(){
-        const beat = 0.2
         this.bass_loop = new Tone.Sequence( (time,note) => {
-            this.bass_synth.triggerAttackRelease(note, beat/2, time);
-        },["C2","C3","C2","C3","C2","C3","C2",["C2","C3"]],beat).start(0)
+            this.bass_synth.triggerAttackRelease(note, .1, time);
+        },["C2","C3","C2","C3","C2","C3","C2",["C2","C3"]],"8n").start(0)
 
-        this.arpeggiator = new Tone.Pattern((time, note) => {
-	        this.good_synth.triggerAttackRelease(note, beat/4,time);
-        }, ["A4", "C5", "E5","A5","C6","E6","A6"], "upDown")
-        this.arpeggiator.interval = beat/2
-        //this.arpeggiator.start(beat*8).stop(beat*16)
+        this.hat_loop = new Tone.Sequence( (time,note) => {
+            this.hat_synth.triggerAttackRelease(note, .1, time);
+        },["C5","C5","C5",null,"C5",null,"C5",null],"16n")
 
-        this.arpeggiator2 = new Tone.Pattern((time, note) => {
-	        this.good_synth.triggerAttackRelease(note, beat/4,time);
-        }, ["D4","F4","A4","D5", "F5","D6","F6","A6","D7"], "upDown")
-        this.arpeggiator2.interval = beat/2
-        //this.arpeggiator2.start(beat*16).stop(beat*32)
+        this.loops = [
+            this.bass_loop,
+            this.hat_loop,
+        ]
     }
 
     stop(){
@@ -98,7 +99,9 @@ export class SoundSystem extends System {
             this.synths.forEach( s => {
                 s.disconnect()
             })
-            this.bass_loop.stop()
+            this.loops.forEach( l => {
+                l.stop()
+            })
         }
     }
 
