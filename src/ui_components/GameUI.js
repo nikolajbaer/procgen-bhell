@@ -11,6 +11,8 @@ export class GameUI extends React.Component {
             hudState: null, 
             playSound: true, 
             showHighScores: false,
+            score: null,
+            world: null,
         }
         this.handleSoundChange = this.handleSoundChange.bind(this)
     }
@@ -19,12 +21,23 @@ export class GameUI extends React.Component {
     }
 
     start_game(){
+        if(this.state.world != null){
+            this.state.world.stop()
+        }
         const world = init_game(this.state.playSound)
-        this.setState({hudState:world.getSystem(HUDSystem).state})
+        this.setState({hudState:world.getSystem(HUDSystem).state,world:world})
     }
 
-    show_high_scores(show){
-        this.setState({showHighScores:show})
+    show_high_scores(show,score=null,wave=null){
+        console.log("Showing high scores",show,score)
+        let score_data = null
+        if(score){
+            score_data = {
+                score: score,
+                wave: wave,
+            }
+        }
+        this.setState({showHighScores:show, score:score_data})
     }
 
     handleSoundChange(event){
@@ -32,12 +45,17 @@ export class GameUI extends React.Component {
     }
 
     render() {
-
+        console.log("rendering")
         let view;
-        if( this.state.hudState != null) {
-            view = <HUDView hudState={this.state.hudState} newGameHandler={() => this.start_game()} highScoreHandler={() => this.show_high_scores(true)} />
+        if( this.state.hudState != null && !this.state.showHighScores) {
+            view = <HUDView 
+                        hudState={this.state.hudState} 
+                        newGameHandler={() => this.start_game()} 
+                        highScoreHandler={(score,wave) => this.show_high_scores(true,score,wave)} 
+                        score={null}
+                    />
         }else if(this.state.showHighScores){
-            view = <HighScores closeHandler={() => this.show_high_scores(false)} />
+            view = <HighScores closeHandler={() => this.show_high_scores(false)} score={this.state.score} />
         }else{
             view = <div className="menu">
                 <p>a procedurally generated</p>
@@ -46,8 +64,12 @@ export class GameUI extends React.Component {
                     By <a title="nikolajbaer.us" target="_blank" href="https://www.nikolajbaer.us/">Nikolaj Baer</a>
                     <a href="https://github.com/nikolajbaer/procgen-bhell" target="_blank" title="source code on github">(src)</a>
                 </p>
-                <button onClick={() => this.show_high_scores(true)}>HIGH SCORES</button>
-                <button onClick={() => this.start_game()}>START</button>
+                <p>
+                    <button onClick={() => this.start_game()}>START</button>
+                </p>
+                <p>
+                    <button onClick={() => this.show_high_scores(true)}>HIGH SCORES</button>
+                </p>
                 <p>
                     <input type="checkbox" checked={this.state.playSound} onChange={this.handleSoundChange} /> Sound
                 </p>

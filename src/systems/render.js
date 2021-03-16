@@ -1,11 +1,13 @@
 import { System, Not } from "ecsy";
 import { LocRotComponent } from "../components/physics"
-import { MeshComponent, ModelComponent, CameraFollowComponent, RayCastTargetComponent } from "../components/render"
+import { MeshComponent, ModelComponent, CameraFollowComponent, RayCastTargetComponent, CameraShakeComponent } from "../components/render"
 import { OutlineEffect } from 'three/examples/jsm/effects/OutlineEffect.js'
 import { GEOMETRIES, MATERIALS } from "../assets"
 import * as THREE from "three"
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { Mesh } from "three";
+import * as TWEEN from '@tweenjs/tween.js'
+import { theWindow } from "tone/build/esm/core/context/AudioContext";
         
 export class RenderSystem extends System {
     init() {
@@ -33,7 +35,10 @@ export class RenderSystem extends System {
 
         this.effect = effect
         this.renderer = renderer
+        this.cam_holder = new THREE.Object3D()
+        this.cam_holder.add(camera)
         this.camera = camera
+        this.shake_tween = new TWEEN.Tween(camera.position).to({x:0.5},50).repeat(3).yoyo(true)
         this.scene = scene
         this.raycaster = raycaster
     
@@ -46,6 +51,7 @@ export class RenderSystem extends System {
         // debug
         window.scene = scene
         window.camera = camera
+        window.shake = this.shake_tween
 
         /* does not play nice with mouse controls
         var controls = new OrbitControls( camera, renderer.domElement );
@@ -66,7 +72,7 @@ export class RenderSystem extends System {
         e.addComponent( MeshComponent, { mesh: mesh })
     }
 
-    execute(delta){
+    execute(delta,time){
         // Initialize meshes for any uninitialized models
         this.queries.unitialized.results.forEach( e => {
             this.create_mesh(e)
@@ -77,13 +83,20 @@ export class RenderSystem extends System {
             const follow = e.getComponent(CameraFollowComponent)
             const pos = e.getComponent(MeshComponent).mesh.position
 
-            this.camera.position.set( 
+            this.cam_holder.position.set( 
                 pos.x + follow.offset.x,
                 pos.y + follow.offset.y,
                 pos.z + follow.offset.z
             )
             this.camera.lookAt(pos);
 
+        })
+
+        this.queries.shakes.results.forEach( e => {
+            if(!this.shake_tween.isPlaying()){
+                this.shake_tween.start()
+            }
+            e.removeComponent(CameraShakeComponent)
         })
 
         // update any raycasts
@@ -113,6 +126,7 @@ export class RenderSystem extends System {
 
 
     	//this.effect.render( this.scene, this.camera );
+        TWEEN.update()
         this.renderer.render( this.scene, this.camera )
     }
 }
@@ -123,6 +137,9 @@ RenderSystem.queries = {
     },
     camera_follow: {
         components: [ CameraFollowComponent, MeshComponent ] // Maybe camera follow component?
+    },
+    shakes: {
+        components: [ CameraShakeComponent ]
     },
     raycasts: {
         components: [ RayCastTargetComponent, MeshComponent ]

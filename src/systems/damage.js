@@ -4,10 +4,11 @@ import { DamageableComponent, DamageAppliedComponent, HealableComponent, HealthA
 import { DamageFlashEffectComponent, ExplosionComponent } from "../components/effects"
 import { PhysicsComponent } from "../components/physics";
 import { PlayerComponent } from "../components/player";
+import { CameraShakeComponent } from "../components/render";
 import { SoundEffectComponent } from "../components/sound";
 import { Vector3 } from "../ecs_types";
 
-// Todo DamageableComponent , DamageComponent, DamagingComponent
+const SHAKE_THRESHOLD = 4;
 
 export class DamageSystem extends System {
 
@@ -32,6 +33,11 @@ export class DamageSystem extends System {
                     end_time: time + .4,
                     freq: 4,
                 })
+            }
+            if( e.hasComponent(PlayerComponent) && !e.hasComponent(CameraShakeComponent)){
+                if(damage.amount > SHAKE_THRESHOLD){
+                    e.addComponent(CameraShakeComponent)
+                }
             }
 
             obj.health -= damage.amount

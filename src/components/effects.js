@@ -8,6 +8,7 @@ ExplosionComponent.schema = {
     size: { type: Types.Number, default: 1.5},
     started: { type: Types.Number },
     duration: { type: Types.Number, default: 0.5 },
+    shake: { type: Types.Boolean, default: false },
 }
 
 // Todo explosion factory

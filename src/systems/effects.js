@@ -1,7 +1,7 @@
 import { System, Not } from "ecsy";
 import { DamageFlashEffectComponent, ExplosionComponent } from "../components/effects"
 import { LocRotComponent } from "../components/physics";
-import { MeshComponent, ModelComponent } from "../components/render"
+import { CameraShakeComponent, MeshComponent, ModelComponent } from "../components/render"
 import { Vector3 } from "../ecs_types"
 import * as THREE from "three"
 
@@ -23,6 +23,9 @@ export class EffectsSystem extends System {
                 location: new Vector3(explosion.location.x,explosion.location.y,explosion.location.z)
             })
             explosion.start = time
+            if(explosion.shake){
+                e.addComponent(CameraShakeComponent)
+            }
         })
 
         this.queries.active_explosions.results.forEach( e => {

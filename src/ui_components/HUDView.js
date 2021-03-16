@@ -1,20 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { observer } from "mobx-react-lite"
 import { gun_output_score } from "../procgen/guns"
 import { GunStat } from "./GunStat"
 import { HealthBar } from "./HealthBar"
 
-export const HUDView = observer( ({ hudState,newGameHandler,highScoreHandler }) => {
+export const HUDView = observer( ({ hudState,newGameHandler,highScoreHandler,saveScoreHandler }) => {
+    const [name, setName ] = useState("")
     if(hudState.gameover){
+        let score_name = ""
         return (<div className="menu">
                     <h1>GAME OVER</h1>
                     <h3>Score: {hudState.score}</h3>
                     <p>You were eliminated during Wave {hudState.wave}</p>
 
-                    <p>Save your score: <input type="text" /> </p>
-
-                    <button onClick={highScoreHandler.bind(this)}>HIGH SCORES</button>
-                    <button onClick={newGameHandler.bind(this)}>PLAY AGAIN</button>
+                    <p>
+                        <button onClick={newGameHandler.bind(this)}>PLAY AGAIN</button>
+                    </p>
+                    <p>
+                        <button onClick={highScoreHandler.bind(this,hudState.score,hudState.wave)}>HIGH SCORES</button>
+                    </p>
                 </div>)
     }
 

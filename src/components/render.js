@@ -19,6 +19,8 @@ CameraFollowComponent.schema = {
   offset: { type: Vector3Type },
 }
 
+export class CameraShakeComponent extends Component {}
+
 export class RayCastTargetComponent extends Component {}
 RayCastTargetComponent.schema = {
   mouse: { type: Vector2Type },

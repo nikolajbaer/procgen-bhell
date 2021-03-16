@@ -78,7 +78,7 @@ export class SoundSystem extends System {
         this.initialized= true
     }
 
-    create_bass_loop(){
+    create_loops(){
         this.bass_loop = new Tone.Sequence( (time,note) => {
             this.bass_synth.triggerAttackRelease(note, .1, time);
         },["C2","C3","C2","C3","C2","C3","C2",["C2","C3"]],"8n").start(0)
@@ -94,7 +94,8 @@ export class SoundSystem extends System {
     }
 
     stop(){
-        if( this.initialized){
+        if( this.initialized ){
+            console.log("Stopping music and loops")
             Tone.Transport.stop()
             this.synths.forEach( s => {
                 s.disconnect()
@@ -111,7 +112,7 @@ export class SoundSystem extends System {
         if(this.queries.music.results.length == 0){
             const e = this.world.createEntity()
             e.addComponent(MusicLoopComponent)
-            this.create_bass_loop()
+            this.create_loops()
         }
 
         this.queries.effects.results.forEach( e => {

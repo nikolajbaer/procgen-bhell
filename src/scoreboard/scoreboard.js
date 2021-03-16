@@ -1,21 +1,24 @@
 import firebase from 'firebase/app';
-import 'firebase/database';
+import 'firebase/firestore';
+
+const SCORE_VERSION = "1.0alpha" // Version based on gameplay dynamics
+
+// TODO https://firebase.google.com/docs/auth/web/anonymous-auth
 
 class Scoreboard {
     constructor(firebase_creds){
         if(firebase.apps.length == 0){
             this.app = firebase.initializeApp(firebase_creds);
         }
-        this.db = firebase.database();
-        window.firebase = firebase // debug
-        this.scores = this.db.ref('scores').orderByChild('score').limitToFirst(10)
+        this.db = firebase.firestore();
+        this.highscores = this.db.collection("scores").where("version","==",SCORE_VERSION).orderBy("score","desc").limit(10)
     }
 
     load_scores(){
-        return this.scores.once('value').then((snapshot) => {
+        return this.highscores.get().then((querySnapshot) => {
             const scores = []
-            snapshot.forEach( (child) => {
-                scores.push(child.val())
+            querySnapshot.forEach( (child) => {
+                scores.push(child.data())
             })
             return scores
         })
@@ -24,7 +27,12 @@ class Scoreboard {
     submit(name,score,last_wave){
         const d = new Date()
         const k = name.replace(/[^\w\-_ ]/g,'').substring(0,32) + "-" + d.getTime()
-        this.db.ref('scores/' + name).set()
+        return this.db.collection("scores").add({
+            name: name,
+            score: score,
+            last_wave: last_wave,
+            version: SCORE_VERSION,
+        })
     }
 }
 

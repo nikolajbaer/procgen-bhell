@@ -159,6 +159,7 @@ export class ProxyMineSystem extends System {
                         location: new Vector3(body.position.x,body.position.y,body.position.z),
                         size: proxy.damage_radius * 0.75,
                         duration: 0.7,
+                        shake: true,
                     })
                     explosion.addComponent(SoundEffectComponent, { sound: "self-destruct" })
                     e.remove()
