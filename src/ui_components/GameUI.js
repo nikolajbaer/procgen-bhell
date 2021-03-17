@@ -3,6 +3,7 @@ import { HUDView } from "./HUDView"
 import { HUDSystem } from "../systems/hud";
 import { HighScores } from "./HighScores"
 import { init_game } from "../game"
+import { MobileControl } from "./MobileControl";
 
 export class GameUI extends React.Component {
     constructor(props) {
@@ -76,10 +77,19 @@ export class GameUI extends React.Component {
             </div>
         }
 
+        let controls = ''
+        if(true){
+            controls = (
+                <MobileControl>
+                </MobileControl>
+            )
+        }
+
         return (
         <div id="game">
             <canvas id="render"></canvas>
             {view}
+            {controls}
         </div>
         )
     }
