@@ -13,6 +13,7 @@ export class PlayerControlsSystem extends System {
     init() {
         let mouse = new Vector2(0,0)
         let actions = {}
+        let direction = new Vector2(0,0) 
 
         // KeyboarD Controls
         document.addEventListener("keydown", event => { actions[event.code] = true });
@@ -20,16 +21,16 @@ export class PlayerControlsSystem extends System {
 
         // Mouse / Touch aim controls
         const render = document.getElementById("render")
-        render.addEventListener("mousemove", event => {
+        render.addEventListener("pointermove", event => {
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1; 
             mouse.y = -( event.clientY / window.innerHeight) * 2 + 1
         })
-        render.addEventListener("mousedown", event => { 
+        render.addEventListener("pointerdown", event => { 
             actions["Mouse"+event.button] = true; 
             event.preventDefault(); 
             return false; 
         })
-        window.addEventListener("mouseup", event => { 
+        window.addEventListener("pointerup", event => { 
             actions["Mouse"+event.button] = false; 
             event.preventDefault(); 
             return false; 
@@ -40,15 +41,32 @@ export class PlayerControlsSystem extends System {
             return false
         })
 
-        // TODO Mobile on-screen controls
+        // TODO Mobile on-screen controls 
+        // CONSIDER jsut record the vector and use that
+        window.addEventListener("game_move_dir", event => {
+            console.log("Updating direction ")
+            this.direction.x = event.detail.vector.x
+            this.direction.y = event.detail.vector.y
+        })
         // can we detect if we have a mouse?
 
+        this.direction = direction
         this.actions = actions
         this.mouse = mouse
     }
 
-    execute(delta){
+    update_direction(){
+        if(this.actions["ArrowUp"] || this.actions["KeyW"]){ this.direction.y = 1
+        }else if(this.actions["ArrowDown"] || this.actions["KeyS"]){ this.direction.y = -1 }
 
+        if(this.actions["ArrowLeft"] || this.actions["KeyA"]){ this.direction.x = 1
+        }else if(this.actions["ArrowRight"] || this.actions["KeyD"]){ this.direction.x = -1 }
+
+    }
+
+    execute(delta){
+        this.update_direction()
+        
         let mouse_cast_target = null
         this.queries.mouse_raycast.results.forEach( e => {
             const caster = e.getMutableComponent(RayCastTargetComponent)
@@ -59,13 +77,7 @@ export class PlayerControlsSystem extends System {
 
         this.queries.controlled.results.forEach( e => {
             // WASD/Arrow movement
-            const vel = new CANNON.Vec3(0,0,0)
-            if(this.actions["ArrowUp"] || this.actions["KeyW"]){ vel.z = 1
-            }else if(this.actions["ArrowDown"] || this.actions["KeyS"]){ vel.z = -1 }
-
-            if(this.actions["ArrowLeft"] || this.actions["KeyA"]){ vel.x = 1
-            }else if(this.actions["ArrowRight"] || this.actions["KeyD"]){ vel.x = -1 }
-
+            const vel = new CANNON.Vec3(this.direction.x,0,this.direction.y)
             vel.normalize()
 
             const body = e.getComponent(PhysicsComponent).body

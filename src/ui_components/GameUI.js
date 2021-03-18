@@ -77,11 +77,11 @@ export class GameUI extends React.Component {
             </div>
         }
 
+        // TODO better explicit signal game is active
         let controls = ''
-        if(true){
+        if('ontouchstart' in window && this.state.hudState != null){
             controls = (
-                <MobileControl>
-                </MobileControl>
+                <MobileControl eventName="game_move_dir"></MobileControl>
             )
         }
 
