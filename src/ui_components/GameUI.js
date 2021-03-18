@@ -3,7 +3,6 @@ import { HUDView } from "./HUDView"
 import { HUDSystem } from "../systems/hud";
 import { HighScores } from "./HighScores"
 import { init_game } from "../game"
-import { MobileControl } from "./MobileControl";
 
 export class GameUI extends React.Component {
     constructor(props) {
@@ -77,19 +76,10 @@ export class GameUI extends React.Component {
             </div>
         }
 
-        // TODO better explicit signal game is active
-        let controls = ''
-        if('ontouchstart' in window && this.state.hudState != null){
-            controls = (
-                <MobileControl eventName="game_move_dir"></MobileControl>
-            )
-        }
-
         return (
         <div id="game">
             <canvas id="render"></canvas>
             {view}
-            {controls}
         </div>
         )
     }
