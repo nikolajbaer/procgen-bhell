@@ -8,7 +8,7 @@ import { WaveMemberComponent } from "../components/wave";
 import { GunComponent } from "../components/weapons";
 import { gen_gun, gun_output_score } from "../procgen/guns"
 
-const WAVE_DELAY = 3 
+export const WAVE_DELAY = 3 
 
 export class WaveSystem extends System {
     init(){
