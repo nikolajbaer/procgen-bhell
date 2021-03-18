@@ -17,7 +17,10 @@ export class WeaponsSystem extends System {
 
     spawn_bullet(gun,vel_vec,start_pos,live_to){
         const bulletEntity = this.world.createEntity() 
+
+        //const bullet_scale = new Vector3(.2 * gun.bullet_damage,.2 * gun.bullet_damage,.2 * gun.bullet_damage)
         const bullet_scale = (gun.bullet_scale == null)?new Vector3(.2,.2,.2):gun.bullet_scale
+
         // scoot bullet out by its z-scale plus a bit
         
         bulletEntity.addComponent(BodyComponent, {

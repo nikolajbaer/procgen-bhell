@@ -1,5 +1,6 @@
 import { MATERIALS } from "../assets"
 import * as THREE from "three"
+import { Vector3 } from "../ecs_types"
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
@@ -25,7 +26,8 @@ export function gen_gun(level,default_gun=true,create_material=true) {
             bullet_damage: 1,
             bullet_speed: 3,
             bullet_life: 2,
-            bullet_color: "white"
+            bullet_color: "white",
+            bullet_scale: new Vector3(.2,.2,.2),
         }
     }else{
         const r = Math.random()
@@ -56,6 +58,8 @@ export function gen_gun(level,default_gun=true,create_material=true) {
             bullet_speed: pickval("bullet_speed"),
             bullet_life: pickval("bullet_life"),
         }
+        const bscale = (generated.bullet_damage/3 + 0.5) * .2
+        generated.bullet_scale = new Vector3(bscale,bscale,bscale) // TODO generate value correlated to damage
         const init_level = gun_output_score(generated)
 
         // generate random color material

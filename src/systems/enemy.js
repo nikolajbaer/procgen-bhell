@@ -74,7 +74,7 @@ export class EnemySystem extends System {
             enemyEntity.addComponent( GunComponent, { 
                 barrels: 3,
                 barrel_spread: 30,
-                rate_of_fire: 0.65, 
+                rate_of_fire: 0.25, 
                 bullet_damage: .5, 
                 bullet_material: "default_bullet", 
                 bullet_speed: 2,
