@@ -8,6 +8,7 @@ import { WaveMemberComponent } from "../components/wave";
 import { GunComponent } from "../components/weapons";
 import { gen_gun, gun_output_score } from "../procgen/guns"
 import { PickupComponent } from "../components/pickup";
+import { SoundEffectComponent } from "../components/sound";
 
 export const WAVE_DELAY = 3 
 export const PICKUP_RADIUS = 5
@@ -25,6 +26,9 @@ export class WaveSystem extends System {
             const e = this.world.createEntity()
             e.addComponent(WaveMemberComponent, { wave: this.wave })
         }
+
+        const e = this.world.createEntity()
+        e.addComponent(SoundEffectComponent, { sound: "new-wave" } )
 
         return n
     }

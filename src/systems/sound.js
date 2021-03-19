@@ -133,6 +133,9 @@ export class SoundSystem extends System {
                 case "healing":
                     this.good_synth.triggerAttackRelease(["G4","C5","E5"],.3)
                     break
+                case "new-wave":
+                    this.good_synth.triggerAttackRelease(["G2","C3","A3"],1)
+                    break
             }
             e.removeComponent(SoundEffectComponent)
         })
