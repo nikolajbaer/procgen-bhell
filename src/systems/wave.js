@@ -7,8 +7,10 @@ import { GunPickupComponent, HealthComponent } from "../components/pickups";
 import { WaveMemberComponent } from "../components/wave";
 import { GunComponent } from "../components/weapons";
 import { gen_gun, gun_output_score } from "../procgen/guns"
+import { PickupComponent } from "../components/pickup";
 
 export const WAVE_DELAY = 3 
+export const PICKUP_RADIUS = 5
 
 export class WaveSystem extends System {
     init(){
@@ -27,47 +29,6 @@ export class WaveSystem extends System {
         return n
     }
 
-    spawn_pickup(pos){
-        const e  = this.world.createEntity() 
-        e.addComponent( LocRotComponent, { 
-            location: new Vector3((0.5 - Math.random()) * 5 + pos.x,8,(0.5 - Math.random()) * 5 + pos.z) 
-        })
-
-        const r =  Math.random()
-        if( r > 0.6 ){
-            e.addComponent( ModelComponent, {
-                material: "health-pickup",
-                geometry: "box",
-                scale: new Vector3(0.5,0.5,0.5),
-            } )
-            e.addComponent( BodyComponent , { 
-                bounds_type: BodyComponent.BOX_TYPE, 
-                mass: 1 ,
-                bounds: new Vector3(0.5,0.5,0.5),
-                material: "chaser",
-                track_collisions: true,
-            } )
-            e.addComponent( HealthComponent )
-        }else if( r > 0.0 ){
-            const gun = gen_gun(1,false) 
-            e.addComponent( ModelComponent, {
-                material: gun.bullet_material,
-                geometry: "box",
-                scale: new Vector3(1.5,0.5,0.5),
-            } )
-            e.addComponent( BodyComponent , { 
-                bounds_type: BodyComponent.BOX_TYPE, 
-                mass: 1 ,
-                bounds: new Vector3(1.5,0.5,0.5),
-                track_collisions: true,
-                fixed_rotation: true
-            } )
-            e.addComponent( GunPickupComponent )
-            e.addComponent( GunComponent, gun )
-            e.addComponent( RotatorComponent ) // slow spin
-        }
-    }
-
     execute(delta,time){
         if(this.queries.player.results.length > 0){
             const player = this.queries.player.results[0]
@@ -78,7 +39,16 @@ export class WaveSystem extends System {
                 if(this.wave_delay == null){
                     this.wave_delay = time + WAVE_DELAY
                     if( this.wave > 1 ){
-                        this.spawn_pickup(player_body.position)
+                        const e = this.world.createEntity()
+                        e.addComponent(PickupComponent, { 
+                            pickup_type: (Math.random() > 0.4)?"health":"gun", 
+                            level: this.wave, 
+                            spawn_pos: new Vector3(
+                                player_body.position.x + (0.5 - Math.random()) * PICKUP_RADIUS,
+                                player_body.position.y + (0.5 - Math.random()) * PICKUP_RADIUS,
+                                player_body.position.z + (0.5 - Math.random()) * PICKUP_RADIUS,
+                            ) 
+                        })
                     }
                 }else if(this.wave_delay <= time){
                     this.wave_delay = null 

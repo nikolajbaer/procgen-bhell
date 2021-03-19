@@ -27,6 +27,8 @@ import { WaveMemberComponent } from './components/wave';
 import { WaveSystem } from './systems/wave';
 import { InventoryComponent } from './components/inventory';
 import { InventorySystem } from './systems/inventory';
+import { PickupSystem } from './systems/pickup';
+import { PickupComponent } from './components/pickup';
 
 
 export function init_game(playSound){
@@ -63,12 +65,12 @@ export function init_game(playSound){
     world.registerComponent(RotatorComponent)
     world.registerComponent(MusicLoopComponent)
     world.registerComponent(CameraShakeComponent)
+    world.registerComponent(PickupComponent)
 
     // Systems
     world.registerSystem(SoundSystem)
     world.registerSystem(PhysicsMeshUpdateSystem)
     world.registerSystem(PlayerControlsSystem)
-    //world.registerSystem(AimSystem)
     world.registerSystem(WeaponsSystem)
     world.registerSystem(BulletSystem)
     world.registerSystem(DamageSystem)
@@ -81,6 +83,7 @@ export function init_game(playSound){
     world.registerSystem(ProxyMineSystem)
     world.registerSystem(WaveSystem)
     world.registerSystem(InventorySystem)
+    world.registerSystem(PickupSystem)
 
     // These go last as they manage mesh and body resource removal
     world.registerSystem(PhysicsSystem)

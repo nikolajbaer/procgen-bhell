@@ -13,7 +13,6 @@ export class EnemySystem extends System {
     spawn_enemy(enemyEntity,level){
         const r = Math.random()
         // TODO Do some procgen of the enemies
-        console.log("spawning entity with level", level)
         enemyEntity.addComponent( LocRotComponent, { location: new Vector3((0.5 - Math.random()) * 20,5,(0.5 - Math.random()) * 20) } )
         if(r > 0.8 && level > 1){ // Chaser
             enemyEntity.addComponent( EnemyComponent, { score: 2 })
