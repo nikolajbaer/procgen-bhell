@@ -9,7 +9,7 @@ import { AIChasePlayerComponent, AITargetPlayerComponent } from "../components/a
 import { FireControlComponent, GunComponent, ProxyMineComponent } from "../components/weapons";
 import { WaveMemberComponent } from "../components/wave";
 
-export const DELAY_FIRST_FIRE = 1
+export const DELAY_FIRST_FIRE = 0.5 
 
 export class EnemySystem extends System {
     spawn_enemy(enemyEntity,level,first_fire){

@@ -8,6 +8,7 @@ import { gen_gun } from "../procgen/guns"
 import { PickupComponent } from "../components/pickup";
 
 export const WAVE_DELAY = 3 
+export const LEVEL_ADJUSTER = 1/5
 
 export class PickupSystem extends System {
     spawn_pickup(e){
@@ -30,7 +31,7 @@ export class PickupSystem extends System {
             } )
             e.addComponent( HealthComponent )
         }else if( pickup.pickup_type == "gun" ){
-            const gun = gen_gun(pickup.level,false) 
+            const gun = gen_gun(pickup.level * LEVEL_ADJUSTER,false) 
             e.addComponent( ModelComponent, {
                 material: gun.bullet_material,
                 geometry: "box",

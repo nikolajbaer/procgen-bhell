@@ -19,6 +19,7 @@ GunComponent.schema = {
     bullet_scale: { type: Vector3Type, default: null },
     bullet_sound: { type: Types.String, default: "bullet-fire" },
     bullet_color: { type: Types.String, default: "white" },
+    ammo: { type: Types.Number, default: null },
     // Future
     // barrel_mod - maybe alternate how often each barrel fires?
 }

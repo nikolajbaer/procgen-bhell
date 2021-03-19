@@ -50,10 +50,16 @@ export class PlayerControlsSystem extends System {
                 // Touch Events
             this.dpad_touch = null
             this.aim_touch = null
+
+            // relative touch control surfaces - 20% left corner and 20% right corner
+            const dpad_rect = {x:window.innerWidth*0.2,y:window.innerHeight*0.8}
+            const aim_rect = {x:window.innerWidth*0.8,y:window.innerHeight*0.8}
+            const touch_rect = {w:window.innerWidth*0.2,h:window.innerHeight*0.2}
+
             render.addEventListener("touchstart", event => {
                 // maybe both touches are simultaneous?
                 Object.values(event.touches).forEach( t => {
-                    if(t.clientX < window.innerWidth*0.2 && t.clientY > window.innerHeight * 0.8){
+                    if(t.clientX < dpad_rect.x && t.clientY > dpad_rect.y){
                         if(this.dpad_touch == null){
                             console.log("DPAD touch started with ",t.identifier)
                             this.dpad_touch = t.identifier
@@ -62,7 +68,7 @@ export class PlayerControlsSystem extends System {
                                 y:event.touches[0].clientY
                             })
                         }
-                    }else{
+                    }else if(t.clientX > aim_rect.x && t.clientY > aim_rect.y){
                         if(this.aim_touch == null){
                             console.log("Aim Touch started with ",t.identifier)
                             this.aim_touch = t.identifier
@@ -81,8 +87,9 @@ export class PlayerControlsSystem extends System {
                     })
                 }
                 if(event.touches[this.aim_touch]){
-                    mouse.x = (event.touches[this.aim_touch].clientX / window.innerWidth) * 2 - 1; 
-                    mouse.y = -(event.touches[this.aim_touch].clientY / window.innerHeight) * 2 + 1
+                    const t = event.touches[this.aim_touch]
+                    mouse.x = (t.clientX - aim_rect.x) * 2 - 1; 
+                    mouse.y = -(t.clientY / window.innerHeight) * 2 + 1
                 }
                 event.preventDefault()
                 return false

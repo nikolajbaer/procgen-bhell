@@ -6,13 +6,7 @@ const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 
 export function gun_output_score(gun){
-    // damage per second 
-    const dmg_out = gun.barrels * (1/gun.rate_of_fire) * gun.bullet_damage
-    // projection factor? spread and 
-    const dmg_focus = ( gun.barrels <= 2)?1.0:(180/gun.barrel_spread)
-    // bullet life?
-
-    return dmg_out * dmg_focus 
+    return gun.barrels * (1/gun.rate_of_fire) * gun.bullet_damage * 1/gun.barrel_spread
 }
 
 export function gen_gun(level,default_gun=true,create_material=true) {
@@ -35,8 +29,6 @@ export function gen_gun(level,default_gun=true,create_material=true) {
                         + ALPHABET[Math.floor((r*10) % 10)] + "-" 
                         + (Math.floor(r*1000) % 100)
 
-        // IDEA:  
-        // how do i pick from these and maintain balance?
         const gv = {
             barrels: {range:[1,5],weight:1},
             barrel_spread: {range:[30,120],weight:1},
@@ -45,22 +37,25 @@ export function gen_gun(level,default_gun=true,create_material=true) {
             bullet_speed: {range:[1,4],weight:1},
             bullet_life: {range:[1,3],weight:1},
         }
+
         const pickval = (k) => { 
             return (Math.random()*(gv[k].range[1] - gv[k].range[0])) + gv[k].range[0] 
         }
 
         const generated = {
             name: name,
-            barrels: pickval("barrels"),
+            barrels: Math.floor(pickval("barrels")),
             barrel_spread: pickval("barrel_spread"),
-            rate_of_fire: pickval("rate_of_fire"),
             bullet_damage: pickval("bullet_damage"),
+            rate_of_fire: pickval("rate_of_fire"),
             bullet_speed: pickval("bullet_speed"),
             bullet_life: pickval("bullet_life"),
         }
+        if(generated.barrels <= 2){
+            generated.barrel_spread = 1
+        }
         const bscale = (generated.bullet_damage/3 + 0.5) * .2
         generated.bullet_scale = new Vector3(bscale,bscale,bscale) // TODO generate value correlated to damage
-        const init_level = gun_output_score(generated)
 
         // generate random color material
         const color = "hsl("+Math.round(Math.random()*255) + ",100%," + Math.round(Math.random()*40 + 50) +"%)"
@@ -69,15 +64,21 @@ export function gen_gun(level,default_gun=true,create_material=true) {
         generated.bullet_material = bullet_material
         generated.bullet_color = color
 
-        // we scale damage and rate of fire by the difference from the level
-        const x = level / init_level
-        console.log(generated)
+        // First, we scale the rate of fire by the difference from the level
+        /*
+        const adj_rof = ( generated.barrels * generated.bullet_damage ) / ( generated.barrel_spread * level )
+        generated.rate_of_fire = adj_rof
+        // then if this exceeds our allowable range, we adjust damage to compensate
+        if(generated.rate_of_fire < gv.rate_of_fire.range[0]){
+            generated.rate_of_fire = gv.rate_of_fire.range[0]
+        }else if(generated.rate_of_fire > gv.rate_of_fire.range[1]){
+            generated.rate_of_fire = gv.rate_of_fire.range[0]
+        }
+        if(adj_rof != generated.rate_of_fire){
+            generated.bullet_damage = generated.rate_of_fire * ( ( generated.barrel_spread * level ) / generated.barrels )
+        }
+        */
 
-        //generated.bullet_damage *= x  
-        //generated.rate_of_fire *= x
-
-        const updated_level = gun_output_score(generated)
-        console.log(init_level,level,updated_level,x)
         return generated
     }
 }
