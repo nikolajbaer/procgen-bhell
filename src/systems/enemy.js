@@ -9,8 +9,10 @@ import { AIChasePlayerComponent, AITargetPlayerComponent } from "../components/a
 import { FireControlComponent, GunComponent, ProxyMineComponent } from "../components/weapons";
 import { WaveMemberComponent } from "../components/wave";
 
+export const DELAY_FIRST_FIRE = 1
+
 export class EnemySystem extends System {
-    spawn_enemy(enemyEntity,level){
+    spawn_enemy(enemyEntity,level,first_fire){
         const r = Math.random()
         // TODO Do some procgen of the enemies
         enemyEntity.addComponent( LocRotComponent, { location: new Vector3((0.5 - Math.random()) * 20,5,(0.5 - Math.random()) * 20) } )
@@ -31,7 +33,7 @@ export class EnemySystem extends System {
             enemyEntity.addComponent( DamageableComponent, { health: 3 } )
         }else if(r > 0.7 && level >= 3){ // Sharp Shooter
             enemyEntity.addComponent( AITargetPlayerComponent, { predict: true, max_distance: 30 } )
-            enemyEntity.addComponent( GunComponent, { rate_of_fire: 2, bullet_damage: 2,bullet_material: "bullet-shooter2", bullet_speed: 5 } )
+            enemyEntity.addComponent( GunComponent, { rate_of_fire: 2, bullet_damage: 2,bullet_material: "bullet-shooter2", bullet_speed: 5, last_fire: first_fire } )
             enemyEntity.addComponent( FireControlComponent )
             enemyEntity.addComponent( ModelComponent, {material: "enemy:shooter2"} )
             enemyEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 1 } )
@@ -47,6 +49,7 @@ export class EnemySystem extends System {
                 bullet_scale: new Vector3(0.4,0.4,0.4),
                 bullet_mass: 500,
                 bullet_sound: "big-bullet-fire",
+                last_fire: first_fire,
             } )
             enemyEntity.addComponent( FireControlComponent )
             enemyEntity.addComponent( ModelComponent, {material: "enemy:shooter3", scale: new Vector3(1.5,1.5,1.5) } )
@@ -61,6 +64,7 @@ export class EnemySystem extends System {
                 bullet_damage: .5, 
                 bullet_speed: 1.5,
                 bullet_life: 1,
+                last_fire: first_fire,
             } )
             enemyEntity.addComponent( FireControlComponent )
             enemyEntity.addComponent( ModelComponent, {material: "enemy:shooter4" } )
@@ -78,6 +82,7 @@ export class EnemySystem extends System {
                 bullet_material: "default_bullet", 
                 bullet_speed: 2,
                 bullet_life: 1,
+                last_fire: first_fire,
             } )
             enemyEntity.addComponent( FireControlComponent )
             enemyEntity.addComponent( ModelComponent, { material: "enemy:shooter5" } )
@@ -88,7 +93,7 @@ export class EnemySystem extends System {
         }else{ // Grunt
             enemyEntity.addComponent( AITargetPlayerComponent )
             enemyEntity.addComponent( FireControlComponent )
-            enemyEntity.addComponent( GunComponent, { rate_of_fire: 1 , bullet_damage: 0.5 } )
+            enemyEntity.addComponent( GunComponent, { rate_of_fire: 1 , bullet_damage: 0.5, last_fire: first_fire } )
             enemyEntity.addComponent( ModelComponent, {material: "enemy:shooter"} )
             enemyEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 1 } )
             enemyEntity.addComponent( DamageableComponent, { health: 2 } )
@@ -100,7 +105,7 @@ export class EnemySystem extends System {
 
         this.queries.uninitialized.results.forEach( e => {
             const wave = e.getComponent(WaveMemberComponent)
-            this.spawn_enemy(e,wave.wave)
+            this.spawn_enemy(e,wave.wave,time+DELAY_FIRST_FIRE)
         })
 
         // TODO only give player points for enemies killed by their bullets?

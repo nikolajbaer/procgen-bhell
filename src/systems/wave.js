@@ -49,7 +49,7 @@ export class WaveSystem extends System {
                             level: this.wave, 
                             spawn_pos: new Vector3(
                                 player_body.position.x + (0.5 - Math.random()) * PICKUP_RADIUS,
-                                player_body.position.y + (0.5 - Math.random()) * PICKUP_RADIUS,
+                                player_body.position.y + 5,
                                 player_body.position.z + (0.5 - Math.random()) * PICKUP_RADIUS,
                             ) 
                         })
