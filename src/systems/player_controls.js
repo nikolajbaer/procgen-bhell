@@ -1,5 +1,5 @@
 import { System, Not } from "ecsy";
-import { Vector2 } from "three";
+import { TOUCH, Vector2 } from "three";
 import * as CANNON from "cannon-es"
 import { PhysicsComponent } from "../components/physics";
 import { FireControlComponent } from "../components/weapons";
@@ -8,6 +8,7 @@ import * as THREE from "three"
 import { PlayerComponent } from "../components/player";
 
 const SPEED = 1 
+const TOUCH_PERCENTAGE = 0.2 // percent of screen for touch rects
 
 export class PlayerControlsSystem extends System {
     init() {
@@ -47,32 +48,32 @@ export class PlayerControlsSystem extends System {
                 return false
             })
         }else{
-                // Touch Events
+            // Touch Events
             this.dpad_touch = null
             this.aim_touch = null
 
-            // relative touch control surfaces - 20% left corner and 20% right corner
-            const dpad_rect = {x:window.innerWidth*0.2,y:window.innerHeight*0.8}
-            const aim_rect = {x:window.innerWidth*0.8,y:window.innerHeight*0.8}
-            const touch_rect = {w:window.innerWidth*0.2,h:window.innerHeight*0.2}
+            // track two rects in the lower left/right
+            // where we do dpad and aim controls for touch
+            this.update_touch_rects()
+            window.addEventListener('resize', () => {
+                this.update_touch_rects()
+            })
 
             render.addEventListener("touchstart", event => {
                 // maybe both touches are simultaneous?
                 Object.values(event.touches).forEach( t => {
-                    if(t.clientX < dpad_rect.x && t.clientY > dpad_rect.y){
+                    if(t.clientX < this.dpad_rect.x && t.clientY > this.dpad_rect.y){
                         if(this.dpad_touch == null){
                             console.log("DPAD touch started with ",t.identifier)
                             this.dpad_touch = t.identifier
-                            this.update_touch_dir({
-                                x:event.touches[0].clientX,
-                                y:event.touches[0].clientY
-                            })
+                            this.update_touch_dpad(event.touches[0])
                         }
-                    }else if(t.clientX > aim_rect.x && t.clientY > aim_rect.y){
+                    }else if(t.clientX > this.aim_rect.x && t.clientY > this.aim_rect.y){
                         if(this.aim_touch == null){
                             console.log("Aim Touch started with ",t.identifier)
                             this.aim_touch = t.identifier
                             actions["Mouse0"] = true
+                            this.update_touch_aim(event.touches[0])
                         }
                     }
                 })
@@ -81,47 +82,70 @@ export class PlayerControlsSystem extends System {
             })
             render.addEventListener("touchmove", event => {
                 if(event.touches[this.dpad_touch]){
-                    this.update_touch_dir({
-                        x: event.touches[this.dpad_touch].clientX,
-                        y: event.touches[this.dpad_touch].clientY
-                    })
+                    this.update_touch_dpad(event.touches[this.dpad_touch])
                 }
                 if(event.touches[this.aim_touch]){
-                    const t = event.touches[this.aim_touch]
-                    mouse.x = (t.clientX - aim_rect.x) * 2 - 1; 
-                    mouse.y = -(t.clientY / window.innerHeight) * 2 + 1
+                    this.update_touch_aim(event.touches[this.aim_touch])
                 }
                 event.preventDefault()
                 return false
             })
-            window.addEventListener("touchend", event => {
+            const handleTouchEnd = (event) => {
                 if(event.changedTouches[this.dpad_touch]){
-                    console.log("Clearing dpad touch direction")
+                    console.log("clearing dpad touch",this.dpad_touch)
                     this.dpad_touch = null
                     this.direction = {x:0,y:0}
                 }
                 if(event.changedTouches[this.aim_touch]){
-                    console.log("Clearing aim touch")
+                    console.log("clearing aim touch",this.aim_touch)
                     this.aim_touch = null 
                     actions["Mouse0"] = false
                 }
                 event.preventDefault()
                 return false
-            })
-            window.addEventListener("touchcancel", event =>{
-                console.log("Got touch cancel!")
-            })
+            }
+            window.addEventListener("touchend",handleTouchEnd)
+            window.addEventListener("touchcancel",handleTouchEnd)
         } 
         this.direction = direction
         this.actions = actions
         this.mouse = mouse
     }
 
-    update_touch_dir(pos){
+    update_touch_rects(){
+        // relative touch control surfaces: e.g. 20% left corner and 20% right corner
+        const inv = 1 - TOUCH_PERCENTAGE 
+        const w = window.innerWidth*TOUCH_PERCENTAGE
+        const h = window.innerHeight * TOUCH_PERCENTAGE 
+        this.dpad_rect = {
+            x: window.innerWidth*TOUCH_PERCENTAGE,
+            y:window.innerHeight*inv,
+            w:w,h:h
+        }
+        this.aim_rect = {
+            x:window.innerWidth*inv,
+            y:window.innerHeight*inv,
+            w:w,h:h
+        }
+    }
+
+    get_pad_vector(touch,rect){
+        const mid = {x:rect.x + rect.w/2, y: rect.y + rect.h/2}
+        return {x: mid.x - touch.clientX, y: mid.y - touch.clientY}
+    }
+
+    update_touch_dpad(touch){
         // convert to -1 to 1 in the 20% corner of the window
-        const x = 1 - (pos.x/(window.innerWidth*0.2) * 2)
-        const y = 1 - ((pos.y - window.innerHeight*0.8 )/(window.innerHeight*0.2) * 2)
-        this.direction = {x:x,y:y}  
+        const v = this.get_pad_vector(touch,this.dpad_rect)
+        console.log("dpad",v,{x:touch.clientX,y:touch.clientY},this.dpad_rect)
+        this.direction = v
+    }
+
+    update_touch_aim(touch){
+        const v = this.get_pad_vector(touch,this.aim_rect)
+        console.log("aim",v,{x:touch.clientX,y:touch.clientY},this.aim_rect)
+        this.mouse.x = v.x; 
+        this.mouse.y = v.y
     }
 
     update_direction_from_keys(){
