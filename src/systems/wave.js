@@ -44,14 +44,16 @@ export class WaveSystem extends System {
                     this.wave_delay = time + WAVE_DELAY
                     if( this.wave > 1 ){
                         const e = this.world.createEntity()
+                        const t = (Math.random() > 0.4)?"health":"gun"
                         e.addComponent(PickupComponent, { 
-                            pickup_type: (Math.random() > 0.4)?"health":"gun", 
+                            pickup_type: t, 
                             level: this.wave, 
                             spawn_pos: new Vector3(
                                 player_body.position.x + (0.5 - Math.random()) * PICKUP_RADIUS,
                                 player_body.position.y + 5,
                                 player_body.position.z + (0.5 - Math.random()) * PICKUP_RADIUS,
-                            ) 
+                            ),
+                            expires: (t=="gun")?time + 10: null
                         })
                     }
                 }else if(this.wave_delay <= time){

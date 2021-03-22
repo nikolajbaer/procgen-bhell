@@ -56,10 +56,19 @@ export class PickupSystem extends System {
         })
 
         // TODO remove un-picked-up pickups that expire
+        this.queries.active.results.forEach( e => {
+            const pickup = e.getComponent(PickupComponent)
+            if(pickup.expires != null && pickup.expires < time ){
+                e.remove()
+            }
+        })
     }
 }
 PickupSystem.queries = {
     uninitialized: {
         components: [ PickupComponent, Not(BodyComponent) ],
+    },
+    active: {
+        components: [ PickupComponent, BodyComponent ],
     }
 }

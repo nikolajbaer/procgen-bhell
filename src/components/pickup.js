@@ -7,5 +7,5 @@ PickupComponent.schema = {
     spawn_pos: { type: Vector3Type },
     pickup_type: { type: Types.String, default: "health" },
     level: { type: Types.Number, default: 1 },
-    expire: { type: Types.Number, default: null },
+    expires: { type: Types.Number, default: null },
 }
