@@ -154,10 +154,10 @@ ul.highscores {
     font-size: 10px;
 }
 #dpad {
-    left: 4px;
-    bottom: 4px;
+    left: 10px;
+    bottom: 10px;
 }
 #aim {
-    right: 4px;
-    bottom: 4px;
+    right: 10px;
+    bottom: 10px;
 }

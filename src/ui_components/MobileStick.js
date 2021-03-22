@@ -1,6 +1,10 @@
 import React from "react";
 import { Vector2 } from "three";
 
+// percent of distance from center of pad before we 
+// become "active", e.g. to shoot
+const ACTIVATION_LEVEL = 0.6
+
 export class MobileStick extends React.Component {
     constructor(props){
         super(props)
@@ -21,9 +25,10 @@ export class MobileStick extends React.Component {
         this.drawCanvas(null,false)
     }
 
+    // TODO make sure this touch is new for this one?
     handleTouchStart(event){
         if(this.state.touch_id == null){
-            this.updateVector(event.touches[0])
+            this.updateVector(event.changedTouches[0])
         }
     }
 
@@ -34,11 +39,18 @@ export class MobileStick extends React.Component {
 
     }
 
+    // CONSIDER do i need to handle window touch end?
     handleTouchEnd(event){
-        if(this.state.touch_id != null && event.changedTouches[this.state.touch_id]){
-            this.setState({ touch_id: null,x: 0,y: 0,active:false})
-            this.sendEvent(0,0,false)
-            this.drawCanvas(null,false)
+        // for some reason changedTouches is a mapping by arbitrary index
+        // so we have to iterate through it
+        for(var i=0; i<event.changedTouches.length; i++){
+            const t = event.changedTouches.item(i)
+            if(t.identifier == this.state.touch_id){
+                this.setState({ touch_id: null,x: 0,y: 0,active:false})
+                this.sendEvent(0,0,false)
+                this.drawCanvas(null,false)
+                break
+            }
         }
     }
 
@@ -61,9 +73,8 @@ export class MobileStick extends React.Component {
         const rp = p.sub(center)
 
         // cap distance of pad to our max_rad
-        let active = false
+        let active = rp.length() >= max_rad * ACTIVATION_LEVEL
         if( rp.length() >= max_rad ){
-            active = true
             rp.multiplyScalar(max_rad/rp.length())
         }
         const pad_pos = center.add(rp)

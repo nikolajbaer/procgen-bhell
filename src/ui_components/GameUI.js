@@ -11,11 +11,13 @@ export class GameUI extends React.Component {
         this.state = { 
             hudState: null, 
             playSound: true, 
+            fullscreen: false,
             showHighScores: false,
             score: null,
             world: null,
         }
         this.handleSoundChange = this.handleSoundChange.bind(this)
+        this.handleFullscreen = this.handleFullscreen.bind(this)
     }
 
     componentDidMount(){
@@ -45,10 +47,23 @@ export class GameUI extends React.Component {
         this.setState({playSound: event.target.checked})
     }
 
+    handleFullscreen(event){
+        const showFullscreen = event.target.checked
+        if (!document.fullscreenElement && showFullscreen) {
+            document.documentElement.requestFullscreen();
+        } else {
+            if (document.exitFullscreen && !showFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+        this.setState({fullscreen:showFullscreen})
+    }
+
     render() {
-        console.log("rendering")
+
+        const playing = this.state.hudState != null && !this.state.showHighScores
         let view;
-        if( this.state.hudState != null && !this.state.showHighScores) {
+        if( playing ) {
             view = <HUDView 
                         hudState={this.state.hudState} 
                         newGameHandler={() => this.start_game()} 
@@ -72,17 +87,18 @@ export class GameUI extends React.Component {
                     <button onClick={() => this.show_high_scores(true)}>HIGH SCORES</button>
                 </p>
                 <p>
+                    <input type="checkbox" checked={this.state.fullscreen} onChange={this.handleFullscreen} /> Fullscreen
                     <input type="checkbox" checked={this.state.playSound} onChange={this.handleSoundChange} /> Sound
                 </p>
             </div>
         }
 
         let touch_controls = ""
-        if('ontouchstart' in window){
+        if('ontouchstart' in window && playing){
             touch_controls = (
                 <React.Fragment>
-                    <MobileStick className="dpad" joystickId="dpad" pad_radius={20} width={200} height={200} />
-                    <MobileStick activeColor="rgba(255,0,0,0.3)" clasSName="aim" joystickId="aim" pad_radius={20} width={200} height={200} />
+                    <MobileStick className="dpad" joystickId="dpad" pad_radius={20} width={150} height={150} />
+                    <MobileStick activeColor="rgba(255,0,0,0.3)" clasSName="aim" joystickId="aim" pad_radius={20} width={150} height={150} />
                 </React.Fragment>
             )
         }
