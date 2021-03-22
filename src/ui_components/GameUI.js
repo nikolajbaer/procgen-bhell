@@ -3,6 +3,7 @@ import { HUDView } from "./HUDView"
 import { HUDSystem } from "../systems/hud";
 import { HighScores } from "./HighScores"
 import { init_game } from "../game"
+import { MobileStick } from "./MobileStick"
 
 export class GameUI extends React.Component {
     constructor(props) {
@@ -80,6 +81,8 @@ export class GameUI extends React.Component {
         <div id="game">
             <canvas id="render"></canvas>
             {view}
+            <MobileStick className="dpad" joystickId="dpad" pad_radius={20} width={200} height={200} />
+            <MobileStick clasSName="aim" joystickId="aim" pad_radius={20} width={200} height={200} />
         </div>
         )
     }

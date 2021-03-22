@@ -140,3 +140,24 @@ ul.highscores {
     top: 50px;
     cursor: pointer;
 }
+
+.mobilestick {
+    position: fixed;
+    vertical-align: bottom;
+}
+.mobilestick .debug {
+    position: absolute;
+    text-align: center;
+    left: 50%;
+    bottom: 0px;
+    color: white;
+    font-size: 10px;
+}
+#dpad {
+    left: 4px;
+    bottom: 4px;
+}
+#aim {
+    right: 4px;
+    bottom: 4px;
+}
