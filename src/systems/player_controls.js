@@ -51,6 +51,17 @@ export class PlayerControlsSystem extends System {
             })
         }else{
             // TODO rethink touch controls
+            window.addEventListener("joystick-dpad", event => {
+                console.log(event.detail)
+                this.direction.x = -event.detail.x
+                this.direction.y = event.detail.y
+            })
+            window.addEventListener("joystick-aim", event => {
+                console.log(event.detail)
+                this.mouse.x = event.detail.x
+                this.mouse.y = event.detail.y
+                this.actions["Mouse0"] = event.detail.active 
+            })
         } 
         this.direction = direction
         this.actions = actions

@@ -36,7 +36,7 @@ export const HUDView = observer( ({ hudState,newGameHandler,highScoreHandler,sav
             </ul>
         </div>
         <div className="flash">
-            <h2 style={{color:hudState.gun.bullet_color}}>{hudState.gun.name}</h2>
+            <div style={{color:hudState.gun.bullet_color}}>{hudState.gun.name}</div>
             <p>[gun level: {gun_output_score(hudState.gun).toFixed(2)}]</p>
         </div>
         <div className="bottom">

@@ -77,12 +77,21 @@ export class GameUI extends React.Component {
             </div>
         }
 
+        let touch_controls = ""
+        if('ontouchstart' in window){
+            touch_controls = (
+                <React.Fragment>
+                    <MobileStick className="dpad" joystickId="dpad" pad_radius={20} width={200} height={200} />
+                    <MobileStick activeColor="rgba(255,0,0,0.3)" clasSName="aim" joystickId="aim" pad_radius={20} width={200} height={200} />
+                </React.Fragment>
+            )
+        }
+
         return (
         <div id="game">
             <canvas id="render"></canvas>
             {view}
-            <MobileStick className="dpad" joystickId="dpad" pad_radius={20} width={200} height={200} />
-            <MobileStick clasSName="aim" joystickId="aim" pad_radius={20} width={200} height={200} />
+            {touch_controls}
         </div>
         )
     }

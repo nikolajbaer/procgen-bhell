@@ -1,4 +1,5 @@
 import React from "react";
+import { Vector2 } from "three";
 
 export class MobileStick extends React.Component {
     constructor(props){
@@ -7,12 +8,17 @@ export class MobileStick extends React.Component {
         this.state = {
             x: 0,
             y: 0,
+            active: false,
             touch_id: null,
         }
 
         this.handleTouchStart = this.handleTouchStart.bind(this)
         this.handleTouchMove = this.handleTouchMove.bind(this)
         this.handleTouchEnd = this.handleTouchEnd.bind(this)
+    }
+
+    componentDidMount(){
+        this.drawCanvas(null,false)
     }
 
     handleTouchStart(event){
@@ -30,37 +36,54 @@ export class MobileStick extends React.Component {
 
     handleTouchEnd(event){
         if(this.state.touch_id != null && event.changedTouches[this.state.touch_id]){
-            this.setState({ touch_id: null,x: 0,y: 0,})
-            this.drawCanvas(null)
+            this.setState({ touch_id: null,x: 0,y: 0,active:false})
+            this.sendEvent(0,0,false)
+            this.drawCanvas(null,false)
         }
     }
 
     updateVector(touch){
         const client_bounding_rect =  this.canvasRef.current.getBoundingClientRect()
 
-        const p = {
-            x: touch.clientX - client_bounding_rect.left,
-            y: touch.clientY - client_bounding_rect.top,
-        } 
+        // location relative to client top left
+        const p = new Vector2(
+            touch.clientX - client_bounding_rect.left,
+            touch.clientY - client_bounding_rect.top,
+        ) 
 
         const w = this.canvasRef.current.width
         const h = this.canvasRef.current.height
+        const max_rad = w/2 - this.props.pad_radius
+      
+        // position from center of pad
+        const center = new Vector2(w/2,h/2)
+        // direction from center
+        const rp = p.sub(center)
 
-        // TODO limit by pull radius
-        const max_rad = this.props.width - this.props.pad_radius
+        // cap distance of pad to our max_rad
+        let active = false
+        if( rp.length() >= max_rad ){
+            active = true
+            rp.multiplyScalar(max_rad/rp.length())
+        }
+        const pad_pos = center.add(rp)
 
+        // our directional vector we store and dispatch
+        const v = new Vector2(rp.x,-rp.y).normalize()
         this.setState({
-            touch_id: touch.identifier,
-            x: (p.x - w/2)/(w/2),
-            y: (p.y - h/2)/(h/2),
+            touch_id: touch.identifier,x:v.x,y:v.y,active:active
         })
-        // TODO emit event
-
-        this.drawCanvas(p)
+        this.sendEvent(v.x,v.y,active)
+        
+        this.drawCanvas(pad_pos,active)
     }
 
+    sendEvent(x,y,active){
+        const event = new CustomEvent("joystick-"+this.props.joystickId, { detail: { x:x, y:y, active:active } })
+        window.dispatchEvent(event)
+    }
 
-    drawCanvas(p){
+    drawCanvas(p,active){
         const ctx = this.canvasRef.current.getContext('2d');
         const w = this.canvasRef.current.width
         const h = this.canvasRef.current.height
@@ -79,7 +102,11 @@ export class MobileStick extends React.Component {
             (p==null)?h/2:p.y,
             this.props.pad_radius,
             0,Math.PI * 2)
-        ctx.fillStyle = "rgba(200,200,200,0.5)"
+        if(this.props.activeColor){
+            ctx.fillStyle = (active)?this.props.activeColor:"rgba(200,200,200,0.25)"
+        }else{
+            ctx.fillStyle = "rgba(200,200,200,0.25)"
+        }
         ctx.strokeStyle = "#888"
         ctx.fill()
         ctx.stroke()
@@ -88,9 +115,6 @@ export class MobileStick extends React.Component {
     render(){
         return (
             <div className="mobilestick" id={this.props.joystickId}>
-                <div className="debug">
-                    {this.state.x.toFixed(2)},{this.state.y.toFixed(2)}
-                </div>
                 <canvas
                     width={this.props.width}
                     height={this.props.height}
