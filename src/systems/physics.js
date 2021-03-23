@@ -148,10 +148,9 @@ export class PhysicsSystem extends System {
         const pgun = player.getMutableComponent(GunComponent)
         pgun.copy(new_gun)
 
-        // Clear out model and physics and render of gun pickup
         const inventory_gun = this.world.createEntity()
         inventory_gun.addComponent( GunComponent, new_gun )
-        inventory_gun.addComponent(InventoryComponent) 
+        inventory_gun.addComponent( InventoryComponent ) 
         gun_pickup.remove()
     }
  }

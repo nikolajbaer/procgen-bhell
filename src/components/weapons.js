@@ -1,4 +1,4 @@
-import { Component, Types } from 'ecsy'
+import { Component, TagComponent, Types } from 'ecsy'
 import { Vector3 } from 'three'
 import { Vector3Type } from "../ecs_types"
 
@@ -36,7 +36,7 @@ FireControlComponent.schema = {
     fire2: { type: Types.Boolean, default: false }
 }
 
-export class ProxyMineComponent extends Component { }
+export class ProxyMineComponent extends Component {}
 ProxyMineComponent.schema = {
     trigger_distance: { type: Types.Number, default: 5 },
     delay: { type: Types.Number, default: 0.75 },
@@ -45,3 +45,4 @@ ProxyMineComponent.schema = {
     damage_radius: { type: Types.Number, default: 3 },
 }
 
+export class OutOfAmmoComponent extends TagComponent {}

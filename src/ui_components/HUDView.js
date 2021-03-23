@@ -35,10 +35,6 @@ export const HUDView = observer( ({ hudState,newGameHandler,highScoreHandler,sav
                 {hudState.inventory.map((gun) => <li key={gun.name}>{gun.name}</li>)} 
             </ul>
         </div>
-        <div className="flash">
-            <div style={{color:hudState.gun.bullet_color}}>{hudState.gun.name}</div>
-            <p>[gun level: {gun_output_score(hudState.gun).toFixed(2)}]</p>
-        </div>
         <div className="bottom">
             <div className="hud">
                 Score: {hudState.score} |

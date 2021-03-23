@@ -18,16 +18,12 @@ test('gun runs out of ammo', () => {
     e.addComponent(FireControlComponent)
     e.addComponent(PhysicsComponent)
     e.addComponent(GunComponent, { ammo: 5 })
+    const player_body = create_physics_body()
 
-    weaponsys.spawn_bullet(
-        e.getMutableComponent(GunComponent),
-        new CANNON.Vec3(1,0,0),
-        new CANNON.Vec3(0,0,0),
-        5
-    )
-   
-    world.execute(1,1)
-
+    weaponsys.fire(e.getMutableComponent(GunComponent),player_body,0)
     expect(e.getComponent(GunComponent).ammo).toBe(4)
+    weaponsys.fire(e.getMutableComponent(GunComponent),player_body,0)
+    weaponsys.fire(e.getMutableComponent(GunComponent),player_body,0)
+    expect(e.getComponent(GunComponent).ammo).toBe(2)
     
 })

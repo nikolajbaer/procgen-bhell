@@ -1,5 +1,5 @@
 import { System, Not } from "ecsy";
-import {  GunComponent, BulletComponent, FireControlComponent, ProxyMineComponent } from "../components/weapons"
+import {  GunComponent, BulletComponent, FireControlComponent, ProxyMineComponent, OutOfAmmoComponent } from "../components/weapons"
 import { PhysicsComponent,BodyComponent, LocRotComponent } from "../components/physics"
 import { ModelComponent } from "../components/render"
 import * as CANNON from "cannon-es"
@@ -68,7 +68,7 @@ export class WeaponsSystem extends System {
         return vecs
     }
 
-    fire(gun,body,time){
+    fire(e,gun,body,time){
         // bullet heading/speed
         const vel_vec = body.quaternion.vmult(new CANNON.Vec3(gun.bullet_speed,0,0))
         // bullet radius 
@@ -97,7 +97,11 @@ export class WeaponsSystem extends System {
         }
         if(gun.ammo != null){
             gun.ammo = gun.ammo - bullets_fired
+            if( gun.ammo <= 0){
+                e.addComponent(OutOfAmmoComponent)
+            }
         }
+        gun.last_fire = time
     }
 
     execute(delta,time){
@@ -107,8 +111,7 @@ export class WeaponsSystem extends System {
             const body = e.getComponent(PhysicsComponent).body
 
             if( gun.last_fire + gun.rate_of_fire < time && control.fire1 && (gun.ammo == null || gun.ammo > 0)){                    
-                this.fire(gun,body,time)
-                gun.last_fire = time
+                this.fire(e,gun,body,time)
                 e.addComponent( SoundEffectComponent, { sound: gun.bullet_sound })
             }
         })
