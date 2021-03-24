@@ -9,7 +9,7 @@ export function gun_output_score(gun){
     return gun.barrels * (1/gun.rate_of_fire) * gun.bullet_damage * 1/gun.barrel_spread
 }
 
-export function gen_gun(level,default_gun=true,create_material=true) {
+export function gen_gun(level,default_gun=true,create_material=true,ammo_level=20) {
 
     if(default_gun){
         return {
@@ -30,12 +30,12 @@ export function gen_gun(level,default_gun=true,create_material=true) {
                         + (Math.floor(r*1000) % 100)
 
         const gv = {
-            barrels: {range:[1,5],weight:1},
-            barrel_spread: {range:[30,120],weight:1},
+            barrels: {range:[2,5],weight:1},
+            barrel_spread: {range:[30,90],weight:1},
             rate_of_fire: {range:[.1,1],weight:1},
-            bullet_damage: {range:[.25,3],weight:1},
-            bullet_speed: {range:[1,4],weight:1},
-            bullet_life: {range:[1,3],weight:1},
+            bullet_damage: {range:[1,5],weight:1},
+            bullet_speed: {range:[2,4],weight:1},
+            bullet_life: {range:[1.5,3],weight:1},
         }
 
         const pickval = (k) => { 
@@ -54,7 +54,7 @@ export function gen_gun(level,default_gun=true,create_material=true) {
         if(generated.barrels <= 2){
             generated.barrel_spread = 1
         }
-        const bscale = (generated.bullet_damage/3 + 0.5) * .2
+        const bscale = (generated.bullet_damage/gv.bullet_damage.range[1]) * .1 + .2
         generated.bullet_scale = new Vector3(bscale,bscale,bscale) // TODO generate value correlated to damage
 
         // generate random color material
@@ -78,6 +78,8 @@ export function gen_gun(level,default_gun=true,create_material=true) {
             generated.bullet_damage = generated.rate_of_fire * ( ( generated.barrel_spread * level ) / generated.barrels )
         }
         */
+
+        generated.ammo = generated.barrels * ammo_level
 
         return generated
     }

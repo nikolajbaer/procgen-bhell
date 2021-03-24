@@ -1,7 +1,8 @@
 import { System } from "ecsy"
 import { InventoryComponent } from "../components/inventory"
 import { PlayerComponent } from "../components/player"
-import { FireControlComponent, GunComponent } from "../components/weapons"
+import { FireControlComponent, GunComponent, OutOfAmmoComponent } from "../components/weapons"
+import { gen_gun } from "../procgen/guns"
 
 export class InventorySystem extends System {
     init(){
@@ -18,22 +19,14 @@ export class InventorySystem extends System {
     }
 
     execute(delta,time){
-        // TODO
         if(this.queries.player.results.length == 0){ return }
         const player = this.queries.player.results[0]
         const control = player.getComponent(FireControlComponent)
-        const current_gun = player.getMutableComponent(GunComponent)
 
-        // toggle next switch with fire2
-        if(control.fire2){
-            if(!this.switching){ 
-                this.switching = true 
-            }
-        }else{
-            if(this.switching){
-                this.switching = false
-                this.select_next_gun(current_gun)
-            }
+        if(player.hasComponent(OutOfAmmoComponent)){
+            player.removeComponent(GunComponent) 
+            player.removeComponent(OutOfAmmoComponent)
+            player.addComponent(GunComponent, gen_gun(1)) 
         }
     }
 }
@@ -43,5 +36,8 @@ InventorySystem.queries = {
     },
     guns: { 
         components: [InventoryComponent,GunComponent]
+    },
+    out_of_ammo: {
+        components: [GunComponent,OutOfAmmoComponent]
     }
 }

@@ -9,6 +9,8 @@ import { InventoryComponent } from "../components/inventory.js";
 import { Player } from "tone";
 import { PlayerComponent } from "../components/player.js";
 
+// TODO explore https://github.com/ashconnell/physx-js
+
 // inspired by https://github.com/macaco-maluco/thermal-runway/blob/master/src/systems/PhysicsSystem.ts
 const PHYSICS_MATERIALS = {
     "ground": new CANNON.Material("ground"),
@@ -148,6 +150,7 @@ export class PhysicsSystem extends System {
         const pgun = player.getMutableComponent(GunComponent)
         pgun.copy(new_gun)
 
+        // Clear out model and physics and render of gun pickup
         const inventory_gun = this.world.createEntity()
         inventory_gun.addComponent( GunComponent, new_gun )
         inventory_gun.addComponent( InventoryComponent ) 

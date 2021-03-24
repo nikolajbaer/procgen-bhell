@@ -45,7 +45,7 @@ export class EnemySystem extends System {
                 rate_of_fire: 3, 
                 bullet_damage: 10, 
                 bullet_material: "default_bullet", 
-                bullet_speed: 2.5 ,
+                bullet_speed: 3 ,
                 bullet_scale: new Vector3(0.4,0.4,0.4),
                 bullet_mass: 500,
                 bullet_sound: "big-bullet-fire",
@@ -89,8 +89,24 @@ export class EnemySystem extends System {
             enemyEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 1, material: "mover" } )
             enemyEntity.addComponent( DamageableComponent, { health: 3 } )
             enemyEntity.addComponent( EnemyComponent, { score: 3 })
-
-        }else{ // Grunt
+        }else if(r > 0.35 && level >= 6){ // Giant Chaser
+            enemyEntity.addComponent( EnemyComponent, { score: 4 })
+            enemyEntity.addComponent( AIChasePlayerComponent, { force: 15 } )
+            enemyEntity.addComponent( ModelComponent, {
+                material: "enemy:giant-chaser",
+                geometry: "sphere",
+                scale: new Vector3(1,1,1),
+            } )
+            enemyEntity.addComponent( BodyComponent , { 
+                bounds_type: BodyComponent.SPHERE_TYPE, 
+                mass: 50 ,
+                material: "chaser", // higher friction
+                bounds: new Vector3(2,2,2),
+            } )
+            enemyEntity.addComponent( ProxyMineComponent, { damage: 30, damage_radius: 7, delay: 2 } )
+            enemyEntity.addComponent( DamageableComponent, { health: 15 } )
+        }
+        else{ // Grunt
             enemyEntity.addComponent( AITargetPlayerComponent )
             enemyEntity.addComponent( FireControlComponent )
             enemyEntity.addComponent( GunComponent, { rate_of_fire: 1 , bullet_damage: 0.5, last_fire: first_fire } )
