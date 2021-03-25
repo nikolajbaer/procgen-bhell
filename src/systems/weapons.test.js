@@ -16,14 +16,15 @@ test('gun runs out of ammo', () => {
     const weaponsys = world.getSystem(WeaponsSystem)
     const e = world.createEntity()
     e.addComponent(FireControlComponent)
-    e.addComponent(PhysicsComponent)
+    e.addComponent(PhysicsComponent, {body: create_physics_body()})
     e.addComponent(GunComponent, { ammo: 5 })
+
     const player_body = create_physics_body()
 
-    weaponsys.fire(e.getMutableComponent(GunComponent),player_body,0)
+    weaponsys.fire(e,e.getMutableComponent(GunComponent),player_body,0)
     expect(e.getComponent(GunComponent).ammo).toBe(4)
-    weaponsys.fire(e.getMutableComponent(GunComponent),player_body,0)
-    weaponsys.fire(e.getMutableComponent(GunComponent),player_body,0)
+    weaponsys.fire(e,e.getMutableComponent(GunComponent),player_body,0)
+    weaponsys.fire(e,e.getMutableComponent(GunComponent),player_body,0)
     expect(e.getComponent(GunComponent).ammo).toBe(2)
     
 })

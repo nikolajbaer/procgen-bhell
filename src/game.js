@@ -33,7 +33,7 @@ import { PickupComponent } from './components/pickup';
 
 export function init_game(playSound){
     const world = new World()
-
+   
     // Components
     world.registerComponent(LocRotComponent)
     world.registerComponent(BodyComponent)
@@ -90,6 +90,8 @@ export function init_game(playSound){
     world.registerSystem(PhysicsSystem)
     world.registerSystem(RenderSystem)
 
+    window.ecsy_world = world
+
     // update sound preference
     if(playSound){
         world.getSystem(SoundSystem).activate()
@@ -103,9 +105,35 @@ export function init_game(playSound){
         let time = performance.now() / 1000
         let delta = time - lastTime
 
+        const perf_t0 = time
         world.execute(delta,time) 
+        const perf_t1 = performance.now()
+
+        // calc perf metrics
+        const frame_time = perf_t1 - perf_t0
+        window.game_perf = {
+            fps: frame_time,
+            phys_time: window.perf_phys,
+            ren_time: window.perf_ren,
+            systems: world.getSystems().map( s => [s.constructor.name,s.executeTime] )
+        }
+
     }
     animate();
+
+    if(window.perf_interval == undefined){
+        const debug_el = document.getElementById("perf")
+        window.perf_interval = setInterval(() => {
+            if(window.game_perf == undefined){ return }
+            let output = `FPS ${window.game_perf.fps.toFixed(3)} Phys: ${window.game_perf.phys_time.toFixed(3)} Render: ${window.game_perf.ren_time.toFixed(3)}\n`
+            window.game_perf.systems.sort( (a,b) => { return b[1] - a[1] })
+            window.game_perf.systems.forEach( s=> {
+                output += `${s[0]}: ${s[1].toFixed(2)}\n`
+            }) 
+            debug_el.innerText = output
+        },1000)
+    }
+
 
     return world
 }

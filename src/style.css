@@ -161,3 +161,12 @@ ul.highscores {
     right: 10px;
     bottom: 10px;
 }
+
+#perf {
+    position: fixed;
+    bottom: 2px;
+    left: 2px;
+    font-family: monospace;
+    font-size: 10px;
+    color: #ddd;
+}

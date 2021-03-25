@@ -23,17 +23,15 @@ export const HUDView = observer( ({ hudState,newGameHandler,highScoreHandler,sav
     }
 
     return (<div className="overlay">
+        <div className="top">
+
+        </div>
         <div className="gun_stats">
             <h2 style={{color:hudState.gun.bullet_color}}>Gun: {hudState.gun.name}</h2>
-            <div>Score {gun_output_score(hudState.gun)}</div>
             <GunStat name="Barrels" value={hudState.gun.barrels} max_value={5} color={hudState.gun.bullet_color}></GunStat>
             <GunStat name="Bullet Damage" value={hudState.gun.bullet_damage} max_value={5} color={hudState.gun.bullet_color}></GunStat>
             <GunStat name="Bullet Speed" value={hudState.gun.bullet_speed} max_value={5} color={hudState.gun.bullet_color}></GunStat>
             <GunStat name="Bullet Distance" value={hudState.gun.bullet_life} max_value={3} color={hudState.gun.bullet_color}></GunStat>
-            <h4>Gun Inventory</h4>
-            <ul>
-                {hudState.inventory.map((gun) => <li key={gun.name}>{gun.name}</li>)} 
-            </ul>
         </div>
         <div className="bottom">
             <div className="hud">

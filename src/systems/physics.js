@@ -111,7 +111,9 @@ export class PhysicsSystem extends System {
             body.angularVelocity.set(0,rot.a_per_s,0)
         })
 
+        const t0 = performance.now()
         this.physics_world.step(1/60,delta)
+        window.perf_phys = performance.now() - t0
     }
 
     handleBulletCollision(bullet,damageable){

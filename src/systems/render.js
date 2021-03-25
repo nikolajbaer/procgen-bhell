@@ -127,7 +127,9 @@ export class RenderSystem extends System {
 
     	//this.effect.render( this.scene, this.camera );
         TWEEN.update()
+        const t0 = performance.now()
         this.renderer.render( this.scene, this.camera )
+        window.perf_ren = performance.now() - t0
     }
 }
 
