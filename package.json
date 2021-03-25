@@ -2,10 +2,14 @@
   "name": "procgenbhell",
   "version": "1.0.0",
   "description": "A procedurally generated bullet hell game built with three.js, ecsy, react, and tone.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nikolajbaer/procgen-bhell.git"
+  },
   "main": "webpack.config.js",
   "scripts": {
     "build": "webpack",
-    "start": "webpack-dev-server --config ./webpack.config.js --mode development --host 0.0.0.0",
+    "start": "webpack serve --config ./webpack.config.js --mode development --host 0.0.0.0",
     "test": "jest"
   },
   "author": "",
@@ -28,9 +32,8 @@
     "style-loader": "^2.0.0",
     "three": ">=0.125.0",
     "tone": "^14.7.77",
-    "webpack": "^4.44.2",
-    "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.0"
+    "webpack": "^5.28.0",
+    "webpack-cli": "^4.5.0"
   },
   "devDependencies": {
     "@babel/core": "^7.13.8",
