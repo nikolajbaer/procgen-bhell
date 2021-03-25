@@ -1,5 +1,7 @@
 #### Proc Gen Bullet Hell
 
+![Test Status](https://github.com/nikolajbaer/procgen-bhell/actions/workflows/node.js.yml/badge.svg)
+
 An work-in-progress experiment to create a procedurally generated [bullet hell game](https://en.wikipedia.org/wiki/Shoot_%27em_up#Bullet_hell_and_niche_appeal) using web tech.
 
 The challenge / goal is to create new guns that are procedurally generated but reasonably balanced.
