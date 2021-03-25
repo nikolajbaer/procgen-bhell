@@ -32,9 +32,9 @@ export function gen_gun(level,default_gun=true,create_material=true,ammo_level=2
         const gv = {
             barrels: {range:[2,5],weight:1},
             barrel_spread: {range:[30,90],weight:1},
-            rate_of_fire: {range:[.1,1],weight:1},
+            rate_of_fire: {range:[.1,.6],weight:1},
             bullet_damage: {range:[1,5],weight:1},
-            bullet_speed: {range:[2,4],weight:1},
+            bullet_speed: {range:[2,5],weight:1},
             bullet_life: {range:[1.5,3],weight:1},
         }
 
@@ -64,6 +64,7 @@ export function gen_gun(level,default_gun=true,create_material=true,ammo_level=2
         generated.bullet_material = bullet_material
         generated.bullet_color = color
 
+
         // First, we scale the rate of fire by the difference from the level
         /*
         const adj_rof = ( generated.barrels * generated.bullet_damage ) / ( generated.barrel_spread * level )
@@ -79,6 +80,7 @@ export function gen_gun(level,default_gun=true,create_material=true,ammo_level=2
         }
         */
 
+        // CONSIDER maybe instead of scaling weapon, we should scale the ammo? Seems like a cop-out
         generated.ammo = generated.barrels * ammo_level
 
         return generated

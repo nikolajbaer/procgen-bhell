@@ -1,4 +1,4 @@
-import { Component, Types } from "ecsy"
+import { TagComponent, Component, Types } from "ecsy"
 import { Vector3Type } from "../ecs_types"
 
 
@@ -9,3 +9,10 @@ PickupComponent.schema = {
     level: { type: Types.Number, default: 1 },
     expires: { type: Types.Number, default: null },
 }
+
+export class HealthComponent extends Component {}
+HealthComponent.schema = {
+    amount: { type: Types.Number, default: 10 }
+}
+
+export class GunPickupComponent extends TagComponent {}

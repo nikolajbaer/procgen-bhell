@@ -91,7 +91,7 @@ export class EnemySystem extends System {
             enemyEntity.addComponent( EnemyComponent, { score: 3 })
         }else if(r > 0.35 && level >= 6){ // Giant Chaser
             enemyEntity.addComponent( EnemyComponent, { score: 4 })
-            enemyEntity.addComponent( AIChasePlayerComponent, { force: 15 } )
+            enemyEntity.addComponent( AIChasePlayerComponent, { force: 15, max_distance: 50 } )
             enemyEntity.addComponent( ModelComponent, {
                 material: "enemy:giant-chaser",
                 geometry: "sphere",

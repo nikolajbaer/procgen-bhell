@@ -2,10 +2,9 @@ import { System, Not } from "ecsy";
 import { LocRotComponent, BodyComponent, RotatorComponent } from "../components/physics"
 import { ModelComponent } from "../components/render"
 import { Vector3 } from "../ecs_types"
-import { GunPickupComponent, HealthComponent } from "../components/pickups";
+import { PickupComponent, GunPickupComponent, HealthComponent } from "../components/pickup";
 import { GunComponent } from "../components/weapons";
 import { gen_gun } from "../procgen/guns"
-import { PickupComponent } from "../components/pickup";
 
 export const WAVE_DELAY = 3 
 export const LEVEL_ADJUSTER = 1/5

@@ -3,11 +3,10 @@ import { LocRotComponent, BodyComponent, PhysicsComponent, RotatorComponent } fr
 import { ModelComponent } from "../components/render"
 import { Vector3 } from "../ecs_types"
 import { PlayerComponent } from "../components/player";
-import { GunPickupComponent, HealthComponent } from "../components/pickups";
+import { PickupComponent, GunPickupComponent, HealthComponent } from "../components/pickup";
 import { WaveMemberComponent } from "../components/wave";
 import { GunComponent } from "../components/weapons";
 import { gen_gun, gun_output_score } from "../procgen/guns"
-import { PickupComponent } from "../components/pickup";
 import { SoundEffectComponent } from "../components/sound";
 
 export const WAVE_DELAY = 3 

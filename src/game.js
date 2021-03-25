@@ -22,13 +22,12 @@ import { EffectsSystem } from "./systems/effects";
 import { HUDSystem } from './systems/hud';
 import { SoundSystem } from './systems/sound';
 import { MusicLoopComponent, SoundEffectComponent } from './components/sound';
-import { GunPickupComponent, HealthComponent } from './components/pickups';
+import { PickupComponent, GunPickupComponent, HealthComponent } from './components/pickup';
 import { WaveMemberComponent } from './components/wave';
 import { WaveSystem } from './systems/wave';
 import { InventoryComponent } from './components/inventory';
 import { InventorySystem } from './systems/inventory';
 import { PickupSystem } from './systems/pickup';
-import { PickupComponent } from './components/pickup';
 
 
 export function init_game(playSound){
@@ -121,7 +120,8 @@ export function init_game(playSound){
     }
     animate();
 
-    if(window.perf_interval == undefined){
+    // manually set perf display in console
+    if(window.perf_interval == undefined && window.show_debug_perf ){
         const debug_el = document.getElementById("perf")
         window.perf_interval = setInterval(() => {
             if(window.game_perf == undefined){ return }
