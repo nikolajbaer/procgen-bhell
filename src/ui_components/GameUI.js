@@ -10,7 +10,7 @@ export class GameUI extends React.Component {
         super(props);
         this.state = { 
             hudState: null, 
-            playSound: true, 
+            playSound: !('ontouchstart' in window),  // mobile devices don't like tone.js
             fullscreen: false,
             showHighScores: false,
             score: null,
