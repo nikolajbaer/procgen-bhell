@@ -1,3 +1,4 @@
+import { HUDMessageComponent } from "../components/hud"
 import { PhysicsComponent } from "../components/physics"
 import { PlayerComponent } from "../components/player"
 import { SoundEffectComponent } from "../components/sound"
@@ -8,7 +9,7 @@ import { WaveSystem, WAVE_DELAY } from "./wave"
 test('wave creates new wave on delay', () => {
     const world = initialize_test_world(
         [WaveSystem],
-        [WaveMemberComponent,PlayerComponent,PhysicsComponent,SoundEffectComponent]
+        [WaveMemberComponent,PlayerComponent,PhysicsComponent,SoundEffectComponent,HUDMessageComponent]
     )
 
 
