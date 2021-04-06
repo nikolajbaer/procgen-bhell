@@ -27,7 +27,9 @@ export class RenderSystem extends System {
         let renderer = new THREE.WebGLRenderer({ antialias: true, canvas: domElement });
         renderer.shadowMap.enabled = true;
         //renderer.shadowMap.type = THREE.PCFShadowMap;
+
         renderer.setSize( window.innerWidth, window.innerHeight );
+        console.log("setting size to ",window.innerWidth,window.innerHeight)
 
         let raycaster = new THREE.Raycaster();
 

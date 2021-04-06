@@ -48,6 +48,7 @@ a {
     color: white;
     text-decoration: none;
 }
+
 .menu {
     position: absolute;
     top: 50%;
@@ -169,4 +170,40 @@ ul.highscores {
     font-family: monospace;
     font-size: 10px;
     color: #ddd;
+}
+
+.gameFlash {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    width: 300px;
+    text-align: center;
+    color: white;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    font-size: 32pt;
+}
+
+.gameFlash .show {
+    z-index: 1000;
+    animation-name: flashFadeInOut;
+    animation-duration: 3s;
+}
+
+@keyframes flashFadeInOut {
+  from {
+    opacity: 0.0;
+  }
+
+  15% {
+    opacity: 1.0;
+  }
+
+  75% {
+    opacity: 1.0;
+  }
+
+  to {
+    opacity: 0.0;
+  }
 }

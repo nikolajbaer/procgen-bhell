@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite"
 import { gun_output_score } from "../procgen/guns"
 import { GunStat } from "./GunStat"
 import { HealthBar } from "./HealthBar"
+import { GameFlash } from "./GameFlash"
 
 export const HUDView = observer( ({ hudState,newGameHandler,highScoreHandler,saveScoreHandler }) => {
     const [name, setName ] = useState("")
@@ -24,7 +25,6 @@ export const HUDView = observer( ({ hudState,newGameHandler,highScoreHandler,sav
 
     return (<div className="overlay">
         <div className="top">
-
         </div>
         <div className="gun_stats">
             <h2 style={{color:hudState.gun.bullet_color}}>Gun: {hudState.gun.name}</h2>
@@ -41,9 +41,10 @@ export const HUDView = observer( ({ hudState,newGameHandler,highScoreHandler,sav
             </div>
             <HealthBar health={hudState.health} max_health={hudState.max_health} />
             <div className="hud">
-                WASD to move, LMB to fire <br/>
+                WASD to move, LMB to fire 
             </div>
         </div>
+        <GameFlash title={hudState.message}></GameFlash>
     </div>)
 })
 

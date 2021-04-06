@@ -8,112 +8,127 @@ import { PlayerComponent } from "../components/player";
 import { AIChasePlayerComponent, AITargetPlayerComponent } from "../components/ai_control";
 import { FireControlComponent, GunComponent, ProxyMineComponent } from "../components/weapons";
 import { WaveMemberComponent } from "../components/wave";
+import { gen_gun } from "../procgen/guns";
 
 export const DELAY_FIRST_FIRE = 0.5 
 
 export class EnemySystem extends System {
-    spawn_enemy(enemyEntity,level,first_fire){
+
+    spawn_enemy(enemyEntity,level,first_fire,boss){
         const r = Math.random()
-        // TODO Do some procgen of the enemies
-        enemyEntity.addComponent( LocRotComponent, { location: new Vector3((0.5 - Math.random()) * 20,5,(0.5 - Math.random()) * 20) } )
-        if(r > 0.8 && level > 1){ // Chaser
-            enemyEntity.addComponent( EnemyComponent, { score: 2 })
-            enemyEntity.addComponent( AIChasePlayerComponent )
-            enemyEntity.addComponent( ModelComponent, {
-                material: "enemy:chaser",
-                geometry: "sphere",
-                scale: new Vector3(0.5,0.5,0.5),
-            } )
-            enemyEntity.addComponent( BodyComponent , { 
-                bounds_type: BodyComponent.SPHERE_TYPE, 
-                mass: 1 ,
-                material: "chaser", // higher friction
-            } )
-            enemyEntity.addComponent( ProxyMineComponent )
-            enemyEntity.addComponent( DamageableComponent, { health: 3 } )
-        }else if(r > 0.7 && level >= 3){ // Sharp Shooter
-            enemyEntity.addComponent( AITargetPlayerComponent, { predict: true, max_distance: 30 } )
-            enemyEntity.addComponent( GunComponent, { rate_of_fire: 2, bullet_damage: 2,bullet_material: "bullet-shooter2", bullet_speed: 5, last_fire: first_fire } )
+
+        if(boss){
+            const scale = 2 
+            enemyEntity.addComponent( LocRotComponent, { location: new Vector3(0,25,0) } )
+            enemyEntity.addComponent( AIChasePlayerComponent, { speed: .25 } )
+            enemyEntity.addComponent( AITargetPlayerComponent, { max_distance: 30 } )
+            enemyEntity.addComponent( GunComponent, gen_gun(level,false,false,null,false) ) // cap max speed to make it survivable
             enemyEntity.addComponent( FireControlComponent )
-            enemyEntity.addComponent( ModelComponent, {material: "enemy:shooter2"} )
-            enemyEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 1 } )
-            enemyEntity.addComponent( DamageableComponent, { health: 3 } )
-            enemyEntity.addComponent( EnemyComponent, { score: 2 })
-        }else if(r > 0.65 && level >= 5){ // Big Daddy
-            enemyEntity.addComponent( AITargetPlayerComponent, { predict: true, max_distance: 30 } )
-            enemyEntity.addComponent( GunComponent, { 
-                rate_of_fire: 3, 
-                bullet_damage: 10, 
-                bullet_material: "default_bullet", 
-                bullet_speed: 3 ,
-                bullet_scale: new Vector3(0.4,0.4,0.4),
-                bullet_mass: 500,
-                bullet_sound: "big-bullet-fire",
-                last_fire: first_fire,
-            } )
-            enemyEntity.addComponent( FireControlComponent )
-            enemyEntity.addComponent( ModelComponent, {material: "enemy:shooter3", scale: new Vector3(1.5,1.5,1.5) } )
-            enemyEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 5, bounds: new Vector3(1.5,1.5,1.5) } )
-            enemyEntity.addComponent( DamageableComponent, { health: 8 } )
-            enemyEntity.addComponent( EnemyComponent, { score: 3 })
-        }else if(r > 0.55 && level >= 4){ // Bullet hail
-            enemyEntity.addComponent( AITargetPlayerComponent, { max_distance: 20 } )
-            enemyEntity.addComponent( GunComponent, { 
-                barrels: 3,
-                rate_of_fire: 0.25, 
-                bullet_damage: .5, 
-                bullet_speed: 1.5,
-                bullet_life: 1,
-                last_fire: first_fire,
-            } )
-            enemyEntity.addComponent( FireControlComponent )
-            enemyEntity.addComponent( ModelComponent, {material: "enemy:shooter4" } )
-            enemyEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 1 } )
-            enemyEntity.addComponent( DamageableComponent, { health: 1 } )
-            enemyEntity.addComponent( EnemyComponent, { score: 3 })
-        }else if(r > 0.45 && level >= 6){ // Hunter
-            enemyEntity.addComponent( AIChasePlayerComponent, { speed: .5 } )
-            enemyEntity.addComponent( AITargetPlayerComponent, { max_distance: 10 } )
-            enemyEntity.addComponent( GunComponent, { 
-                barrels: 3,
-                barrel_spread: 30,
-                rate_of_fire: 0.25, 
-                bullet_damage: .5, 
-                bullet_material: "default_bullet", 
-                bullet_speed: 2,
-                bullet_life: 1,
-                last_fire: first_fire,
-            } )
-            enemyEntity.addComponent( FireControlComponent )
-            enemyEntity.addComponent( ModelComponent, { material: "enemy:shooter5" } )
-            enemyEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 1, material: "mover" } )
-            enemyEntity.addComponent( DamageableComponent, { health: 3 } )
-            enemyEntity.addComponent( EnemyComponent, { score: 3 })
-        }else if(r > 0.35 && level >= 6){ // Giant Chaser
-            enemyEntity.addComponent( EnemyComponent, { score: 4 })
-            enemyEntity.addComponent( AIChasePlayerComponent, { force: 15, max_distance: 50 } )
-            enemyEntity.addComponent( ModelComponent, {
-                material: "enemy:giant-chaser",
-                geometry: "sphere",
-                scale: new Vector3(1,1,1),
-            } )
-            enemyEntity.addComponent( BodyComponent , { 
-                bounds_type: BodyComponent.SPHERE_TYPE, 
-                mass: 50 ,
-                material: "chaser", // higher friction
-                bounds: new Vector3(2,2,2),
-            } )
-            enemyEntity.addComponent( ProxyMineComponent, { damage: 30, damage_radius: 7, delay: 2 } )
-            enemyEntity.addComponent( DamageableComponent, { health: 15 } )
-        }
-        else{ // Grunt
-            enemyEntity.addComponent( AITargetPlayerComponent )
-            enemyEntity.addComponent( FireControlComponent )
-            enemyEntity.addComponent( GunComponent, { rate_of_fire: 1 , bullet_damage: 0.5, last_fire: first_fire } )
-            enemyEntity.addComponent( ModelComponent, {material: "enemy:shooter"} )
-            enemyEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 1 } )
-            enemyEntity.addComponent( DamageableComponent, { health: 2 } )
-            enemyEntity.addComponent( EnemyComponent, { score: 1 })
+            enemyEntity.addComponent( ModelComponent, {material: "enemy:boss", scale: new Vector3(scale,scale,scale) } )
+            enemyEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 500, bounds: new Vector3(scale,scale,scale), material: "mover" } )
+            enemyEntity.addComponent( DamageableComponent, { health: 100 + level*2 } )
+            enemyEntity.addComponent( EnemyComponent, { score: 25 + level * 2  })
+        }else{
+            enemyEntity.addComponent( LocRotComponent, { location: new Vector3((0.5 - Math.random()) * 20,5,(0.5 - Math.random()) * 20) } )
+            if(r > 0.8 && level > 1){ // Chaser
+                enemyEntity.addComponent( EnemyComponent, { score: 2 })
+                enemyEntity.addComponent( AIChasePlayerComponent )
+                enemyEntity.addComponent( ModelComponent, {
+                    material: "enemy:chaser",
+                    geometry: "sphere",
+                    scale: new Vector3(0.5,0.5,0.5),
+                } )
+                enemyEntity.addComponent( BodyComponent , { 
+                    bounds_type: BodyComponent.SPHERE_TYPE, 
+                    mass: 1 ,
+                    material: "chaser", // higher friction
+                } )
+                enemyEntity.addComponent( ProxyMineComponent )
+                enemyEntity.addComponent( DamageableComponent, { health: 3 } )
+            }else if(r > 0.7 && level >= 3){ // Sharp Shooter
+                enemyEntity.addComponent( AITargetPlayerComponent, { predict: true, max_distance: 30 } )
+                enemyEntity.addComponent( GunComponent, { rate_of_fire: 2, bullet_damage: 2,bullet_material: "bullet-shooter2", bullet_speed: 5, last_fire: first_fire } )
+                enemyEntity.addComponent( FireControlComponent )
+                enemyEntity.addComponent( ModelComponent, {material: "enemy:shooter2"} )
+                enemyEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 1 } )
+                enemyEntity.addComponent( DamageableComponent, { health: 3 } )
+                enemyEntity.addComponent( EnemyComponent, { score: 2 })
+            }else if(r > 0.65 && level >= 5){ // Big Daddy
+                enemyEntity.addComponent( AITargetPlayerComponent, { predict: true, max_distance: 30 } )
+                enemyEntity.addComponent( GunComponent, { 
+                    rate_of_fire: 3, 
+                    bullet_damage: 10, 
+                    bullet_material: "default_bullet", 
+                    bullet_speed: 3 ,
+                    bullet_scale: new Vector3(0.4,0.4,0.4),
+                    bullet_mass: 500,
+                    bullet_sound: "big-bullet-fire",
+                    last_fire: first_fire,
+                } )
+                enemyEntity.addComponent( FireControlComponent )
+                enemyEntity.addComponent( ModelComponent, {material: "enemy:shooter3", scale: new Vector3(1.5,1.5,1.5) } )
+                enemyEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 5, bounds: new Vector3(1.5,1.5,1.5) } )
+                enemyEntity.addComponent( DamageableComponent, { health: 8 } )
+                enemyEntity.addComponent( EnemyComponent, { score: 3 })
+            }else if(r > 0.55 && level >= 4){ // Bullet hail
+                enemyEntity.addComponent( AITargetPlayerComponent, { max_distance: 20 } )
+                enemyEntity.addComponent( GunComponent, { 
+                    barrels: 3,
+                    rate_of_fire: 0.25, 
+                    bullet_damage: .5, 
+                    bullet_speed: 1.5,
+                    bullet_life: 1,
+                    last_fire: first_fire,
+                } )
+                enemyEntity.addComponent( FireControlComponent )
+                enemyEntity.addComponent( ModelComponent, {material: "enemy:shooter4" } )
+                enemyEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 1 } )
+                enemyEntity.addComponent( DamageableComponent, { health: 1 } )
+                enemyEntity.addComponent( EnemyComponent, { score: 3 })
+            }else if(r > 0.45 && level >= 6){ // Hunter
+                enemyEntity.addComponent( AIChasePlayerComponent, { speed: .5 } )
+                enemyEntity.addComponent( AITargetPlayerComponent, { max_distance: 10 } )
+                enemyEntity.addComponent( GunComponent, { 
+                    barrels: 3,
+                    barrel_spread: 30,
+                    rate_of_fire: 0.25, 
+                    bullet_damage: .5, 
+                    bullet_material: "default_bullet", 
+                    bullet_speed: 2,
+                    bullet_life: 1,
+                    last_fire: first_fire,
+                } )
+                enemyEntity.addComponent( FireControlComponent )
+                enemyEntity.addComponent( ModelComponent, { material: "enemy:shooter5" } )
+                enemyEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 1, material: "mover" } )
+                enemyEntity.addComponent( DamageableComponent, { health: 3 } )
+                enemyEntity.addComponent( EnemyComponent, { score: 3 })
+            }else if(r > 0.35 && level >= 6){ // Giant Chaser
+                enemyEntity.addComponent( EnemyComponent, { score: 4 })
+                enemyEntity.addComponent( AIChasePlayerComponent, { force: 15, max_distance: 50 } )
+                enemyEntity.addComponent( ModelComponent, {
+                    material: "enemy:giant-chaser",
+                    geometry: "sphere",
+                    scale: new Vector3(1,1,1),
+                } )
+                enemyEntity.addComponent( BodyComponent , { 
+                    bounds_type: BodyComponent.SPHERE_TYPE, 
+                    mass: 50 ,
+                    material: "chaser", // higher friction
+                    bounds: new Vector3(2,2,2),
+                } )
+                enemyEntity.addComponent( ProxyMineComponent, { damage: 75, damage_radius: 8, delay: 2 } )
+                enemyEntity.addComponent( DamageableComponent, { health: 15 } )
+            }
+            else{ // Grunt
+                enemyEntity.addComponent( AITargetPlayerComponent )
+                enemyEntity.addComponent( FireControlComponent )
+                enemyEntity.addComponent( GunComponent, { rate_of_fire: 1 , bullet_damage: 0.5, last_fire: first_fire } )
+                enemyEntity.addComponent( ModelComponent, {material: "enemy:shooter"} )
+                enemyEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 1 } )
+                enemyEntity.addComponent( DamageableComponent, { health: 2 } )
+                enemyEntity.addComponent( EnemyComponent, { score: 1 })
+            }
         }
     }
 
@@ -121,7 +136,7 @@ export class EnemySystem extends System {
 
         this.queries.uninitialized.results.forEach( e => {
             const wave = e.getComponent(WaveMemberComponent)
-            this.spawn_enemy(e,wave.wave,time+DELAY_FIRST_FIRE)
+            this.spawn_enemy(e,wave.wave,time+DELAY_FIRST_FIRE,wave.boss)
         })
 
         // TODO only give player points for enemies killed by their bullets?

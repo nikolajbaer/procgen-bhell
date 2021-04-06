@@ -5,6 +5,7 @@ import { EnemyComponent } from "../components/enemy"
 import { PlayerComponent } from "../components/player"
 import { GunComponent } from "../components/weapons"
 import { InventoryComponent } from "../components/inventory"
+import { HUDMessageComponent } from "../components/hud"
 
 
 export class HUDState {
@@ -19,6 +20,9 @@ export class HUDState {
     gameover = false
     gun = {} 
     inventory = []
+    message = null
+    message_duration = null
+    message_expires = null
 
     constructor(){
         makeAutoObservable(this)
@@ -62,6 +66,21 @@ export class HUDSystem extends System {
             this.state.total_enemies = player_c.current_wave_enemies
             this.state.enemies_left = this.queries.enemies.results.length
 
+            if(this.state.message_expires <=  time){
+                this.state.message = null
+                this.state.message_duration = null
+                this.state.message_expires = null
+            }
+
+            if(this.queries.messages.results.length){
+                const msg_e = this.queries.messages.results[0]
+                const msg = msg_e.getComponent(HUDMessageComponent)
+                this.state.message = msg.message
+                this.state.message_duration = msg.duration
+                this.state.message_expires = msg.duration + time
+                msg_e.removeComponent(HUDMessageComponent)
+            }
+
             // current gun
             for(var key in gun.constructor.schema){
                 this.state.gun[key] = gun[key]
@@ -91,5 +110,8 @@ HUDSystem.queries = {
     },
     enemies: {
         components: [EnemyComponent]
+    },
+    messages: {
+        components: [HUDMessageComponent]
     },
 }

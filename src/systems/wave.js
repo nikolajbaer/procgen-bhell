@@ -8,9 +8,11 @@ import { WaveMemberComponent } from "../components/wave";
 import { GunComponent } from "../components/weapons";
 import { gen_gun, gun_output_score } from "../procgen/guns"
 import { SoundEffectComponent } from "../components/sound";
+import { HUDMessageComponent } from "../components/hud";
 
 export const WAVE_DELAY = 3 
 export const PICKUP_RADIUS = 5
+const BOSS_FRQ = 10
 
 export class WaveSystem extends System {
     init(){
@@ -19,15 +21,27 @@ export class WaveSystem extends System {
     }
 
     spawn_wave(){
-        const n = Math.ceil(Math.pow(this.wave,.9) + 2)
-
-        for(var i=0; i<n; i++){
+        let n = 0
+        if( this.wave % BOSS_FRQ == 0){
+            // Spawn Boss and wave
+            const boss = this.world.createEntity()
+            boss.addComponent(WaveMemberComponent, { wave: this.wave, boss: true})
+            n = 3 + this.wave % 10;
+            for(var i=0; i < n; i++){
+                const e = this.world.createEntity()
+                e.addComponent(WaveMemberComponent, { wave: Math.max(this.wave-3,1) })
+            }
             const e = this.world.createEntity()
-            e.addComponent(WaveMemberComponent, { wave: this.wave })
+            e.addComponent(SoundEffectComponent, { sound: "new-boss-wave" } )
+        }else{
+            n = Math.ceil(Math.pow(this.wave,.9) + 2)
+            for(var i=0; i<n; i++){
+                const e = this.world.createEntity()
+                e.addComponent(WaveMemberComponent, { wave: this.wave })
+            }
+            const e = this.world.createEntity()
+            e.addComponent(SoundEffectComponent, { sound: "new-wave" } )
         }
-
-        const e = this.world.createEntity()
-        e.addComponent(SoundEffectComponent, { sound: "new-wave" } )
 
         return n
     }
@@ -55,6 +69,10 @@ export class WaveSystem extends System {
                             expires: (t=="gun")?time + 10: null
                         })
                     }
+                    player.addComponent(HUDMessageComponent,{
+                        message:`Wave ${this.wave}`,
+                        duration: 2,
+                    })
                 }else if(this.wave_delay <= time){
                     this.wave_delay = null 
                     // Spawn enemies

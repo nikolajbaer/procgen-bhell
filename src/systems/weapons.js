@@ -68,13 +68,13 @@ export class WeaponsSystem extends System {
         return vecs
     }
 
-    fire(e,gun,body,time){
+    fire(e,gun,body,time,x_offset=2.1){
         // bullet heading/speed
         const vel_vec = body.quaternion.vmult(new CANNON.Vec3(gun.bullet_speed,0,0))
         // bullet radius 
         const br = (gun.bullet_scale!=undefined)?gun.bullet_scale.z:.2
         // go out so we don't collid with ourselves (NOTE ASsumption our radius is .5)
-        const offset = body.quaternion.vmult(new CANNON.Vec3( br*2.1 + .5,0.5,0 ) )
+        const offset = body.quaternion.vmult(new CANNON.Vec3( br*x_offset + .5,0.5,0 ) )
         // perpendicular offset spacer for each barrel
         const p_offset = body.quaternion.vmult(new CANNON.Vec3(0,0,br*3)) 
 
@@ -109,9 +109,11 @@ export class WeaponsSystem extends System {
             const gun = e.getMutableComponent(GunComponent)  
             const control = e.getComponent(FireControlComponent)
             const body = e.getComponent(PhysicsComponent).body
+            const _body = e.getComponent(BodyComponent)
+            const offset = _body.bounds.x * 1.5
 
             if( gun.last_fire + gun.rate_of_fire < time && control.fire1 && (gun.ammo == null || gun.ammo > 0)){                    
-                this.fire(e,gun,body,time)
+                this.fire(e,gun,body,time,offset)
                 e.addComponent( SoundEffectComponent, { sound: gun.bullet_sound })
             }
         })

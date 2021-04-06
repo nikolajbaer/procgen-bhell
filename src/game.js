@@ -28,6 +28,7 @@ import { WaveSystem } from './systems/wave';
 import { InventoryComponent } from './components/inventory';
 import { InventorySystem } from './systems/inventory';
 import { PickupSystem } from './systems/pickup';
+import { HUDMessageComponent } from './components/hud';
 
 
 export function init_game(playSound){
@@ -66,6 +67,7 @@ export function init_game(playSound){
     world.registerComponent(CameraShakeComponent)
     world.registerComponent(PickupComponent)
     world.registerComponent(OutOfAmmoComponent)
+    world.registerComponent(HUDMessageComponent)
 
     // Systems
     world.registerSystem(SoundSystem)
@@ -98,8 +100,17 @@ export function init_game(playSound){
     
     let lastTime = performance.now() / 1000
 
+    let paused = false
+
+    window.addEventListener("keypress", (e) => {
+        if(e.key == " "){
+            paused = !paused
+        }
+    })
+
     function animate() {
         requestAnimationFrame( animate );            
+        if(paused){ return }
 
         let time = performance.now() / 1000
         let delta = time - lastTime

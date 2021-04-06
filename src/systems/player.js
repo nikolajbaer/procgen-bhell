@@ -7,6 +7,7 @@ import { DamageableComponent, HealableComponent } from "../components/damage"
 import { Vector3 } from "../ecs_types"
 import { gen_gun } from "../procgen/guns"
 import { InventoryComponent } from "../components/inventory";
+import { HUDMessageComponent } from "../components/hud";
 
 const RESPAWN_DELAY = 3
 
@@ -41,6 +42,8 @@ export class PlayerSystem extends System {
         const gunEntity = this.world.createEntity()
         gunEntity.addComponent(GunComponent, base_gun )
         gunEntity.addComponent(InventoryComponent)
+
+        return playerEntity
     }
 
     execute(delta,time){
@@ -48,7 +51,10 @@ export class PlayerSystem extends System {
             if(this.respawn_delay == null && this.lives > 0){
                 this.respawn_delay = time + RESPAWN_DELAY
             }else if(this.respawn_delay <= time && this.lives > 0){
-                this.spawn_player()
+                const playerEntity = this.spawn_player()
+                /*playerEntity.addComponent(HUDMessageComponent,{
+                    message:"GET READY!",duration:3
+                })*/
                 this.respawn_delay = null
                 this.lives -= 1
             }

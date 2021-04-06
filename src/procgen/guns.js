@@ -9,7 +9,26 @@ export function gun_output_score(gun){
     return gun.barrels * (1/gun.rate_of_fire) * gun.bullet_damage * 1/gun.barrel_spread
 }
 
-export function gen_gun(level,default_gun=true,create_material=true,ammo_level=20) {
+const PLAYER_RANGES =  {
+    barrels: {range:[2,5],weight:1},
+    barrel_spread: {range:[30,90],weight:1},
+    rate_of_fire: {range:[.1,.6],weight:1},
+    bullet_damage: {range:[1,5],weight:1},
+    bullet_speed: {range:[2,5],weight:1},
+    bullet_life: {range:[1.5,3],weight:1},
+}
+
+const BOSS_RANGES = {
+    barrels: {range:[2,4],weight:1},
+    barrel_spread: {range:[30,50],weight:1},
+    rate_of_fire: {range:[.2,.8],weight:1},
+    bullet_damage: {range:[1,3],weight:1},
+    bullet_speed: {range:[2,3],weight:1},
+    bullet_life: {range:[1.5,2],weight:1},
+}
+
+
+export function gen_gun(level,default_gun=true,create_material=true,ammo_level=20,player=true) {
 
     if(default_gun){
         return {
@@ -29,14 +48,7 @@ export function gen_gun(level,default_gun=true,create_material=true,ammo_level=2
                         + ALPHABET[Math.floor((r*10) % 10)] + "-" 
                         + (Math.floor(r*1000) % 100)
 
-        const gv = {
-            barrels: {range:[2,5],weight:1},
-            barrel_spread: {range:[30,90],weight:1},
-            rate_of_fire: {range:[.1,.6],weight:1},
-            bullet_damage: {range:[1,5],weight:1},
-            bullet_speed: {range:[2,5],weight:1},
-            bullet_life: {range:[1.5,3],weight:1},
-        }
+        const gv = player?PLAYER_RANGES:BOSS_RANGES
 
         const pickval = (k) => { 
             return (Math.random()*(gv[k].range[1] - gv[k].range[0])) + gv[k].range[0] 
@@ -81,7 +93,9 @@ export function gen_gun(level,default_gun=true,create_material=true,ammo_level=2
         */
 
         // CONSIDER maybe instead of scaling weapon, we should scale the ammo? Seems like a cop-out
-        generated.ammo = generated.barrels * ammo_level
+        if( ammo_level != null){
+            generated.ammo = generated.barrels * ammo_level
+        }
 
         return generated
     }

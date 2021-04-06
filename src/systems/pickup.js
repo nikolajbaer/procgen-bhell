@@ -30,7 +30,7 @@ export class PickupSystem extends System {
             } )
             e.addComponent( HealthComponent )
         }else if( pickup.pickup_type == "gun" ){
-            const gun = gen_gun(pickup.level * LEVEL_ADJUSTER,false) 
+            const gun = gen_gun(pickup.level * LEVEL_ADJUSTER,false,true,20+(pickup.level*2),true) 
             e.addComponent( ModelComponent, {
                 material: gun.bullet_material,
                 geometry: "box",
