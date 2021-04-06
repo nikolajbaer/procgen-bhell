@@ -187,7 +187,7 @@ ul.highscores {
 .gameFlash .show {
     z-index: 1000;
     animation-name: flashFadeInOut;
-    animation-duration: 3s;
+    animation-duration: 2s;
 }
 
 @keyframes flashFadeInOut {

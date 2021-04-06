@@ -46,7 +46,7 @@ export class EnemySystem extends System {
                 enemyEntity.addComponent( ProxyMineComponent )
                 enemyEntity.addComponent( DamageableComponent, { health: 3 } )
             }else if(r > 0.7 && level >= 3){ // Sharp Shooter
-                enemyEntity.addComponent( AITargetPlayerComponent, { predict: true, max_distance: 30 } )
+                enemyEntity.addComponent( AITargetPlayerComponent, { predict: true, max_distance: 40 } )
                 enemyEntity.addComponent( GunComponent, { rate_of_fire: 2, bullet_damage: 2,bullet_material: "bullet-shooter2", bullet_speed: 5, last_fire: first_fire } )
                 enemyEntity.addComponent( FireControlComponent )
                 enemyEntity.addComponent( ModelComponent, {material: "enemy:shooter2"} )
@@ -54,7 +54,7 @@ export class EnemySystem extends System {
                 enemyEntity.addComponent( DamageableComponent, { health: 3 } )
                 enemyEntity.addComponent( EnemyComponent, { score: 2 })
             }else if(r > 0.65 && level >= 5){ // Big Daddy
-                enemyEntity.addComponent( AITargetPlayerComponent, { predict: true, max_distance: 30 } )
+                enemyEntity.addComponent( AITargetPlayerComponent, { predict: true, max_distance: 40 } )
                 enemyEntity.addComponent( GunComponent, { 
                     rate_of_fire: 3, 
                     bullet_damage: 10, 
@@ -105,7 +105,7 @@ export class EnemySystem extends System {
                 enemyEntity.addComponent( EnemyComponent, { score: 3 })
             }else if(r > 0.35 && level >= 6){ // Giant Chaser
                 enemyEntity.addComponent( EnemyComponent, { score: 4 })
-                enemyEntity.addComponent( AIChasePlayerComponent, { force: 15, max_distance: 50 } )
+                enemyEntity.addComponent( AIChasePlayerComponent, { force: 15, max_distance: 100 } )
                 enemyEntity.addComponent( ModelComponent, {
                     material: "enemy:giant-chaser",
                     geometry: "sphere",
