@@ -1,5 +1,5 @@
 import { System, Not } from "ecsy";
-import { EnemyComponent } from "../components/enemy";
+import { EnemyComponent, ShakeGroundComponent } from "../components/enemy";
 import { LocRotComponent, BodyComponent, PhysicsComponent } from "../components/physics"
 import { ModelComponent } from "../components/render"
 import { DamageableComponent } from "../components/damage"
@@ -18,16 +18,18 @@ export class EnemySystem extends System {
         const r = Math.random()
 
         if(boss){
-            const scale = 2 
+            const scale = 2
+            enemyEntity.name = `Bossmang${level}`
             enemyEntity.addComponent( LocRotComponent, { location: new Vector3(0,25,0) } )
             enemyEntity.addComponent( AIChasePlayerComponent, { speed: .25 } )
             enemyEntity.addComponent( AITargetPlayerComponent, { max_distance: 30 } )
             enemyEntity.addComponent( GunComponent, gen_gun(level,false,false,null,false) ) // cap max speed to make it survivable
             enemyEntity.addComponent( FireControlComponent )
             enemyEntity.addComponent( ModelComponent, {material: "enemy:boss", scale: new Vector3(scale,scale,scale) } )
-            enemyEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 500, bounds: new Vector3(scale,scale,scale), material: "mover" } )
+            enemyEntity.addComponent( BodyComponent , { bounds_type: BodyComponent.BOX_TYPE, mass: 500, bounds: new Vector3(scale,scale,scale), material: "mover" , track_collisions: true} )
             enemyEntity.addComponent( DamageableComponent, { health: 100 + level*2 } )
             enemyEntity.addComponent( EnemyComponent, { score: 25 + level * 2  })
+            enemyEntity.addComponent( ShakeGroundComponent )
         }else{
             enemyEntity.addComponent( LocRotComponent, { location: new Vector3((0.5 - Math.random()) * 20,5,(0.5 - Math.random()) * 20) } )
             if(r > 0.8 && level > 1){ // Chaser

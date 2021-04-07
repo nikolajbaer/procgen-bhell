@@ -8,7 +8,7 @@ import { RenderSystem } from "./systems/render"
 import { PlayerControlsSystem } from "./systems/player_controls"
 import { DamageSystem } from "./systems/damage"
 import { WeaponsSystem, AimSystem, BulletSystem, ProxyMineSystem } from "./systems/weapons";
-import { EnemyComponent } from "./components/enemy";
+import { EnemyComponent, ShakeGroundComponent } from "./components/enemy";
 import { PlayerComponent } from "./components/player"
 import { EnemySystem } from "./systems/enemy";
 import { Vector3 } from "./ecs_types"
@@ -68,6 +68,7 @@ export function init_game(playSound){
     world.registerComponent(PickupComponent)
     world.registerComponent(OutOfAmmoComponent)
     world.registerComponent(HUDMessageComponent)
+    world.registerComponent(ShakeGroundComponent)
 
     // Systems
     world.registerSystem(SoundSystem)

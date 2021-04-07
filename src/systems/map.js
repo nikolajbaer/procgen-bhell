@@ -38,7 +38,7 @@ export class MapSystem extends System {
         e.addComponent( BodyComponent, {
             mass: 0,
             bounds_type: BodyComponent.BOX_TYPE,
-            bounds: {x:w,y:H,z:h},
+            bounds: {x:w,y:H*5,z:h}, // Walls are 5x high to prevent escape from bouncing stuff
             material: "ground",
          })
         e.addComponent( LocRotComponent, { location: {x:x,y:H/2,z:z} } )

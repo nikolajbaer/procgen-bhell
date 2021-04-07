@@ -1,13 +1,14 @@
 import { System, Not } from "ecsy";
 import { PhysicsComponent, LocRotComponent, BodyComponent, RotatorComponent } from "../components/physics.js"
-import { MeshComponent, ModelComponent } from "../components/render.js"
+import { CameraShakeComponent, MeshComponent, ModelComponent } from "../components/render.js"
 import * as CANNON from "cannon-es"
 import { BulletComponent, GunComponent } from "../components/weapons.js";
 import { DamageableComponent, DamageAppliedComponent, HealableComponent, HealthAppliedComponent } from "../components/damage.js";
 import { GunPickupComponent, HealthComponent } from "../components/pickup.js";
 import { InventoryComponent } from "../components/inventory.js";
-import { Player } from "tone";
 import { PlayerComponent } from "../components/player.js";
+import { GroundComponent } from "../components/map";
+import { ShakeGroundComponent } from "../components/enemy.js";
 
 // TODO explore https://github.com/ashconnell/physx-js
 
@@ -71,16 +72,30 @@ export class PhysicsSystem extends System {
                 }else if(event.target.ecsy_entity.hasComponent(BulletComponent)){
                     this.handleBulletCollision(event.target.ecsy_entity,event.body.ecsy_entity) 
                 }
+
                 if(event.body.ecsy_entity.hasComponent(HealthComponent)){
                     this.handleHealthCollision(event.body.ecsy_entity,event.target.ecsy_entity) 
                 }else if(event.target.ecsy_entity.hasComponent(HealthComponent)){
                     this.handleHealthCollision(event.target.ecsy_entity,event.body.ecsy_entity) 
                 }  
+                
                 if(event.body.ecsy_entity.hasComponent(GunPickupComponent)){
                     this.handleGunPickupCollision(event.body.ecsy_entity,event.target.ecsy_entity) 
                 }else if(event.target.ecsy_entity.hasComponent(GunPickupComponent)){
                     this.handleGunPickupCollision(event.target.ecsy_entity,event.body.ecsy_entity) 
-                }  
+                }
+
+                if(event.body.ecsy_entity.hasComponent(GroundComponent)){
+                    if(event.target.ecsy_entity.hasComponent(ShakeGroundComponent)){
+                        event.target.ecsy_entity.addComponent(CameraShakeComponent) 
+                        event.target.ecsy_entity.removeComponent(ShakeGroundComponent) 
+                    }
+                }else if(event.target.ecsy_entity.hasComponent(GroundComponent)){
+                    if(event.body.ecsy_entity.hasComponent(ShakeGroundComponent)){
+                        event.body.ecsy_entity.addComponent(CameraShakeComponent) 
+                        event.body.ecsy_entity.removeComponent(ShakeGroundComponent) 
+                    }
+                }
             })
         }
         this.physics_world.addBody(body1) 

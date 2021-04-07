@@ -12,7 +12,7 @@ import { HUDMessageComponent } from "../components/hud";
 
 export const WAVE_DELAY = 3 
 export const PICKUP_RADIUS = 5
-const BOSS_FRQ = 10
+const BOSS_FRQ = 4
 
 export class WaveSystem extends System {
     init(){
@@ -20,9 +20,9 @@ export class WaveSystem extends System {
         this.wave_delay = null
     }
 
-    spawn_wave(){
+    spawn_wave(boss){
         let n = 0
-        if( this.wave % BOSS_FRQ == 0){
+        if( boss ){
             // Spawn Boss and wave
             const boss = this.world.createEntity()
             boss.addComponent(WaveMemberComponent, { wave: this.wave, boss: true})
@@ -44,6 +44,10 @@ export class WaveSystem extends System {
         }
 
         return n
+    }
+
+    is_boss(){
+        return this.wave % BOSS_FRQ == 0
     }
 
     execute(delta,time){
@@ -70,13 +74,13 @@ export class WaveSystem extends System {
                         })
                     }
                     player.addComponent(HUDMessageComponent,{
-                        message:`Wave ${this.wave}`,
+                        message: (this.is_boss())?`Boss Wave ${this.wave}`:`Wave ${this.wave}`,
                         duration: 2,
                     })
                 }else if(this.wave_delay <= time){
                     this.wave_delay = null 
                     // Spawn enemies
-                    player_c.current_wave_enemies = this.spawn_wave()
+                    player_c.current_wave_enemies = this.spawn_wave(this.is_boss())
                     player_c.wave = this.wave
                     this.wave += 1
                 }

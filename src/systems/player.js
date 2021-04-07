@@ -19,6 +19,8 @@ export class PlayerSystem extends System {
 
     spawn_player(){
         const playerEntity = this.world.createEntity()
+        playerEntity.name = "Player"
+
         playerEntity.addComponent( BodyComponent, { 
             mass: 1, 
             bounds_type: BodyComponent.BOX_TYPE, 
